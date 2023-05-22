@@ -1,7 +1,5 @@
 package com.t3q.dranswer.filter;
 
-import com.t3q.dranswer.entity.LoggingFilterEntity;
-import com.t3q.dranswer.repository.LoggingFilterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,12 +22,6 @@ import java.util.Map;
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
-    private final LoggingFilterRepository loggingFilterRepository;
-
-    @Autowired
-    public LoggingFilter(LoggingFilterRepository loggingfilterRepository) {
-        this.loggingFilterRepository = loggingfilterRepository;
-    }
 
 
     @Override
@@ -49,13 +41,8 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("Request Body: {}", RequestBody);
         log.info("Response Body: {}", ResponseBody);
 
-        LoggingFilterEntity filterEntity = new LoggingFilterEntity();
-        filterEntity.setHeader(Headers);
-        filterEntity.setQueryString(queryString);
-        filterEntity.setRequestBody(RequestBody);
-        filterEntity.setResponseBody(ResponseBody);
 
-        loggingFilterRepository.save(filterEntity);
+
         responseWrapper.copyBodyToResponse();
     }
 
