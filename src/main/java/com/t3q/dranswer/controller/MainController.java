@@ -57,7 +57,6 @@ public class MainController {
 			log.error(e.getMessage());
 			return "login_fail";
 		}
-		//return "redirect:http://localhost:8888/callback/callbacktest";
 		return "redirect:" + CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL + "/callbacktest";
 	}
 

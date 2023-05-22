@@ -25,13 +25,22 @@ public class Constants {
 	public static final String KEYCLOAK_USER_ID 		= "asan";
 	public static final String KEYCLOAK_USER_PW 		= "123";
 
-//	// keycloak grant_type
-//	public static final String CLIENT_CREDENTIALS 	= "client_credentials";
-//	// keycloak scope
-//	public static final String SCOPE_OPENID 		= "openid";
-//	public static final String SCOPE_PROFILE 		= "profile";
-//	public static final String SCOPE_EMAIL 			= "email";
-//	public static final String SCOPE_ADDRESS 		= "address";
-//	public static final String SCOPE_PHONE 			= "phone";
+	public static final String E00000		 		= "00000";
+	public static final String E00000_MSG	 		= "성공";
+	public static final String E40001		 		= "40001";
+	public static final String E40001_MSG	 		= "요청 파라미터 목록이 없습니다.";
+	public static final String E40002		 		= "40002";
+	public static final String E40002_MSG	 		= "필수 헤더항목이 없습니다.";
+	public static final String E40003		 		= "40003";
+	public static final String E40003_MSG	 		= "관리자 비밀번호가 일치하지 않습니다.";
+	public static final String E50001		 		= "50001";
+	public static final String E50001_MSG	 		= "다른 테이블이 참조하는 데이터는 삭제할 수 없습니다.";
+	public static final String E50002		 		= "50002";
+	public static final String E50002_MSG	 		= "참조 데이터가 없습니다.";
+	public static final String E50003		 		= "50003";
+	public static final String E50003_MSG	 		= "관리자 비밀번호가 일치하지 않습니다.";
+	public static final String E50004		 		= "50004";
+	public static final String E50004_MSG	 		= "필요한 데이터가 없습니다.";
+	public static final String E50000		 		= "50000";
 
 }
