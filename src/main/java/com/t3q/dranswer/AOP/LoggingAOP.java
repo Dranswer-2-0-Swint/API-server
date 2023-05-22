@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 @Slf4j
 @Aspect
 @Component
-public class TodoAOP {
+public class LoggingAOP {
 
     @Pointcut("execution(* com.t3q.dranswer.controller..*.*(..))")
     private void cut(){}
