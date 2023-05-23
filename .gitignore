@@ -28,7 +28,7 @@ rebel.xml
 
 # Gradle
 .gradle/
-gradle/
+#gradle/
 .settings/
 bin/
 build/
