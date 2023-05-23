@@ -68,7 +68,7 @@ public class KeycloakService {
 		try {
 			ResponseEntity<KeycloakTokenRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakTokenRes.class);
 			if (response.getStatusCode() == HttpStatus.OK) {
-				request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, response.getBody().getAccessToken().replace('T', 'd'));
+				request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, response.getBody().getAccessToken());
 				request.getSession().setAttribute(Constants.REFRESH_TOKEN_NAME, response.getBody().getRefreshToken());
 			}
 		} catch (Exception e) {
