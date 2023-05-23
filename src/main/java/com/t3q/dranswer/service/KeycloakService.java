@@ -159,7 +159,7 @@ public class KeycloakService {
 						ResponseEntity<KeycloakTokenRes> getNewTokenResponse = restTemplate.postForEntity(url, getNewTokenRequest, KeycloakTokenRes.class);
 						if (getNewTokenResponse.getStatusCode() == HttpStatus.OK) {
 							log.info("new_token_success!");
-							request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, getNewTokenResponse.getBody().getAccessToken().replace('T', 'd'));
+							request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, getNewTokenResponse.getBody().getAccessToken());
 							request.getSession().setAttribute(Constants.REFRESH_TOKEN_NAME, getNewTokenResponse.getBody().getRefreshToken());
 						}
 					} catch (Exception e) {
