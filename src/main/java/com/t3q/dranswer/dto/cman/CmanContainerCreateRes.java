@@ -3,7 +3,7 @@ package com.t3q.dranswer.dto.cman;
 import lombok.Data;
 
 @Data
-public class CmanContainerCreateUpdateRes {
+public class CmanContainerCreateRes {
 
 	private String conName;					// 컨테이너명
 	private String alias;					// 컨테이너 별칭

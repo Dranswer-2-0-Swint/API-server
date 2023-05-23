@@ -1,6 +1,8 @@
 package com.t3q.dranswer.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateRes;
@@ -18,10 +20,16 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Service
 public class MicroService {
+	
+	private final RestTemplate restTemplate;
 
+    @Autowired
+    public MicroService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+    
 	public ServpotMicroServiceCreateRes createMicroService(ServpotMicroServiceCreateReq microReq) {
 		log.info("MicroService : createMicroService");
-		// TODO: cman으로 마이크로서비스 생성 요청
 		// TODO: DB 데이터 추가
 		return null;
 	}
@@ -41,7 +49,7 @@ public class MicroService {
 	
 	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq, String microId) {
 		log.info("MicroService : createMicroServiceDomain");
-		// TODO: cman으로 마이크로서비스 도메인 생성 요청
+		// TODO: 마이크로서비스 도메인이 있으면 삭제 후 생성
 		// TODO: DB 데이터 추가
 		return null;
 	}
