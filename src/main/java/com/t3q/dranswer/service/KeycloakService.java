@@ -179,6 +179,7 @@ public class KeycloakService {
 		return active; 
 	}
 
+	//요청 헤더에 있는 토큰검증
 	public boolean getAuthorizationByHeader(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String token = null;
@@ -194,84 +195,43 @@ public class KeycloakService {
 
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add(OAuth2Constants.CLIENT_ID, 		Constants.KEYCLOAK_CLIENT);
-		map.add(OAuth2Constants.CLIENT_SECRET, 	Constants.KEYCLOAK_SECRET);
-		map.add(OAuth2Constants.TOKEN_TYPE,		OAuth2Constants.ACCESS_TOKEN);
-		map.add(OAuth2Constants.TOKEN,			token);
+		map.add(OAuth2Constants.CLIENT_ID, Constants.KEYCLOAK_CLIENT);
+		map.add(OAuth2Constants.CLIENT_SECRET, Constants.KEYCLOAK_SECRET);
+		map.add(OAuth2Constants.TOKEN_TYPE, OAuth2Constants.ACCESS_TOKEN);
+		map.add(OAuth2Constants.TOKEN, token);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
 		String url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_SPEC_URL;
+		ResponseEntity<KeycloakIntroSpectRes> response = null;
 		try {
-			ResponseEntity<KeycloakIntroSpectRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
-
-			if (response.getStatusCode() == HttpStatus.OK) {
-				log.info("active : " + response.getBody().isActive());
-				active = response.getBody().isActive();
-
-				if (active == true) {
-					Map<String, KeycloakIntroSpectRoleRes> jsonMap = response.getBody().getResourceAccess();
-					for (Map.Entry<String, KeycloakIntroSpectRoleRes> entry : jsonMap.entrySet()) {
-						String clientId = entry.getKey();
-						List<String> roles = entry.getValue().getRoles();
-						log.info("clientId : " + clientId);
-						log.info("roles : " + roles.toString());
-					}
-
-					LoginHistory obj = new LoginHistory();
-					obj.setUserId(response.getBody().getUsername());
-					obj.setAccessToken(token);
-					obj.setRefreshToken(refreshToken);
-					loginHistoryMapper.setLoginHistory(obj);
-
-				} else {
-					// clientToken 발급
-					String clientToken = null;
-					MultiValueMap<String, String> getTokenMap = new LinkedMultiValueMap<>();
-					getTokenMap.add(OAuth2Constants.CLIENT_ID, 		Constants.KEYCLOAK_CLIENT);
-					getTokenMap.add(OAuth2Constants.CLIENT_SECRET, 	Constants.KEYCLOAK_SECRET);
-					getTokenMap.add(OAuth2Constants.GRANT_TYPE,		OAuth2Constants.CLIENT_CREDENTIALS);
-
-					HttpEntity<MultiValueMap<String, String>> getTokenRequest = new HttpEntity<>(getTokenMap, headers);
-					url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_TOKEN_URL;
-					try {
-						ResponseEntity<KeycloakTokenRes> getTokenResponse = restTemplate.postForEntity(url, getTokenRequest, KeycloakTokenRes.class);
-						if (response.getStatusCode() == HttpStatus.OK) {
-							clientToken = getTokenResponse.getBody().getAccessToken();
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						log.error(e.getMessage());
-						return false;
-					}
-
-					// refreshToken 발급
-					MultiValueMap<String, String> getNewTokenMap = new LinkedMultiValueMap<>();
-					getNewTokenMap.add(OAuth2Constants.CLIENT_ID, 		Constants.KEYCLOAK_CLIENT);
-					getNewTokenMap.add(OAuth2Constants.CLIENT_SECRET, 	Constants.KEYCLOAK_SECRET);
-					getNewTokenMap.add(OAuth2Constants.REFRESH_TOKEN, 	refreshToken.toString());
-					getNewTokenMap.add(OAuth2Constants.GRANT_TYPE,		OAuth2Constants.REFRESH_TOKEN);
-
-					headers.setBearerAuth(clientToken);
-					HttpEntity<MultiValueMap<String, String>> getNewTokenRequest = new HttpEntity<>(getNewTokenMap, headers);
-					url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_TOKEN_URL;
-					try {
-						ResponseEntity<KeycloakTokenRes> getNewTokenResponse = restTemplate.postForEntity(url, getNewTokenRequest, KeycloakTokenRes.class);
-						if (getNewTokenResponse.getStatusCode() == HttpStatus.OK) {
-							log.info("new_token_success!");
-							request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, getNewTokenResponse.getBody().getAccessToken());
-							request.getSession().setAttribute(Constants.REFRESH_TOKEN_NAME, getNewTokenResponse.getBody().getRefreshToken());
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						log.error(e.getMessage());
-						return false;
-					}
-				}
-			}
+			response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
 		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
-			log.error(e.getMessage());
-			return false;
+			e.getMessage();
+		}
+		if (response.getStatusCode() == HttpStatus.OK) {
+			log.info("active : " + response.getBody().isActive());
+			active = response.getBody().isActive();
+
+			if (active == true) {
+				Map<String, KeycloakIntroSpectRoleRes> jsonMap = response.getBody().getResourceAccess();
+				for (Map.Entry<String, KeycloakIntroSpectRoleRes> entry : jsonMap.entrySet()) {
+					String clientId = entry.getKey();
+					List<String> roles = entry.getValue().getRoles();
+					log.info("clientId : " + clientId);
+					log.info("roles : " + roles.toString());
+				}
+
+				LoginHistory obj = new LoginHistory();
+				obj.setUserId(response.getBody().getUsername());
+				obj.setAccessToken(token);
+				obj.setRefreshToken(refreshToken);
+				loginHistoryMapper.setLoginHistory(obj);
+
+			}
+			else {
+				return false;
+			}
 		}
 		return active;
 	}

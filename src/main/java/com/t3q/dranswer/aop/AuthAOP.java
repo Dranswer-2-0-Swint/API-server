@@ -40,7 +40,7 @@ public class AuthAOP {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            throw new Exception("토큰이 유효하지 않습니다");
+            throw new Exception("토큰이 없습니다");
         }
     }
 
