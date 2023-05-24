@@ -1,4 +1,4 @@
-package com.t3q.dranswer.AOP;
+package com.t3q.dranswer.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -18,29 +18,6 @@ public class LoggingAOP {
 
     @Pointcut("execution(* com.t3q.dranswer.controller..*.*(..))")
     private void cut(){}
-
-//    @Before("cut()")
-//    public void httpgetheader(JoinPoint joinPoint){
-//        Gson gson = new Gson();
-//        log.info("this is header log");
-//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-//                .getRequest();
-//
-//        Object[] objArr = joinPoint.getArgs();
-//        if (objArr != null && objArr.length > 0) {
-//
-//            for (Object obj : objArr) {
-//                if (obj instanceof TodoEntity) {
-//                    log.info("[REQUEST] \n [{}][{}][{}][{}] : \n {}", request.getHeader("X-HIT-Log-Key"), request.getProtocol(), request.getMethod(),
-//                            request.getServletPath(), gson.toJson((TodoEntity) obj).toString());
-//                }
-//                else if(obj instanceof TodoEntity) {
-//                    log.info("[REQUEST] \n [{}][{}][{}][{}] : \n {}", request.getHeader("X-HIT-Log-Key"), request.getProtocol(), request.getMethod(),
-//                            request.getServletPath(), gson.toJson((TodoRequest) obj).toString());
-//                }
-//            }
-//        }
-//    }
     @Before("cut()")
     public void beforeParameterLog(JoinPoint joinPoint) {
         Method method = getMethod(joinPoint);
