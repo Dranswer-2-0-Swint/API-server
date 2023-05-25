@@ -7,9 +7,10 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainDeleteRes extends ApiResponse {
+public class ServpotMicroServiceListReadResSub {
 
-	private String requestId;			// 요청ID
 	private String microId;				// 마이크로서비스ID
+	private String microName;			// 마이크로서비스명
+	private String microDomain;			// 마이크로서비스도메인
 
 }

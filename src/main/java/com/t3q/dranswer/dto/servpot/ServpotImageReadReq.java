@@ -9,12 +9,9 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotImageSetCreateUpdateReq {
+public class ServpotImageReadReq {
 
 	@NotNull
-	private String microId;			// 마이크로서비스ID
-	@NotNull
-	private String imageName;		// 이미지명
+	private String imageId;			// 이미지ID
 	
-	private ServpotImageSetCreateUpdateReqSet setList;			// 설정목록
 }

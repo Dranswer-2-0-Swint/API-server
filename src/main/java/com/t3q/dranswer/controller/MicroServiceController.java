@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +24,8 @@ import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteRes;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeRes;
+import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadReq;
+import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadRes;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateRes;
 import com.t3q.dranswer.service.MicroService;
@@ -32,12 +34,32 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Controller
-@RequestMapping("/v1/micro-service")
+@RequestMapping("/api/v1/micro-service")
 public class MicroServiceController {
 
 	@Autowired
 	MicroService microService;
 	
+	// 마이크로서비스 목록 조회
+	@GetMapping("/list")
+	public ResponseEntity<Object> readMicroServiceList(HttpServletRequest request, 
+													@RequestBody @Valid final ServpotMicroServiceListReadReq microReq) {
+		
+		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
+		
+		try {
+			res = microService.readMicroServiceList(microReq);
+		}catch (Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage());
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()), 
+												new HttpHeaders(), 
+												HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
+	}
+	
+	// 마이크로서비스 생성
 	@PostMapping()
 	public ResponseEntity<Object> createMicroService(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
@@ -56,6 +78,7 @@ public class MicroServiceController {
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
 	
+	// 마이크로서비스 변경
 	@PutMapping()
 	public ResponseEntity<Object> updateMicroService(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
@@ -74,6 +97,7 @@ public class MicroServiceController {
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
 	
+	// 마이크로서비스 삭제
 	@DeleteMapping()
 	public ResponseEntity<Object> deleteMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceDeleteReq microReq) {
@@ -92,15 +116,15 @@ public class MicroServiceController {
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@PostMapping("/{micro_id}/domain")
+	// 마이크로서비스 도메인 설정
+	@PostMapping("/domain")
 	public ResponseEntity<Object> createMicroServiceDomain(HttpServletRequest request, 
-														@RequestBody @Valid final ServpotMicroServiceDomainMergeReq microReq, 
-														@PathVariable("micro_id") final String microId) {
+														@RequestBody @Valid final ServpotMicroServiceDomainMergeReq microReq) {
 		
 		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		
 		try {
-			res = microService.createMicroServiceDomain(microReq, microId);
+			res = microService.createMicroServiceDomain(microReq);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -111,15 +135,15 @@ public class MicroServiceController {
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/{micro_id}/domain")
+	// 마이크로서비스 도메인 삭제
+	@DeleteMapping("/domain")
 	public ResponseEntity<Object> deleteMicroServiceDomain(HttpServletRequest request, 
-															@RequestBody @Valid final ServpotMicroServiceDomainDeleteReq microReq, 
-															@PathVariable("micro_id") final String microId) {
+															@RequestBody @Valid final ServpotMicroServiceDomainDeleteReq microReq) {
 		
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
 		
 		try {
-			res = microService.deleteMicroServiceDomain(microReq, microId);
+			res = microService.deleteMicroServiceDomain(microReq);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

@@ -12,6 +12,8 @@ import lombok.Data;
 public class ServpotMicroServiceDomainMergeReq {
 
 	@NotNull
+	private String microId;				// 마이크로서비스ID
+	@NotNull
 	private String microDomain;			// 마이크로서비스 도메인
 
 }

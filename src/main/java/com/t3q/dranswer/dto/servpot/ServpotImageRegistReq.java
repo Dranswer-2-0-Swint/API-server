@@ -12,8 +12,11 @@ import lombok.Data;
 public class ServpotImageRegistReq {
 
 	@NotNull
-	private String imageId;			// 이미지ID
+	private String microId;								// 마이크로서비스ID
 	@NotNull
-	private String imagePath;		// 이미지 저장경로
+	private String imageName;							// 이미지명
+	@NotNull
+	private String imagePath;							// 이미지 저장경로
+	private ServpotImageRegistReqSub setupList;			// 설정목록
 	
 }

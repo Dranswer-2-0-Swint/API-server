@@ -7,10 +7,10 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotImageStatusUpdateRes extends ApiResponse {
+public class ServpotAppServiceListReadRes extends ApiResponse {
 
-	private String requestId;			// 요청ID
-	private String imageId;				// 이미지ID
-	private String imageStatus;			// 이미지상태
+	private String requestId;								// 요청ID
+	private String companyId;								// 기업ID
+	private ServpotAppServiceListReadResSub serviceList;		// 응용서비스목록
 
 }
