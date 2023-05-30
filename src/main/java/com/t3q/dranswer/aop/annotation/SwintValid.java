@@ -11,5 +11,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SwintAuth {
+public @interface SwintValid {
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.t3q.dranswer.aop.annotation.SwintAuth;
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.config.ConstantsToValidation;
 import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.service.KeycloakService;
 
@@ -59,7 +59,7 @@ public class MainController {
 			log.error(e.getMessage());
 			return "login_fail";
 		}
-		return "redirect:" + CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL + "/callbacktest";
+		return "redirect:" + CALLBACK_URL + ConstantsToValidation.KEYCLOAK_CALLBACK_URL + "/callbacktest";
 	}
 
 	@RequestMapping(value = "/callback/callbacktest")
@@ -81,7 +81,7 @@ public class MainController {
 		return "login_success";
 	}
 
-	@SwintAuth
+	@SwintValid
 	@GetMapping("/hi")
 	public String hi(){
 		System.out.println("controller call hi()");

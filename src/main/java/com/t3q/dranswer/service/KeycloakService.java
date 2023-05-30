@@ -16,11 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.config.ConstantsToValidation;
 import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRoleRes;
@@ -41,9 +40,9 @@ public class KeycloakService {
 
 	// keycloak login page
 	public String getRedirectUrl(HttpServletRequest request) {
-		String authUrl		= Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_AUTH_URL;
-		String clientId		= Constants.KEYCLOAK_CLIENT;
-		String redirectUri	= CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL;
+		String authUrl		= ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_AUTH_URL;
+		String clientId		= ConstantsToValidation.KEYCLOAK_CLIENT;
+		String redirectUri	= CALLBACK_URL + ConstantsToValidation.KEYCLOAK_CALLBACK_URL;
 		String responseType	= "code";
 		String url = String.format("%s?client_id=%s&redirect_uri=%s&response_type=%s&scope=openid", 
                 					authUrl, clientId, redirectUri, responseType);
@@ -58,19 +57,19 @@ public class KeycloakService {
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", 		Constants.KEYCLOAK_CLIENT);
-		map.add("client_secret", 	Constants.KEYCLOAK_SECRET);
+		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 		map.add("grant_type", 	"authorization_code");
-		map.add("redirect_uri", 	CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL);
+		map.add("redirect_uri", 	CALLBACK_URL + ConstantsToValidation.KEYCLOAK_CALLBACK_URL);
 		map.add("code", 			code);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_TOKEN_URL;
+		String url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_TOKEN_URL;
 		try {
 			ResponseEntity<KeycloakTokenRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakTokenRes.class);
 			if (response.getStatusCode() == HttpStatus.OK) {
-				request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, response.getBody().getAccessToken());
-				request.getSession().setAttribute(Constants.REFRESH_TOKEN_NAME, response.getBody().getRefreshToken());
+				request.getSession().setAttribute(ConstantsToValidation.ACCESS_TOKEN_NAME, response.getBody().getAccessToken());
+				request.getSession().setAttribute(ConstantsToValidation.REFRESH_TOKEN_NAME, response.getBody().getRefreshToken());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,8 +85,8 @@ public class KeycloakService {
 		boolean active = true;
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
-		Object accessToken = request.getSession().getAttribute(Constants.ACCESS_TOKEN_NAME);
-		Object refreshToken = request.getSession().getAttribute(Constants.REFRESH_TOKEN_NAME);
+		Object accessToken = request.getSession().getAttribute(ConstantsToValidation.ACCESS_TOKEN_NAME);
+		Object refreshToken = request.getSession().getAttribute(ConstantsToValidation.REFRESH_TOKEN_NAME);
 		
 		if (accessToken == null || refreshToken == null) {
 			log.error("no token");
@@ -96,13 +95,13 @@ public class KeycloakService {
 
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", 		Constants.KEYCLOAK_CLIENT);
-		map.add("client_secret", 	Constants.KEYCLOAK_SECRET);
+		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 		map.add("token_type_hint",		"access_token");
 		map.add("token",			accessToken.toString());
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_SPEC_URL;
+		String url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_SPEC_URL;
 		try {
 			ResponseEntity<KeycloakIntroSpectRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
 
@@ -129,12 +128,12 @@ public class KeycloakService {
 					// clientToken 발급
 					String clientToken = null;
 					MultiValueMap<String, String> getTokenMap = new LinkedMultiValueMap<>();
-					getTokenMap.add("client_id", 		Constants.KEYCLOAK_CLIENT);
-					getTokenMap.add("client_secret", 	Constants.KEYCLOAK_SECRET);
+					getTokenMap.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+					getTokenMap.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 					getTokenMap.add("grant_type",		"client_credentials");
 
 					HttpEntity<MultiValueMap<String, String>> getTokenRequest = new HttpEntity<>(getTokenMap, headers);
-					url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_TOKEN_URL;
+					url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_TOKEN_URL;
 					try {
 						ResponseEntity<KeycloakTokenRes> getTokenResponse = restTemplate.postForEntity(url, getTokenRequest, KeycloakTokenRes.class);
 						if (response.getStatusCode() == HttpStatus.OK) {
@@ -148,20 +147,20 @@ public class KeycloakService {
 					
 					// refreshToken 발급
 					MultiValueMap<String, String> getNewTokenMap = new LinkedMultiValueMap<>();
-					getNewTokenMap.add("client_id", 		Constants.KEYCLOAK_CLIENT);
-					getNewTokenMap.add("client_secret", 	Constants.KEYCLOAK_SECRET);
+					getNewTokenMap.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+					getNewTokenMap.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 					getNewTokenMap.add("refresh_token", 	refreshToken.toString());
 					getNewTokenMap.add("grant_type",		"refresh_token");
 
 					headers.setBearerAuth(clientToken);
 					HttpEntity<MultiValueMap<String, String>> getNewTokenRequest = new HttpEntity<>(getNewTokenMap, headers);
-					url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_TOKEN_URL;
+					url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_TOKEN_URL;
 					try {
 						ResponseEntity<KeycloakTokenRes> getNewTokenResponse = restTemplate.postForEntity(url, getNewTokenRequest, KeycloakTokenRes.class);
 						if (getNewTokenResponse.getStatusCode() == HttpStatus.OK) {
 							log.info("new_token_success!");
-							request.getSession().setAttribute(Constants.ACCESS_TOKEN_NAME, getNewTokenResponse.getBody().getAccessToken());
-							request.getSession().setAttribute(Constants.REFRESH_TOKEN_NAME, getNewTokenResponse.getBody().getRefreshToken());
+							request.getSession().setAttribute(ConstantsToValidation.ACCESS_TOKEN_NAME, getNewTokenResponse.getBody().getAccessToken());
+							request.getSession().setAttribute(ConstantsToValidation.REFRESH_TOKEN_NAME, getNewTokenResponse.getBody().getRefreshToken());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -190,13 +189,13 @@ public class KeycloakService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", Constants.KEYCLOAK_CLIENT);
-		map.add("client_secret", Constants.KEYCLOAK_SECRET);
+		map.add("client_id", ConstantsToValidation.KEYCLOAK_CLIENT);
+		map.add("client_secret", ConstantsToValidation.KEYCLOAK_SECRET);
 		map.add("token_type_hint", "access_token");
 		map.add("token", token);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_SPEC_URL;
+		String url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_SPEC_URL;
 		ResponseEntity<KeycloakIntroSpectRes> response = null;
 		try {
 			response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
@@ -238,8 +237,8 @@ public class KeycloakService {
 		HttpHeaders headers = new HttpHeaders();
 		List<LoginHistory> loginHistory = new ArrayList<>();
 		
-		Object accessToken = request.getSession().getAttribute(Constants.ACCESS_TOKEN_NAME);
-		Object refreshToken = request.getSession().getAttribute(Constants.REFRESH_TOKEN_NAME);
+		Object accessToken = request.getSession().getAttribute(ConstantsToValidation.ACCESS_TOKEN_NAME);
+		Object refreshToken = request.getSession().getAttribute(ConstantsToValidation.REFRESH_TOKEN_NAME);
 		
 		if (accessToken == null || refreshToken == null) {
 			log.error("no token");
@@ -248,13 +247,13 @@ public class KeycloakService {
 
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", 		Constants.KEYCLOAK_CLIENT);
-		map.add("client_secret", 	Constants.KEYCLOAK_SECRET);
+		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 		map.add("token_type_hint",		"access_token");
 		map.add("token",			accessToken.toString());
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_SPEC_URL;
+		String url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_SPEC_URL;
 		try {
 			ResponseEntity<KeycloakIntroSpectRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
 

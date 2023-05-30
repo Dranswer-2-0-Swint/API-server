@@ -1,6 +1,6 @@
 package com.t3q.dranswer.config;
 
-public class Constants {
+public class ConstantsToValidation {
 
 	// token
 	public static final String ACCESS_TOKEN_NAME		= "dr_access_token";

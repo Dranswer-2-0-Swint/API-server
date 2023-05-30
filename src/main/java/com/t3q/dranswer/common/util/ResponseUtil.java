@@ -1,6 +1,6 @@
 package com.t3q.dranswer.common.util;
 
-import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.config.ConstantsToValidation;
 import com.t3q.dranswer.dto.servpot.ApiResponse;
 
 public class ResponseUtil {
@@ -10,26 +10,26 @@ public class ResponseUtil {
 		
 		res.setRspCode(error);
 		switch (error) {
-			case Constants.E00000:
-				res.setRspMsg(Constants.E00000_MSG);
+			case ConstantsToValidation.E00000:
+				res.setRspMsg(ConstantsToValidation.E00000_MSG);
 				break;
-			case Constants.E40001:
-				res.setRspMsg(Constants.E40001_MSG);
+			case ConstantsToValidation.E40001:
+				res.setRspMsg(ConstantsToValidation.E40001_MSG);
 				break;
-			case Constants.E40002:
-				res.setRspMsg(Constants.E40002_MSG);
+			case ConstantsToValidation.E40002:
+				res.setRspMsg(ConstantsToValidation.E40002_MSG);
 				break;
-			case Constants.E40003:
-				res.setRspMsg(Constants.E40003_MSG);
+			case ConstantsToValidation.E40003:
+				res.setRspMsg(ConstantsToValidation.E40003_MSG);
 				break;
-			case Constants.E50001:
-				res.setRspMsg(Constants.E50001_MSG);
+			case ConstantsToValidation.E50001:
+				res.setRspMsg(ConstantsToValidation.E50001_MSG);
 				break;
-			case Constants.E50002:
-				res.setRspMsg(Constants.E50002_MSG);
+			case ConstantsToValidation.E50002:
+				res.setRspMsg(ConstantsToValidation.E50002_MSG);
 				break;
 			default:
-				res.setRspCode(Constants.E50000);
+				res.setRspCode(ConstantsToValidation.E50000);
 				res.setRspMsg(error);
 				break;
 		}
