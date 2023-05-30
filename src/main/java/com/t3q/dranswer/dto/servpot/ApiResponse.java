@@ -9,7 +9,7 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ApiResponse {
 
-	private String rspCode;					// 응답코드
-	private String rspMsg;					// 응답메시지
+	private String rspCode	= "00000";			// 응답코드
+	private String rspMsg	= "성공";				// 응답메시지
 	
 }

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.service.KeycloakService;
@@ -25,9 +26,13 @@ public class MainController {
 	@Autowired
 	private KeycloakService keycloakService;
 	
-	@Value("${auth.callback-url}")
-	String CALLBACK_URL;
-
+	private final ApplicationProperties applicationProperties;
+	
+	@Autowired
+    public MainController(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
+	
 	@RequestMapping(value = "/")
 	public String mainPage(HttpServletRequest request, Model model) {
 		System.out.println("Mapping to keycloak_login() method");
@@ -57,7 +62,7 @@ public class MainController {
 			log.error(e.getMessage());
 			return "login_fail";
 		}
-		return "redirect:" + CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL + "/callbacktest";
+		return "redirect:" + applicationProperties.getCallbackUrl() + Constants.KEYCLOAK_CALLBACK_URL + "/callbacktest";
 	}
 
 	@RequestMapping(value = "/callback/callbacktest")

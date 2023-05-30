@@ -1,5 +1,7 @@
 package com.t3q.dranswer.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -14,18 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.dto.servpot.ServpotImageDeleteReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageListReadReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageListReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageReadReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageReadRes;
 import com.t3q.dranswer.dto.servpot.ServpotImageRegistReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageRegistRes;
 import com.t3q.dranswer.dto.servpot.ServpotImageRegistUpdateReq;
-import com.t3q.dranswer.dto.servpot.ServpotImageStatusReadReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageStatusRes;
 import com.t3q.dranswer.dto.servpot.ServpotImageStatusUpdateReq;
 import com.t3q.dranswer.service.ImageService;
@@ -43,12 +43,17 @@ public class ImageController {
 	// 이미지 목록 조회
 	@GetMapping("/list")
 	public ResponseEntity<Object> readImageList(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotImageListReadReq imageReq) {
+													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageListReadRes res = new ServpotImageListReadRes();
 		
+		String micro = (String) parameter.get("micro_id");
+		if (micro == null || micro.isEmpty() == true) {
+			// exception
+		}
+		
 		try {
-			res = imageService.readImageList(imageReq);
+			res = imageService.readImageList(micro);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -62,12 +67,17 @@ public class ImageController {
 	// 이미지 조회
 	@GetMapping()
 	public ResponseEntity<Object> readImage(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotImageReadReq imageReq) {
+													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageReadRes res = new ServpotImageReadRes();
 		
+		String image = (String) parameter.get("image_id");
+		if (image == null || image.isEmpty() == true) {
+			// exception
+		}
+		
 		try {
-			res = imageService.readImage(imageReq);
+			res = imageService.readImage(image);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -81,12 +91,17 @@ public class ImageController {
 	// 이미지 상태 조회
 	@GetMapping("/status")
 	public ResponseEntity<Object> readImageStatus(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotImageStatusReadReq imageReq) {
+													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageStatusRes res = new ServpotImageStatusRes();
 		
+		String image = (String) parameter.get("image_id");
+		if (image == null || image.isEmpty() == true) {
+			// exception
+		}
+		
 		try {
-			res = imageService.readImageStatus(imageReq);
+			res = imageService.readImageStatus(image);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

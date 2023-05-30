@@ -1,5 +1,7 @@
 package com.t3q.dranswer.dto.servpot;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -12,11 +14,11 @@ import lombok.Data;
 public class ServpotImageRegistReq {
 
 	@NotNull
-	private String microId;								// 마이크로서비스ID
+	private String microId;										// 마이크로서비스ID
 	@NotNull
-	private String imageName;							// 이미지명
+	private String imageName;									// 이미지명
 	@NotNull
-	private String imagePath;							// 이미지 저장경로
-	private ServpotImageRegistReqSub setupList;			// 설정목록
+	private String imagePath;									// 이미지 저장경로
+	private List<ServpotImageRegistReqSub> setupList;			// 설정목록
 	
 }

@@ -13,10 +13,9 @@ spring:
     name: dranswer
   datasource:
     #driver-class-name: org.postgresql.Driver
-    #url: jdbc:postgresql://192.168.85.134:5432/postgres
-    url: jdbc:postgresql://${DB_HOST:192.168.85.134}:${DB_PORT:5432}/${DB_NAME:postgres}
+    url: jdbc:postgresql://${DB_HOST:192.168.85.134}:${DB_PORT:5432}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
     username: ${DB_USER:postgres}
-    password: ${DB_PASS:ttt333qqq}
+    password: ${DB_PASS:postgres}
 
 keycloak:
   enabled: true
@@ -29,6 +28,10 @@ keycloak:
   use-resource-role-mappings: true
   bearer-only: true
   
-auth:
+mybatis:
+  type-aliases-package: com.t3q.dranswer.dto
+
+setup:
   #callback-url: http://192.168.85.132:8888
-  callback-url: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}
+  callbackUrl: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}
+  cmanUrl: http://${CMAN_HOST:115.85.182.6}:${CMAN_PORT:30330}

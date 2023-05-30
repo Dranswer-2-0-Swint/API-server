@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.keycloak.OAuth2Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
@@ -32,17 +32,21 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class KeycloakService {
 	
-	@Value("${auth.callback-url}")
-	String CALLBACK_URL;
-	
 	@Autowired
 	LoginHistoryMapper loginHistoryMapper;
+
+	private final ApplicationProperties applicationProperties;
+	
+	@Autowired
+    public KeycloakService(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
 	// keycloak login page
 	public String getRedirectUrl(HttpServletRequest request) {
 		String authUrl		= Constants.KEYCLOAK_BASE_URL + Constants.KEYCLOAK_REALM + Constants.KEYCLOAK_AUTH_URL;
 		String clientId		= Constants.KEYCLOAK_CLIENT;
-		String redirectUri	= CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL;
+		String redirectUri	= applicationProperties.getCallbackUrl() + Constants.KEYCLOAK_CALLBACK_URL;
 		String responseType	= OAuth2Constants.CODE;
 		String url = String.format("%s?client_id=%s&redirect_uri=%s&response_type=%s&scope=openid", 
                 					authUrl, clientId, redirectUri, responseType);
@@ -60,7 +64,7 @@ public class KeycloakService {
 		map.add(OAuth2Constants.CLIENT_ID, 		Constants.KEYCLOAK_CLIENT);
 		map.add(OAuth2Constants.CLIENT_SECRET, 	Constants.KEYCLOAK_SECRET);
 		map.add(OAuth2Constants.GRANT_TYPE, 	OAuth2Constants.AUTHORIZATION_CODE);
-		map.add(OAuth2Constants.REDIRECT_URI, 	CALLBACK_URL + Constants.KEYCLOAK_CALLBACK_URL);
+		map.add(OAuth2Constants.REDIRECT_URI, 	applicationProperties.getCallbackUrl() + Constants.KEYCLOAK_CALLBACK_URL);
 		map.add(OAuth2Constants.CODE, 			code);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
