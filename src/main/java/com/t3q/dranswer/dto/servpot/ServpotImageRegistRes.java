@@ -9,8 +9,10 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ServpotImageRegistRes extends ApiResponse {
 
-	private String requestId;			// 요청ID
-	private String imageId;				// 이미지ID
-	private String imagePath;			// 이미지 저장경로
+	private String requestId;				// 요청ID
+	private String imageId;					// 이미지ID
+	private String imageName;				// 이미지명
+	private String imageStatus;				// 이미지상태
+	private String imageStatusDetail;		// 이미지상태상세
 
 }

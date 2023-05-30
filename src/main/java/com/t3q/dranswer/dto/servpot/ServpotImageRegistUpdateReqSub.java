@@ -9,11 +9,14 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotImageStatusUpdateReq {
+public class ServpotImageRegistUpdateReqSub {
 
 	@NotNull
-	private String imageId;				// 이미지ID
+	private int setupSeq;					// 설정순번
 	@NotNull
-	private String imageStatus;			// 이미지상태
-	
+	private String setupType;				// 설정타입 (포트개방/포트연결/볼륨연결/환경변수)
+	private String setupKey;				// 설정키 (환경변수 설정 시 사용)
+	@NotNull
+	private String setupValue;				// 설정값
+
 }

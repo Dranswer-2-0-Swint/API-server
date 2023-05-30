@@ -1,5 +1,7 @@
 package com.t3q.dranswer.dto.servpot;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -9,7 +11,7 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ServpotImageStatusReadReq {
 
-	//@NotNull
-	//private String imageId;			// 이미지ID
+	@NotNull
+	private String imageId;			// 이미지ID
 	
 }

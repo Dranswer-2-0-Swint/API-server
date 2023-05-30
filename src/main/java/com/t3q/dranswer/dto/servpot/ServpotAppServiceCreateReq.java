@@ -1,5 +1,7 @@
 package com.t3q.dranswer.dto.servpot;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -7,9 +9,11 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainDeleteRes extends ApiResponse {
+public class ServpotAppServiceCreateReq {
 
-	private String requestId;			// 요청ID
-	private String microId;				// 마이크로서비스ID
+	@NotNull
+	private String companyId;			// 기업ID
+	@NotNull
+	private String serviceName;			// 응용서비스명
 
 }

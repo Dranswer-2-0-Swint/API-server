@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotServiceInfoReadRes extends ApiResponse {
+public class ServpotImageListReadResSub {
 
-	private String requestId;			// 요청ID
-	private String service_id;						// 마이크로서비스ID
-	private ServpotServiceInfoReadResMicro microList;		// 설정목록
+	private String imageId;					// 이미지ID
+	private String imageName;				// 이미지명
+	
 }

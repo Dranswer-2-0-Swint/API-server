@@ -9,9 +9,12 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainDeleteReq {
+public class ServpotImageRegistUpdateReq {
 
 	@NotNull
-	private String microId;				// 마이크로서비스ID
-
+	private String imageId;										// 이미지ID
+	@NotNull
+	private String imageName;									// 이미지명
+	
+	private ServpotImageRegistUpdateReqSub setupList;			// 설정목록
 }

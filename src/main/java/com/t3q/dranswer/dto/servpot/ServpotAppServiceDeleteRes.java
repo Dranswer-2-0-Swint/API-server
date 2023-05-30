@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainDeleteRes extends ApiResponse {
+public class ServpotAppServiceDeleteRes extends ApiResponse {
 
-	private String requestId;			// 요청ID
-	private String microId;				// 마이크로서비스ID
+	private String requestId;					// 요청ID
+	private String serviceId;					// 응용서비스ID
 
 }
