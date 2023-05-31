@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.cman.CmanContainerStatusListReadRes;
 import com.t3q.dranswer.dto.cman.CmanInitProjectReq;
 import com.t3q.dranswer.dto.cman.CmanInitProjectRes;
 import com.t3q.dranswer.dto.db.DbAppService;

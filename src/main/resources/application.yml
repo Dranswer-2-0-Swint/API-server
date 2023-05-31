@@ -16,7 +16,7 @@ spring:
     url: jdbc:postgresql://${DB_HOST:192.168.85.134}:${DB_PORT:5432}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
     #url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:postgres}?currentSchema=${DB_SCHEMA:public}
     username: ${DB_USER:postgres}
-    password: ${DB_PASS:ttt333qqq}
+    password: ${DB_PASS:postgres}
 
 keycloak:
   enabled: true
