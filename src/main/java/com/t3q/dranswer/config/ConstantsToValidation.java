@@ -1,6 +1,6 @@
 package com.t3q.dranswer.config;
 
-public class Constants {
+public class ConstantsToValidation {
 
 	// common code
 	public static final String PREFIX_SVC		= "s";
