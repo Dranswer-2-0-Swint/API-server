@@ -2,40 +2,23 @@ package com.t3q.dranswer.config;
 
 public class Constants {
 
+	public static final String SLASH			= "/";
+	public static final String COLONS			= ":";
+	public static final String SPACE			= " ";
+
 	// common code
 	public static final String PREFIX_SVC		= "s";
 	public static final String PREFIX_MIC		= "m";
 	public static final String PREFIX_IMG		= "i";
 	public static final String PREFIX_CON		= "c";
 
-	// token
-	public static final String ACCESS_TOKEN_NAME		= "dr_access_token";
-	public static final String REFRESH_TOKEN_NAME		= "dr_refresh_token";
-
-	// keycloak
-	public static final String KEYCLOAK_REALM 			= "service-user-dev";
-	public static final String KEYCLOAK_CLIENT 			= "login";
-	public static final String KEYCLOAK_SECRET 			= "JG6eaVSJVzbUp5Sgp7MAyByrraZX7xNC";
-	public static final String KEYCLOAK_SERVER 			= "http://27.96.130.179:5010/";
-	public static final String KEYCLOAK_URL 			= KEYCLOAK_SERVER + "auth/";
-	public static final String KEYCLOAK_BASE_URL 		= KEYCLOAK_URL + "realms/";
-	public static final String KEYCLOAK_CALLBACK_URL 	= "/callback";
-	public static final String KEYCLOAK_AUTH_URL 		= "/protocol/openid-connect/auth";
-	public static final String KEYCLOAK_TOKEN_URL 		= "/protocol/openid-connect/token";
-	public static final String KEYCLOAK_SPEC_URL 		= "/protocol/openid-connect/token/introspect";
-
 	// harbor url
 	public static final String HARBOR_URL				= "svc-harbor-dev.com";
-
-	public static final String SLASH					= "/";
-	public static final String COLONS					= ":";
-	public static final String SPACE					= " ";
 	// container set
 	public static final String TYPE_OPEN				= "OPEN";
 	public static final String TYPE_CONN				= "CONN";
 	public static final String TYPE_MOUNT				= "MOUNT";
 	public static final String TYPE_ENV					= "ENV";
-
 	// cman url
 	public static final String CMAN_PROJECT_CREATE_URL 					= "/api/v1/init/projects";
 	public static final String CMAN_IMAGE_CREATE_URL 					= "/api/v1/images";
@@ -53,7 +36,9 @@ public class Constants {
 	public static final String CMAN_CONTAINER_STATUS_READ_URL 			= "/api/v1/containers/{conid}/status/{podName}";
 	public static final String CMAN_CONTAINER_LIST_STATUS_READ_URL 		= "/api/v1/containers/status/list";
 
-	// container status
+	// container current status
+	public static final String STATUS_RUN					= "RUN";
+	public static final String STATUS_SUSPEND				= "SUSPEND";
 	public static final String STATUS_POD_RUNNING			= "POD_RUNNING";
 	public static final String STATUS_IMAGE_UPLOADING		= "IMAGE_UPLOADING";
 	public static final String STATUS_POD_DEPLOYING			= "POD_DEPLOYING";

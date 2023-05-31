@@ -62,7 +62,7 @@ public class MainController {
 			log.error(e.getMessage());
 			return "login_fail";
 		}
-		return "redirect:" + applicationProperties.getCallbackUrl() + Constants.KEYCLOAK_CALLBACK_URL + "/callbacktest";
+		return "redirect:" + applicationProperties.getCallbackUrl() + "/callback" + "/callbacktest";
 	}
 
 	@RequestMapping(value = "/callback/callbacktest")

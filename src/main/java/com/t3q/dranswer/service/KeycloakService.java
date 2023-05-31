@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.ConstantsToValidation;
 import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
@@ -38,11 +39,18 @@ public class KeycloakService {
 	@Autowired
 	LoginHistoryMapper loginHistoryMapper;
 
+	private final ApplicationProperties applicationProperties;
+	
+	@Autowired
+    public KeycloakService(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
+
 	// keycloak login page
 	public String getRedirectUrl(HttpServletRequest request) {
 		String authUrl		= ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_AUTH_URL;
 		String clientId		= ConstantsToValidation.KEYCLOAK_CLIENT;
-		String redirectUri	= CALLBACK_URL + ConstantsToValidation.KEYCLOAK_CALLBACK_URL;
+		String redirectUri	= applicationProperties.getCallbackUrl() + ConstantsToValidation.KEYCLOAK_CALLBACK_URL;
 		String responseType	= "code";
 		String url = String.format("%s?client_id=%s&redirect_uri=%s&response_type=%s&scope=openid", 
                 					authUrl, clientId, redirectUri, responseType);
@@ -59,8 +67,8 @@ public class KeycloakService {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
 		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
-		map.add("grant_type", 	"authorization_code");
-		map.add("redirect_uri", 	CALLBACK_URL + ConstantsToValidation.KEYCLOAK_CALLBACK_URL);
+		map.add("grant_type", 		"authorization_code");
+		map.add("redirect_uri", 	applicationProperties.getCallbackUrl() + ConstantsToValidation.KEYCLOAK_CALLBACK_URL);
 		map.add("code", 			code);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
@@ -97,7 +105,7 @@ public class KeycloakService {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
 		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
-		map.add("token_type_hint",		"access_token");
+		map.add("token_type_hint",	"access_token");
 		map.add("token",			accessToken.toString());
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
@@ -189,10 +197,10 @@ public class KeycloakService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", ConstantsToValidation.KEYCLOAK_CLIENT);
-		map.add("client_secret", ConstantsToValidation.KEYCLOAK_SECRET);
+		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
+		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
 		map.add("token_type_hint", "access_token");
-		map.add("token", token);
+		map.add("token", 			token);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
 		String url = ConstantsToValidation.KEYCLOAK_BASE_URL + ConstantsToValidation.KEYCLOAK_REALM + ConstantsToValidation.KEYCLOAK_SPEC_URL;
@@ -249,7 +257,7 @@ public class KeycloakService {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add("client_id", 		ConstantsToValidation.KEYCLOAK_CLIENT);
 		map.add("client_secret", 	ConstantsToValidation.KEYCLOAK_SECRET);
-		map.add("token_type_hint",		"access_token");
+		map.add("token_type_hint",	"access_token");
 		map.add("token",			accessToken.toString());
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
