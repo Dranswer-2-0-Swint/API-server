@@ -1,5 +1,6 @@
 package com.t3q.dranswer.common.util;
 
+import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.config.ConstantsToValidation;
 import com.t3q.dranswer.dto.servpot.ApiResponse;
 
@@ -35,6 +36,51 @@ public class ResponseUtil {
 		}
 		
 		return res;
+	}
+	
+	public static String getStatusCode(String detail) {
+		String status = new String();
+		
+		switch(detail) {
+			// 동작중
+			case Constants.DETAIL_RUNNING :
+				status = Constants.STATUS_POD_RUNNING;
+				break;
+			// 시동중
+			case Constants.DETAIL_UPLOADING :
+				status = Constants.STATUS_IMAGE_UPLOADING;
+				break;
+			// 종료중
+			case Constants.DETAIL_DEPLOYING :
+				status = Constants.STATUS_POD_DEPLOYING;
+				break;
+			// 종료중
+			case Constants.DETAIL_TERMINATING :
+				status = Constants.STATUS_POD_TERMINATING;
+				break;
+			// 중지
+			case Constants.DETAIL_SHUTDOWN :
+				status = Constants.STATUS_POD_STOPPED;
+				break;
+			// 이미지 업로드 실패
+			case Constants.DETAIL_ERROR_LOAD :
+			case Constants.DETAIL_ERROR_PUSH :
+				status = Constants.STATUS_IMAGE_UPLOAD_FAILED;
+				break;
+			// 컨테이너 실행 실패
+			case Constants.DETAIL_ERROR_IMAGE_PULL :
+			case Constants.DETAIL_ERROR_OOM :
+			case Constants.DETAIL_ERROR_PENDING :
+			case Constants.DETAIL_ERROR_CRASHED :
+			case Constants.DETAIL_ERROR_INTERNAL_ERR :
+				status = Constants.STATUS_DEPLOY_FAILED;
+				break;
+			default :
+				break;
+			
+		}
+
+		return status;
 	}
 
 }

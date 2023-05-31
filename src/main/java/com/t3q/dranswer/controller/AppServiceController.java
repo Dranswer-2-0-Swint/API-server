@@ -1,5 +1,7 @@
 package com.t3q.dranswer.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -13,13 +15,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateReq;
 import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateRes;
 import com.t3q.dranswer.dto.servpot.ServpotAppServiceDeleteReq;
 import com.t3q.dranswer.dto.servpot.ServpotAppServiceDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceListReadReq;
 import com.t3q.dranswer.dto.servpot.ServpotAppServiceListReadRes;
 import com.t3q.dranswer.service.AppService;
 
@@ -36,12 +38,17 @@ public class AppServiceController {
 	// 응용서비스 목록 조회
 	@GetMapping("/list")
 	public ResponseEntity<Object> readAppServiceList(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotAppServiceListReadReq microReq) {
+													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
 		
+		String company = (String) parameter.get("company_id");
+		if (company == null || company.isEmpty() == true) {
+			// exception
+		}
+		
 		try {
-			res = appService.readAppServiceList(microReq);
+			res = appService.readAppServiceList(company);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -55,12 +62,12 @@ public class AppServiceController {
 	// 응용서비스 생성
 	@PostMapping()
 	public ResponseEntity<Object> createAppService(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotAppServiceCreateReq microReq) {
+													@RequestBody @Valid final ServpotAppServiceCreateReq serviceReq) {
 		
 		ServpotAppServiceCreateRes res = new ServpotAppServiceCreateRes();
 		
 		try {
-			res = appService.createAppService(microReq);
+			res = appService.createAppService(serviceReq);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -74,12 +81,12 @@ public class AppServiceController {
 	// 응용서비스 삭제
 	@DeleteMapping()
 	public ResponseEntity<Object> deleteAppService(HttpServletRequest request, 
-														@RequestBody @Valid final ServpotAppServiceDeleteReq microReq) {
+														@RequestBody @Valid final ServpotAppServiceDeleteReq serviceReq) {
 		
 		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
 		
 		try {
-			res = appService.deleteAppService(microReq);
+			res = appService.deleteAppService(serviceReq.getServiceId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

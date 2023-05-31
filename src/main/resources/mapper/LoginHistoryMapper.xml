@@ -4,7 +4,7 @@
 
 <mapper namespace="com.t3q.dranswer.mapper.LoginHistoryMapper">
 
-    <resultMap type="com.t3q.dranswer.dto.db.LoginHistory" id="loginHistoryMap">
+    <resultMap type="LoginHistory" id="loginHistoryMap">
 		<result property="id"				column="id" />
 		<result property="userId"			column="user_id" />
 		<result property="accessToken"		column="access_token" />

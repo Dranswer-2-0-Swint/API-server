@@ -69,7 +69,8 @@ public class Constants {
 	public static final String DETAIL_SHUTDOWN				= "SHUTDOWN";
 	public static final String DETAIL_ERROR_LOAD			= "ERROR_LOAD";
 	public static final String DETAIL_ERROR_PUSH			= "ERROR_PUSH";
-	public static final String DETAIL_ERROR_IMAGE_PULL		= "dERROR_IMAGE_PULL";
+	public static final String DETAIL_ERROR_IMAGE_PULL		= "ERROR_IMAGE_PULL";
+
 	public static final String DETAIL_ERROR_OOM				= "ERROR_OOM";
 	public static final String DETAIL_ERROR_PENDING			= "ERROR_PENDING";
 	public static final String DETAIL_ERROR_CRASHED			= "ERROR_CRASHED";

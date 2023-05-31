@@ -29,8 +29,9 @@ public class DatabaseConfig {
 		// Specify the mapper XML file location
 		sessionFactory.setMapperLocations(applicationContext.getResources("classpath*:mapper/*.xml"));
 		sessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
-	
-		return sessionFactory.getObject();
+        sessionFactory.setTypeAliasesPackage("com.t3q.dranswer.dto");
+
+        return sessionFactory.getObject();
 	}
 
 	@Bean

@@ -1,5 +1,7 @@
 package com.t3q.dranswer.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
@@ -24,7 +27,6 @@ import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteRes;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadRes;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateRes;
@@ -43,12 +45,17 @@ public class MicroServiceController {
 	// 마이크로서비스 목록 조회
 	@GetMapping("/list")
 	public ResponseEntity<Object> readMicroServiceList(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotMicroServiceListReadReq microReq) {
+														@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
 		
+		String service = (String) parameter.get("service_id");
+		if (service == null || service.isEmpty() == true) {
+			// exception
+		}
+		
 		try {
-			res = microService.readMicroServiceList(microReq);
+			res = microService.readMicroServiceList(service);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -62,7 +69,7 @@ public class MicroServiceController {
 	// 마이크로서비스 생성
 	@PostMapping()
 	public ResponseEntity<Object> createMicroService(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
+														@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
 		
 		ServpotMicroServiceCreateRes res = new ServpotMicroServiceCreateRes();
 		
@@ -81,7 +88,7 @@ public class MicroServiceController {
 	// 마이크로서비스 변경
 	@PutMapping()
 	public ResponseEntity<Object> updateMicroService(HttpServletRequest request, 
-													@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
+														@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
 		
 		ServpotMicroServiceUpdateRes res = new ServpotMicroServiceUpdateRes();
 		
@@ -105,7 +112,7 @@ public class MicroServiceController {
 		ServpotMicroServiceDeleteRes res = new ServpotMicroServiceDeleteRes();
 		
 		try {
-			res = microService.deleteMicroService(microReq);
+			res = microService.deleteMicroService(microReq.getMicroId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -143,7 +150,7 @@ public class MicroServiceController {
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
 		
 		try {
-			res = microService.deleteMicroServiceDomain(microReq);
+			res = microService.deleteMicroServiceDomain(microReq.getMicroId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

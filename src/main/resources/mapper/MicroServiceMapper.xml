@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.t3q.dranswer.mapper.MicroServiceMapper">
+
+    <resultMap type="DbMicroService" id="dbMicroServiceMap">
+		<result property="microService"			column="micro_service" />
+		<result property="service"				column="service" />
+		<result property="microServiceName"		column="micro_service_name" />
+		<result property="microServiceDomain"	column="micro_service_domain" />
+		<result property="modTimestamp"			column="mod_timestamp" />
+		<result property="regTimestamp"			column="reg_timestamp" />
+    </resultMap>
+
+    <select id="getMicroSequence" resultType="int">
+    	select nextval('swint.swint_mic_seq')
+    </select>
+
+    <select id="selectMicroServiceByMicro" parameterType="String" resultType="DbMicroService">
+    	select	*
+    	from	tb_micro_info
+    	where	micro_service = #{microService}
+    </select>
+
+    <select id="selectMicroServiceByService" parameterType="String" resultMap="dbMicroServiceMap">
+    	select	*
+    	from	tb_micro_info
+    	where	service = #{service}
+    </select>
+
+    <select id="selectContainerForDomain" parameterType="String" resultType="String">
+    	select	b.container	
+    	from	tb_micro_info a,
+    			tb_image_info b
+    	where	a.micro_service = #{micro}
+    	and		a.micro_service_domain is not null
+    	and		a.micro_service = b.micro_service
+    	and		b.container is not null
+    </select>
+
+    <insert id="insertMicroService" parameterType="map">
+		insert into tb_micro_info
+		(
+			micro_service,
+			service,
+			micro_service_name,
+			micro_service_domain
+		) values (
+			#{obj.microService},
+			#{obj.service},
+			#{obj.microServiceName},
+			#{obj.microServiceDomain}
+		)
+    </insert>
+    
+	<update id="updateMicroServiceName" parameterType="map">
+		update tb_micro_info set
+			micro_service_name	= #{obj.microServiceName},
+			mod_timestamp		= current_timestamp
+		where
+			micro_service		= #{obj.microService}
+    </update>
+
+	<update id="updateMicroServiceDomain" parameterType="map">
+		update tb_micro_info set
+			micro_service_domain	= #{obj.microServiceDomain},
+			mod_timestamp			= current_timestamp
+		where
+			micro_service			= #{obj.microService}
+    </update>
+
+	<delete id="deleteMicroServiceByMicro" parameterType="String">
+		delete from tb_micro_info
+		where
+			micro_service = #{microService}
+	</delete>
+
+	<delete id="deleteMicroServiceByService" parameterType="String">
+		delete from tb_micro_info
+		where
+			service = #{service}
+	</delete>
+
+</mapper>

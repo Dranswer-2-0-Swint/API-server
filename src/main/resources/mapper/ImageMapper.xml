@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.t3q.dranswer.mapper.ImageMapper">
+
+    <resultMap type="DbImage" id="dbImageMap">
+		<result property="image"				column="image" />
+		<result property="microService"			column="micro_service" />
+		<result property="imageName"			column="image_name" />
+		<result property="imageRealName"		column="image_real_name" />
+		<result property="imageStatus"			column="image_status" />
+		<result property="imageStatusDetail"	column="image_status_detail" />
+		<result property="container"			column="container" />
+		<result property="containerDomain"		column="container_domain" />
+		<result property="modTimestamp"			column="mod_timestamp" />
+		<result property="regTimestamp"			column="reg_timestamp" />
+    </resultMap>
+
+    <select id="getImageSequence" resultType="int">
+    	select nextval('swint.swint_img_seq')
+    </select>
+
+    <select id="getContainerSequence" resultType="int">
+    	select nextval('swint.swint_con_seq')
+    </select>
+
+    <select id="selectServiceByMicro" parameterType="String" resultType="String">
+    	select	service
+    	from	tb_micro_info
+    	where	micro_service = #{micro}
+    	limit	1
+    </select>
+
+    <select id="selectImageByimage" parameterType="String" resultType="DbImage">
+    	select	*
+    	from	tb_image_info
+    	where	image = #{image}
+    </select>
+
+    <select id="selectImageByMicro" parameterType="String" resultMap="dbImageMap">
+    	select	*
+    	from	tb_image_info
+    	where	micro_service = #{microService}
+    </select>
+
+    <select id="selectContainerByMicro" parameterType="String" resultMap="dbImageMap">
+    	select	*
+    	from	tb_image_info
+    	where	micro_service = #{microService}
+    	and		container is not null
+    </select>
+
+    <insert id="insertImage" parameterType="map">
+		insert into tb_image_info
+		(
+			image,
+			micro_service,
+			image_name,
+			image_real_name,
+			image_status,
+			image_status_detail,
+			container,
+			container_domain
+		) values (
+			#{obj.image},
+			#{obj.microService},
+			#{obj.imageName},
+			#{obj.imageRealName},
+			#{obj.imageStatus},
+			#{obj.imageStatusDetail},
+			#{obj.container},
+			#{obj.containerDomain}
+		)
+    </insert>
+    
+	<update id="updateImageName" parameterType="String">
+		update tb_image_info set
+			image_name		= #{imageName},
+			mod_timestamp	= current_timestamp
+		where
+			image = #{image}
+    </update>
+
+	<update id="updateImageRealName" parameterType="String">
+		update tb_image_info set
+			image_real_name	= #{imageRealName},
+			mod_timestamp	= current_timestamp
+		where
+			image = #{image}
+    </update>
+
+	<update id="updateImageStatus" parameterType="String">
+		update tb_image_info set
+			image_status		= #{imageStatus},
+			image_status_detail	= #{imageStatusDetail},
+			mod_timestamp		= current_timestamp
+		where
+			image = #{image}
+    </update>
+
+	<update id="updateImageContainer" parameterType="String">
+		update tb_image_info set
+			container			= #{container},
+			container_domain	= #{containerDomain},
+			mod_timestamp		= current_timestamp
+		where
+			image = #{image}
+    </update>
+
+	<delete id="deleteImageByImage" parameterType="String">
+		delete from tb_image_info
+		where
+			image = #{image}
+	</delete>
+
+	<delete id="deleteImageByMicro" parameterType="String">
+		delete from tb_image_info
+		where
+			micro_service = #{microService}
+	</delete>
+
+</mapper>
