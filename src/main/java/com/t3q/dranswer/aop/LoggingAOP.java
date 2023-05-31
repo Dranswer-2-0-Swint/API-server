@@ -31,7 +31,6 @@ public class LoggingAOP {
         }
     }
 
-
     @AfterReturning(value = "cut()", returning = "returnObj")
     public void afterReturnLog(JoinPoint joinPoint, Object returnObj) {
         // 메서드 정보 받아오기
@@ -41,7 +40,6 @@ public class LoggingAOP {
         log.info("=return type = {}=", returnObj.getClass().getSimpleName());
         log.info("=return value = {}=", returnObj);
     }
-
 
     private Method getMethod(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

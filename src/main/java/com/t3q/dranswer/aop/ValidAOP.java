@@ -6,6 +6,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class ValidAOP {
     //@Pointcut("execution(* com.t3q.dranswer.controller..*.*(..))")
 
     @Before("@annotation(com.t3q.dranswer.aop.annotation.SwintValid)")
-    public void SwintAuth(final ProceedingJoinPoint pjp) throws Exception {
+    public void SwintAuth(JoinPoint joinPoint) throws Exception {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {

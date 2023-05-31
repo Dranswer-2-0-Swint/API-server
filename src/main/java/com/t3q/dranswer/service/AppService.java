@@ -93,7 +93,6 @@ public class AppService {
 			log.error(e.getMessage());
 			return null;
 		}
-
 		DbAppService dbAppService = new DbAppService();
 		dbAppService.setService(serviceId);
 		dbAppService.setCompany(serviceReq.getCompanyId());

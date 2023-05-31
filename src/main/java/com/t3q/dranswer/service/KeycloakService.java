@@ -32,7 +32,7 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class KeycloakService {
 	
-	@Value("${auth.callback-url}")
+	@Value("${setup.callbackUrl}")
 	String CALLBACK_URL;
 	
 	@Autowired
