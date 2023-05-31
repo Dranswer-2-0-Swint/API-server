@@ -73,7 +73,9 @@ public class Constants {
 	public static final String E50001		 		= "50001";
 	public static final String E50001_MSG	 		= "시스템에 접속할 수 없습니다.";
 	public static final String E50002		 		= "50002";
-	public static final String E50002_MSG	 		= "필요한 데이터가 없습니다.";
+	public static final String E50002_MSG	 		= "API 요청 처리에 실패했습니다.";
+	public static final String E50003		 		= "50003";
+	public static final String E50003_MSG	 		= "시스템에 알 수 없는 에러가 발생했습니다.";
 	public static final String E50000		 		= "50000";
 
 }
