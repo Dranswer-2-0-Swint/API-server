@@ -1,7 +1,10 @@
 package com.t3q.dranswer.common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.config.ConstantsToValidation;
+import com.t3q.dranswer.dto.cman.ErrorResponse;
 import com.t3q.dranswer.dto.servpot.ApiResponse;
 
 public class ResponseUtil {
@@ -11,26 +14,26 @@ public class ResponseUtil {
 		
 		res.setRspCode(error);
 		switch (error) {
-			case ConstantsToValidation.E00000:
-				res.setRspMsg(ConstantsToValidation.E00000_MSG);
+			case Constants.E00000:
+				res.setRspMsg(Constants.E00000_MSG);
 				break;
-			case ConstantsToValidation.E40001:
-				res.setRspMsg(ConstantsToValidation.E40001_MSG);
+			case Constants.E40001:
+				res.setRspMsg(Constants.E40001_MSG);
 				break;
-			case ConstantsToValidation.E40002:
-				res.setRspMsg(ConstantsToValidation.E40002_MSG);
+			case Constants.E40002:
+				res.setRspMsg(Constants.E40002_MSG);
 				break;
-			case ConstantsToValidation.E40003:
-				res.setRspMsg(ConstantsToValidation.E40003_MSG);
+			case Constants.E40003:
+				res.setRspMsg(Constants.E40003_MSG);
 				break;
-			case ConstantsToValidation.E50001:
-				res.setRspMsg(ConstantsToValidation.E50001_MSG);
+			case Constants.E50001:
+				res.setRspMsg(Constants.E50001_MSG);
 				break;
-			case ConstantsToValidation.E50002:
-				res.setRspMsg(ConstantsToValidation.E50002_MSG);
+			case Constants.E50002:
+				res.setRspMsg(Constants.E50002_MSG);
 				break;
 			default:
-				res.setRspCode(ConstantsToValidation.E50000);
+				res.setRspCode(Constants.E50000);
 				res.setRspMsg(error);
 				break;
 		}
@@ -38,6 +41,15 @@ public class ResponseUtil {
 		return res;
 	}
 	
+	public static ErrorResponse parseJsonString(String jsonString) throws JsonMappingException, JsonProcessingException {
+
+		ObjectMapper mapper = new ObjectMapper();
+		ErrorResponse res = mapper.readValue(jsonString, ErrorResponse.class);
+		
+		return res;
+	}
+	
+
 	public static String getStatusCode(String detail) {
 		String status = new String();
 		
