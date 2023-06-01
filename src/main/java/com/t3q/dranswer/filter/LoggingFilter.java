@@ -41,8 +41,6 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("Request Body: {}", RequestBody);
         log.info("Response Body: {}", ResponseBody);
 
-
-
         responseWrapper.copyBodyToResponse();
     }
 

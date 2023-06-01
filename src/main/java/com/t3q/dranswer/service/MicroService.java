@@ -230,8 +230,6 @@ public class MicroService {
 				log.info("==== 마이크로서비스 도메인 변경 실패 ====");
 			}
 		}
-
 		return res;
 	}
-
 }
