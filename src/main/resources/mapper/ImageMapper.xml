@@ -11,8 +11,6 @@
 		<result property="imageRealName"		column="image_real_name" />
 		<result property="imageStatus"			column="image_status" />
 		<result property="imageStatusDetail"	column="image_status_detail" />
-		<result property="container"			column="container" />
-		<result property="containerDomain"		column="container_domain" />
 		<result property="modTimestamp"			column="mod_timestamp" />
 		<result property="regTimestamp"			column="reg_timestamp" />
     </resultMap>
@@ -21,14 +19,19 @@
     	select nextval('swint.swint_img_seq')
     </select>
 
-    <select id="getContainerSequence" resultType="int">
-    	select nextval('swint.swint_con_seq')
-    </select>
-
     <select id="selectServiceByMicro" parameterType="String" resultType="String">
     	select	service
     	from	tb_micro_info
     	where	micro_service = #{micro}
+    	limit	1
+    </select>
+
+    <select id="selectServiceByImage" parameterType="String" resultType="String">
+    	select	A.service
+    	from	tb_micro_info A,
+    			tb_image_info B
+    	where	B.image = #{image}
+    	and		B.micro_service = A.micro_service
     	limit	1
     </select>
 
@@ -44,13 +47,6 @@
     	where	micro_service = #{microService}
     </select>
 
-    <select id="selectContainerByMicro" parameterType="String" resultMap="dbImageMap">
-    	select	*
-    	from	tb_image_info
-    	where	micro_service = #{microService}
-    	and		container is not null
-    </select>
-
     <insert id="insertImage" parameterType="map">
 		insert into tb_image_info
 		(
@@ -59,18 +55,14 @@
 			image_name,
 			image_real_name,
 			image_status,
-			image_status_detail,
-			container,
-			container_domain
+			image_status_detail
 		) values (
 			#{obj.image},
 			#{obj.microService},
 			#{obj.imageName},
 			#{obj.imageRealName},
 			#{obj.imageStatus},
-			#{obj.imageStatusDetail},
-			#{obj.container},
-			#{obj.containerDomain}
+			#{obj.imageStatusDetail}
 		)
     </insert>
     
@@ -99,15 +91,6 @@
 			image = #{image}
     </update>
 
-	<update id="updateImageContainer" parameterType="String">
-		update tb_image_info set
-			container			= #{container},
-			container_domain	= #{containerDomain},
-			mod_timestamp		= current_timestamp
-		where
-			image = #{image}
-    </update>
-
 	<delete id="deleteImageByImage" parameterType="String">
 		delete from tb_image_info
 		where
@@ -118,6 +101,63 @@
 		delete from tb_image_info
 		where
 			micro_service = #{microService}
+	</delete>
+	
+	
+	
+	
+	<resultMap type="DbContainer" id="dbContainerMap">
+		<result property="image"				column="image" />
+		<result property="container"			column="container" />
+		<result property="containerDomain"		column="container_domain" />
+		<result property="modTimestamp"			column="mod_timestamp" />
+		<result property="regTimestamp"			column="reg_timestamp" />
+    </resultMap>
+
+    <select id="getContainerSequence" resultType="int">
+    	select nextval('swint.swint_con_seq')
+    </select>
+
+    <select id="selectImageByContainer" parameterType="String" resultType="String">
+    	select	image
+    	from	tb_container_info
+    	where	container = #{container}
+    	limit	1
+    </select>
+
+    <select id="selectContainerByImage" parameterType="String" resultMap="dbContainerMap">
+    	select	*
+    	from	tb_container_info
+    	where	image = #{image}
+    </select>
+    
+    <select id="selectContainerIdByImage" parameterType="String" resultType="String">
+    	select	container
+    	from	tb_container_info
+    	where	image = #{image}
+    	limit	1
+    </select>
+    
+    <insert id="insertContainer" parameterType="map">
+		insert into tb_container_info
+		(
+			image,
+			container,
+			container_domain
+		) values
+		<foreach collection="list" item="obj" separator=",">
+		(
+			#{obj.image},
+			#{obj.container},
+			#{obj.containerDomain}
+		)
+		</foreach>
+    </insert>
+    
+    <delete id="deleteContainerByImage" parameterType="String">
+		delete from tb_container_info
+		where
+			image = #{image}
 	</delete>
 
 </mapper>
