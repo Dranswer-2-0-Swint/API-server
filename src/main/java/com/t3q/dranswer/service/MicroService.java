@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -122,7 +123,7 @@ public class MicroService {
 		return res;
 	}
 	
-	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) {
+	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) throws Exception {
 		log.info("MicroService : createMicroServiceDomain");
 		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		res.setMicroId(microReq.getMicroId());
@@ -173,10 +174,14 @@ public class MicroService {
 				if (cmanRes.getStatusCode() == HttpStatus.OK) {
 					log.info("container domain create : " + cmanRes.getBody().getMessage());
 				}
+			} catch (HttpClientErrorException e) {
+				e.printStackTrace();
+				log.error(e.getMessage());
+				throw new Exception(Constants.E50002);
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(e.getMessage());
-				return null;
+				throw new Exception(Constants.E50000);
 			}
 
 			// 마이크로서비스 도메인 변경
@@ -191,14 +196,19 @@ public class MicroService {
 		return res;
 	}
 	
-	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) {
+	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) throws Exception {
 		log.info("MicroService : deleteMicroServiceDomain");
+		DbMicroService dbMicro = new DbMicroService();
+		dbMicro = microServiceMapper.selectMicroServiceByMicro(microId);
+		List<String> containerList = new ArrayList<>();
+		containerList = microServiceMapper.selectContainerForDomain(microId);
+		if (dbMicro == null || containerList == null) {
+			throw new Exception(Constants.E40004);
+		}
+		
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
 		res.setMicroId(microId);
 
-		// 마이크로서비스의 이미지(컨테이너) 목록 조회
-		List<String> containerList = new ArrayList<>();
-		containerList = microServiceMapper.selectContainerForDomain(microId);
 		for (String container : containerList) {
 			// 이미지(컨테이너) 도메인 삭제 요청
 			HttpHeaders headers = new HttpHeaders();
@@ -206,8 +216,9 @@ public class MicroService {
 			HttpEntity<String> entity = new HttpEntity<>(headers);
 			URI uri = UriComponentsBuilder
 				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_DELETE_URL)
+				    	.queryParam("projectName", "{projectName}")
 				    	.encode()
-				    	.buildAndExpand(container)
+				    	.buildAndExpand(container, dbMicro.getService())
 				    	.toUri();
 			try {
 				ResponseEntity<CmanContainerDomainCreateDeleteRes> cmanRes = restTemplate.exchange(	uri, 
@@ -217,17 +228,14 @@ public class MicroService {
 				if (cmanRes.getStatusCode() == HttpStatus.OK) {
 					log.info("container domain delete : " + cmanRes.getBody().getMessage());
 				}
+			} catch (HttpClientErrorException e) {
+				e.printStackTrace();
+				log.error(e.getMessage());
+				throw new Exception(Constants.E50002);
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(e.getMessage());
-				return null;
-			}
-
-			// 마이크로서비스 도메인 변경
-			DbMicroService dbMicroService = new DbMicroService();
-			dbMicroService.setMicroService(microId);
-			if (microServiceMapper.updateMicroServiceDomain(dbMicroService) == 0) {
-				log.info("==== 마이크로서비스 도메인 변경 실패 ====");
+				throw new Exception(Constants.E50000);
 			}
 		}
 

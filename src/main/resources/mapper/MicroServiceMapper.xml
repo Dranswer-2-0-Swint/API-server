@@ -30,13 +30,16 @@
     </select>
 
     <select id="selectContainerForDomain" parameterType="String" resultType="String">
-    	select	b.container	
+    	select	c.container	
     	from	tb_micro_info a,
-    			tb_image_info b
+    			tb_image_info b,
+    			tb_container_info c
     	where	a.micro_service = #{micro}
     	and		a.micro_service_domain is not null
     	and		a.micro_service = b.micro_service
-    	and		b.container is not null
+    	and		b.image = c.image 
+    	and		c.container is not null
+    	group by c.container
     </select>
 
     <insert id="insertMicroService" parameterType="map">

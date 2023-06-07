@@ -6,6 +6,7 @@ public class Constants {
 	public static final String COLONS			= ":";
 	public static final String EQUAL			= "=";
 	public static final String SPACE			= " ";
+	public static final String ZERO				= "0";
 
 	// common code
 	public static final String PREFIX_SVC		= "s";
@@ -23,7 +24,9 @@ public class Constants {
 	// cman url
 	public static final String CMAN_PROJECT_CREATE_URL 					= "/api/v1/init/projects";
 	public static final String CMAN_IMAGE_CREATE_URL 					= "/api/v1/images";
+	public static final String CMAN_IMAGE_READ_URL 						= "/api/v1/images/{image_name}";
 	public static final String CMAN_IMAGE_DELETE_URL 					= "/api/v1/images/{image_name}";
+	public static final String CMAN_IMAGE_TAG_DELETE_URL 				= "/api/v1/images/{image_name}/tags/{tag_name}";
 	public static final String CMAN_CONTAINER_CREATE_URL 				= "/api/v1/containers";
 	public static final String CMAN_CONTAINER_LIST_READ_URL 			= "/api/v1/containers";
 	public static final String CMAN_CONTAINER_UPDATE_URL 				= "/api/v1/containers/{conid}";
@@ -60,6 +63,7 @@ public class Constants {
 	public static final String DETAIL_ERROR_PENDING			= "ERROR_PENDING";
 	public static final String DETAIL_ERROR_CRASHED			= "ERROR_CRASHED";
 	public static final String DETAIL_ERROR_INTERNAL_ERR	= "ERROR_INTERNAL_ERR";
+	public static final String DETAIL_ERROR_NOT_EXIST		= "ERROR_NOT_EXIST";
 
 	// error code
 	public static final String E00000		 		= "00000";
@@ -71,7 +75,7 @@ public class Constants {
 	public static final String E40003		 		= "40003";
 	public static final String E40003_MSG	 		= "토큰이 유효하지 않음";
 	public static final String E40004		 		= "40004";
-	public static final String E40004_MSG	 		= "조회 데이터 없음";
+	public static final String E40004_MSG	 		= "ID 매칭 실패";
 	public static final String E40005		 		= "40005";
 	public static final String E40005_MSG	 		= "";
 	public static final String E40006		 		= "40006";
