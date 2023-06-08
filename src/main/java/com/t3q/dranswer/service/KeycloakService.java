@@ -1,6 +1,5 @@
 package com.t3q.dranswer.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +19,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.AuthConstants;
-import com.t3q.dranswer.dto.db.LoginHistory;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRoleRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
-import com.t3q.dranswer.mapper.LoginHistoryMapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -32,9 +29,6 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class KeycloakService {
 	
-	@Autowired
-	LoginHistoryMapper loginHistoryMapper;
-
 	private final ApplicationProperties applicationProperties;
 	
 	@Autowired
@@ -121,13 +115,6 @@ public class KeycloakService {
 						log.info("clientId : " + clientId);
 						log.info("roles : " + roles.toString());
 					}
-					
-					LoginHistory obj = new LoginHistory();
-					obj.setUserId(response.getBody().getUsername());
-					obj.setAccessToken(accessToken.toString());
-					obj.setRefreshToken(refreshToken.toString());
-					loginHistoryMapper.setLoginHistory(obj);
-					
 				} else {
 					// clientToken 발급
 					String clientToken = null;
@@ -185,7 +172,7 @@ public class KeycloakService {
 	public boolean getAuthorizationByHeader(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String token = authorizationHeader.substring(7);
-		String refreshToken = "getAuthorizationByHeader is not using request token";
+		//String refreshToken = "getAuthorizationByHeader is not using request token";
 		//if(token == null){
 
 		boolean active = true;
@@ -220,57 +207,11 @@ public class KeycloakService {
 					log.info("clientId : " + clientId);
 					log.info("roles : " + roles.toString());
 				}
-
-				LoginHistory obj = new LoginHistory();
-				obj.setUserId(response.getBody().getAzp());
-				obj.setAccessToken(token);
-				obj.setRefreshToken(refreshToken);
-				loginHistoryMapper.setLoginHistory(obj);
-
 			}
 			else {
 				return false;
 			}
 		}
 		return active;
-	}
-
-	public List<LoginHistory> getLoginHistory(HttpServletRequest request) {
-
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		List<LoginHistory> loginHistory = new ArrayList<>();
-		
-		Object accessToken = request.getSession().getAttribute(AuthConstants.ACCESS_TOKEN_NAME);
-		Object refreshToken = request.getSession().getAttribute(AuthConstants.REFRESH_TOKEN_NAME);
-		
-		if (accessToken == null || refreshToken == null) {
-			log.error("no token");
-			return null;
-		}
-
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("client_id", 		AuthConstants.KEYCLOAK_USER_CLIENT);
-		map.add("client_secret", 	AuthConstants.KEYCLOAK_USER_SECRET);
-		map.add("token_type_hint",	"access_token");
-		map.add("token",			accessToken.toString());
-
-		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL;
-		try {
-			ResponseEntity<KeycloakIntroSpectRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
-
-			if (response.getStatusCode() == HttpStatus.OK) {
-				if (response.getBody().isActive() == true) {
-					loginHistory = loginHistoryMapper.getLoginHistoryByUserId(response.getBody().getUsername());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			return null;
-		}
-		return loginHistory; 
 	}
 }

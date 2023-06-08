@@ -95,10 +95,9 @@ public class AppService {
 		dbAppService.setService(serviceId);
 		dbAppService.setCompany(serviceReq.getCompanyId());
 		dbAppService.setServiceName(serviceReq.getServiceName());
-		if (appServiceMapper.insertService(dbAppService) == 0) {
-			log.info("==== 응용서비스 저장 실패 ====");
-		}
-
+		
+		appServiceMapper.insertService(dbAppService);
+		
 		ServpotAppServiceCreateRes res = new ServpotAppServiceCreateRes();
 		res.setServiceId(dbAppService.getService());
 		res.setCompanyId(dbAppService.getCompany());
@@ -109,9 +108,8 @@ public class AppService {
 	
 	public ServpotAppServiceDeleteRes deleteService(String service) {
 		log.info("MicroService : deleteService");
-		if (appServiceMapper.deleteService(service) == 0) {
-			log.info("==== 응용서비스 삭제 실패 ====");
-		}
+		
+		appServiceMapper.deleteService(service);
 		
 		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
 		res.setServiceId(service);

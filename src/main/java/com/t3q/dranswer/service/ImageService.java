@@ -270,7 +270,7 @@ public class ImageService {
 						pod = cmanRes.getBody().getPodList().get(0).getPodName();
 					}
 				} catch (HttpClientErrorException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					log.error(e.getMessage());
 					dbImage.setImageStatus(Constants.STATUS_POD_STOPPED);
 					dbImage.setImageStatusDetail(Constants.DETAIL_SHUTDOWN);
