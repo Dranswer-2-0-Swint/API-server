@@ -29,17 +29,22 @@
     	where	service = #{service}
     </select>
 
-    <select id="selectContainerForDomain" parameterType="String" resultType="String">
+    <select id="selectContainerByMicro" parameterType="String" resultType="String">
     	select	c.container	
     	from	tb_micro_info a,
     			tb_image_info b,
     			tb_container_info c
     	where	a.micro_service = #{micro}
-    	and		a.micro_service_domain is not null
     	and		a.micro_service = b.micro_service
     	and		b.image = c.image 
     	and		c.container is not null
     	group by c.container
+    </select>
+
+    <select id="selectServiceByMicro" parameterType="String" resultType="String">
+    	select	service
+    	from	tb_micro_info
+    	where	micro_service = #{micro}
     </select>
 
     <insert id="insertMicroService" parameterType="map">

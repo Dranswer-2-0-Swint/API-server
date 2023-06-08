@@ -29,5 +29,6 @@ public interface MicroServiceMapper {
 	public int deleteMicroServiceByService(@Param("service") String service);
 
 	// 컨테이너 조회(마이크로서비스 도메인 변경 시 해당하는 모든 컨테이너의 외부 도메인을 변경)
-	public List<String> selectContainerForDomain(@Param("micro") String micro);
+	public List<String> selectContainerByMicro(@Param("micro") String micro);
+	public String selectServiceByMicro(@Param("micro") String micro);
 }

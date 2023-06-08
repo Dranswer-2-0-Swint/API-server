@@ -685,21 +685,13 @@ public class ImageService {
 								    .encode()
 								    .buildAndExpand(dbImage.getMicroService(), dbImage.getImage(), service)
 								    .toUri();
-						try {
-							ResponseEntity<CmanContainerDeleteRes> cmanRes = restTemplate.exchange(	uri, 
-																									HttpMethod.DELETE, 
-																									entity, 
-																									CmanContainerDeleteRes.class);
-							if (cmanRes.getStatusCode() == HttpStatus.OK) {
-								log.info("image delete success : " + cmanRes.getBody().getMessage());
-							}
-						} catch (HttpClientErrorException e) {
-							e.printStackTrace();
-							log.error(e.getMessage());
-						} catch (Exception e) {
-							e.printStackTrace();
-							log.error(e.getMessage());
-							throw new Exception(Constants.E50000);
+
+						ResponseEntity<CmanContainerDeleteRes> cmanRes = restTemplate.exchange(	uri, 
+																								HttpMethod.DELETE, 
+																								entity, 
+																								CmanContainerDeleteRes.class);
+						if (cmanRes.getStatusCode() == HttpStatus.OK) {
+							log.info("image delete success : " + cmanRes.getBody().getMessage());
 						}
 					}
 				}
