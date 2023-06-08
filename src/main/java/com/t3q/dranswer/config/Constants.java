@@ -29,6 +29,7 @@ public class Constants {
 	public static final String CMAN_IMAGE_TAG_DELETE_URL 				= "/api/v1/images/{image_name}/tags/{tag_name}";
 	public static final String CMAN_CONTAINER_CREATE_URL 				= "/api/v1/containers";
 	public static final String CMAN_CONTAINER_LIST_READ_URL 			= "/api/v1/containers";
+	public static final String CMAN_CONTAINER_READ_URL 					= "/api/v1/containers/{conid}";
 	public static final String CMAN_CONTAINER_UPDATE_URL 				= "/api/v1/containers/{conid}";
 	public static final String CMAN_CONTAINER_DELETE_URL 				= "/api/v1/containers/{conid}";
 	public static final String CMAN_CONTAINER_DEPLOY_URL 				= "/api/v1/containers/{conid}/deploy";
@@ -50,6 +51,7 @@ public class Constants {
 	public static final String STATUS_POD_STOPPED			= "POD_STOPPED";
 	public static final String STATUS_IMAGE_UPLOAD_FAILED	= "IMAGE_UPLOAD_FAILED";
 	public static final String STATUS_DEPLOY_FAILED			= "DEPLOY_FAILED";
+	public static final String STATUS_SEARCH_FAILED			= "SEARCH_FAILED";
 	// container status detail
 	public static final String DETAIL_RUNNING				= "RUNNING";
 	public static final String DETAIL_UPLOADING				= "UPLOADING";
@@ -64,6 +66,8 @@ public class Constants {
 	public static final String DETAIL_ERROR_CRASHED			= "ERROR_CRASHED";
 	public static final String DETAIL_ERROR_INTERNAL_ERR	= "ERROR_INTERNAL_ERR";
 	public static final String DETAIL_ERROR_NOT_EXIST		= "ERROR_NOT_EXIST";
+	public static final String DETAIL_IMAGE_NOT_EXIST		= "ERROR_IMAGE_NOT_EXIST";
+	public static final String DETAIL_CONTAINER_NOT_EXIST	= "ERROR_CONTAINER_NOT_EXIST";
 
 	// error code
 	public static final String E00000		 		= "00000";
