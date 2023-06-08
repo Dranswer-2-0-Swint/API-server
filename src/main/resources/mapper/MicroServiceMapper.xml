@@ -17,7 +17,7 @@
     	select nextval('swint.swint_mic_seq')
     </select>
 
-    <select id="selectMicroServiceByMicro" parameterType="String" resultType="DbMicroService">
+    <select id="selectMicroService" parameterType="String" resultType="DbMicroService">
     	select	*
     	from	tb_micro_info
     	where	micro_service = #{microService}
@@ -39,6 +39,14 @@
     	and		b.image = c.image 
     	and		c.container is not null
     	group by c.container
+    </select>
+
+    <select id="selectImageByMicro" parameterType="String" resultType="String">
+		select	b.image	
+		from	tb_micro_info a,
+				tb_image_info b
+		where	a.micro_service = #{micro}
+		and		a.micro_service = b.micro_service
     </select>
 
     <select id="selectServiceByMicro" parameterType="String" resultType="String">
@@ -78,7 +86,7 @@
 			micro_service			= #{obj.microService}
     </update>
 
-	<delete id="deleteMicroServiceByMicro" parameterType="String">
+	<delete id="deleteMicroService" parameterType="String">
 		delete from tb_micro_info
 		where
 			micro_service = #{microService}
@@ -88,6 +96,12 @@
 		delete from tb_micro_info
 		where
 			service = #{service}
+	</delete>
+
+    <delete id="deleteContainer" parameterType="String">
+		delete from tb_container_info
+		where
+			container = #{container}
 	</delete>
 
 </mapper>

@@ -49,7 +49,6 @@ import com.t3q.dranswer.dto.cman.CmanImageRegistRes;
 import com.t3q.dranswer.dto.cman.ErrorResponse;
 import com.t3q.dranswer.dto.db.DbContainer;
 import com.t3q.dranswer.dto.db.DbImage;
-import com.t3q.dranswer.dto.servpot.ServpotImageDeleteReq;
 import com.t3q.dranswer.dto.servpot.ServpotImageDeleteRes;
 import com.t3q.dranswer.dto.servpot.ServpotImageListReadRes;
 import com.t3q.dranswer.dto.servpot.ServpotImageListReadResSub;
@@ -107,7 +106,7 @@ public class ImageService {
 		log.info("ImageService : readImage");
 		ServpotImageReadRes res = new ServpotImageReadRes();
 		DbImage dbImage = new DbImage(); 
-		dbImage = imageMapper.selectImageByimage(image);
+		dbImage = imageMapper.selectImage(image);
 		if (dbImage == null) {
 			throw new Exception(Constants.E40004);
 		}
@@ -240,7 +239,7 @@ public class ImageService {
 		log.info("ImageService : readImageStatus");
 		String pod = new String();
 		DbImage dbImage = new DbImage();
-		dbImage = imageMapper.selectImageByimage(image);
+		dbImage = imageMapper.selectImage(image);
 		String container = imageMapper.selectContainerIdByImage(image);
 		
 		if (dbImage == null) {
@@ -349,7 +348,7 @@ public class ImageService {
 	public ServpotImageStatusRes updateImageStatus(ServpotImageStatusUpdateReq imageReq) throws Exception {
 		log.info("ImageService : updateImageStatus");
 		DbImage dbImage = new DbImage();
-		dbImage = imageMapper.selectImageByimage(imageReq.getImageId());
+		dbImage = imageMapper.selectImage(imageReq.getImageId());
 		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
 		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
 		
@@ -485,7 +484,7 @@ public class ImageService {
 	public ServpotImageRegistRes updateImageRegist(ServpotImageRegistUpdateReq imageReq) throws Exception {
 		log.info("ImageService : updateImageRegist");
 		DbImage dbImage = new DbImage();
-		dbImage = imageMapper.selectImageByimage(imageReq.getImageId());
+		dbImage = imageMapper.selectImage(imageReq.getImageId());
 		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
 		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
 		
@@ -599,15 +598,15 @@ public class ImageService {
 						throw new Exception(Constants.E50000);
 					}
 				}
-				imageMapper.deleteImageByImage(dbImage.getImage());
+				imageMapper.deleteImage(dbImage.getImage());
 			}
 		}
 	}
 
-	public ServpotImageDeleteRes deleteImage(ServpotImageDeleteReq imageReq) throws Exception {
+	public ServpotImageDeleteRes deleteImage(String image) throws Exception {
 		log.info("ImageService : deleteImage");
 		DbImage dbImage = new DbImage();
-		dbImage = imageMapper.selectImageByimage(imageReq.getImageId());
+		dbImage = imageMapper.selectImage(image);
 		if (dbImage == null) {
 			throw new Exception(Constants.E40004);
 		}
@@ -705,7 +704,7 @@ public class ImageService {
 			throw new Exception(Constants.E50000);
 		}
 
-		imageMapper.deleteImageByImage(dbImage.getImage());
+		imageMapper.deleteImage(dbImage.getImage());
 
 		return res;
 	}

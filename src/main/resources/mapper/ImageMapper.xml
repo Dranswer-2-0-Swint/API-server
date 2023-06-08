@@ -35,7 +35,7 @@
     	limit	1
     </select>
 
-    <select id="selectImageByimage" parameterType="String" resultType="DbImage">
+    <select id="selectImage" parameterType="String" resultType="DbImage">
     	select	*
     	from	tb_image_info
     	where	image = #{image}
@@ -91,7 +91,7 @@
 			image = #{image}
     </update>
 
-	<delete id="deleteImageByImage" parameterType="String">
+	<delete id="deleteImage" parameterType="String">
 		delete from tb_image_info
 		where
 			image = #{image}

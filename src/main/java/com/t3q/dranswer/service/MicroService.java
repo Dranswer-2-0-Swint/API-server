@@ -17,13 +17,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.t3q.dranswer.common.util.HashUtil;
+import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.cman.CmanContainerDeleteRes;
 import com.t3q.dranswer.dto.cman.CmanContainerDomainCreateDeleteRes;
 import com.t3q.dranswer.dto.cman.CmanContainerDomainCreateReq;
-import com.t3q.dranswer.dto.cman.CmanContainerPodReadRes;
-import com.t3q.dranswer.dto.cman.CmanContainerRecycleRes;
+import com.t3q.dranswer.dto.cman.CmanImageDeleteRes;
+import com.t3q.dranswer.dto.cman.ErrorResponse;
 import com.t3q.dranswer.dto.db.DbMicroService;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateRes;
@@ -117,7 +118,7 @@ public class MicroService {
 	public ServpotMicroServiceDeleteRes deleteMicroService(String micro) throws Exception {
 		log.info("MicroService : deleteMicroService");
 		DbMicroService dbMicro = new DbMicroService();
-		dbMicro = microServiceMapper.selectMicroServiceByMicro(micro);
+		dbMicro = microServiceMapper.selectMicroService(micro);
 		if (dbMicro == null || dbMicro.getMicroService() == null) {
 			throw new Exception(Constants.E40004);
 		}
@@ -126,52 +127,27 @@ public class MicroService {
 		List<String> containerList = new ArrayList<>();
 		containerList = microServiceMapper.selectContainerByMicro(dbMicro.getMicroService());
 		for (String container : containerList) {
+
+			/*
+			 * 컨테이너 삭제
+			 */
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity<String> podEntity = new HttpEntity<>(headers);
+			HttpEntity<String> containerEntity = new HttpEntity<>(headers);
 			URI uri = UriComponentsBuilder
-				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_POD_READ_URL)
-					    .queryParam("projectName", "{projectName}")
+				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DELETE_URL)
 					    .encode()
-					    .buildAndExpand(container, dbMicro.getService())
+					    .buildAndExpand(container)
 					    .toUri();
 			try {
-				ResponseEntity<CmanContainerPodReadRes> cmanPodRes = restTemplate.exchange(	uri, 
-																							HttpMethod.GET, 
-																							podEntity, 
-																							CmanContainerPodReadRes.class);
-				if (cmanPodRes.getStatusCode() == HttpStatus.OK) {
-					HttpEntity<String> recycleEntity = new HttpEntity<>(headers);
-					uri = UriComponentsBuilder
-						    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_RECYCLE_URL)
-							    .queryParam("projectName", "{projectName}")
-							    .encode()
-							    .buildAndExpand(container, dbMicro.getService())
-							    .toUri();
-					ResponseEntity<CmanContainerRecycleRes> cmanRecycleRes = restTemplate.exchange(	uri, 
-																									HttpMethod.POST, 
-																									recycleEntity, 
-																									CmanContainerRecycleRes.class);
-					if (cmanRecycleRes.getStatusCode() == HttpStatus.OK) {
-						log.info("container recycle success.\nmessage : " + cmanRecycleRes.getBody().getMessage());
-					}
-				}
-				
-				HttpEntity<String> containerEntity = new HttpEntity<>(headers);
-				uri = UriComponentsBuilder
-					    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DELETE_URL)
-						    .encode()
-						    .buildAndExpand(container)
-						    .toUri();
-
 				ResponseEntity<CmanContainerDeleteRes> cmanContainerRes = restTemplate.exchange(uri, 
 																								HttpMethod.DELETE, 
 																								containerEntity, 
 																								CmanContainerDeleteRes.class);
 				if (cmanContainerRes.getStatusCode() == HttpStatus.OK) {
 					log.info("container delete success : " + cmanContainerRes.getBody().getMessage());
+					microServiceMapper.deleteContainer(container);
 				}
-
 			} catch (HttpClientErrorException e) {
 				e.printStackTrace();
 				log.error(e.getMessage());
@@ -181,8 +157,100 @@ public class MicroService {
 				log.error(e.getMessage());
 				throw new Exception(Constants.E50000);
 			}
+
+			
+//			/* 
+//			 * 1. 가동중인 컨테이너 확인
+//			 * 2. 컨테이너 중지
+//			 * 3. 컨테이너 삭제
+//			 */
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+//			HttpEntity<String> podEntity = new HttpEntity<>(headers);
+//			URI uri = UriComponentsBuilder
+//				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_POD_READ_URL)
+//					    .queryParam("projectName", "{projectName}")
+//					    .encode()
+//					    .buildAndExpand(container, dbMicro.getService())
+//					    .toUri();
+//			try {
+//				ResponseEntity<CmanContainerPodReadRes> cmanPodRes = restTemplate.exchange(	uri, 
+//																							HttpMethod.GET, 
+//																							podEntity, 
+//																							CmanContainerPodReadRes.class);
+//				if (cmanPodRes.getStatusCode() == HttpStatus.OK) {
+//					HttpEntity<String> recycleEntity = new HttpEntity<>(headers);
+//					uri = UriComponentsBuilder
+//						    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_RECYCLE_URL)
+//							    .queryParam("projectName", "{projectName}")
+//							    .encode()
+//							    .buildAndExpand(container, dbMicro.getService())
+//							    .toUri();
+//					ResponseEntity<CmanContainerRecycleRes> cmanRecycleRes = restTemplate.exchange(	uri, 
+//																									HttpMethod.POST, 
+//																									recycleEntity, 
+//																									CmanContainerRecycleRes.class);
+//					if (cmanRecycleRes.getStatusCode() == HttpStatus.OK) {
+//						log.info("container recycle success.\nmessage : " + cmanRecycleRes.getBody().getMessage());
+//					}
+//				}
+//				
+//				HttpEntity<String> containerEntity = new HttpEntity<>(headers);
+//				uri = UriComponentsBuilder
+//					    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DELETE_URL)
+//						    .encode()
+//						    .buildAndExpand(container)
+//						    .toUri();
+//
+//				ResponseEntity<CmanContainerDeleteRes> cmanContainerRes = restTemplate.exchange(uri, 
+//																								HttpMethod.DELETE, 
+//																								containerEntity, 
+//																								CmanContainerDeleteRes.class);
+//				if (cmanContainerRes.getStatusCode() == HttpStatus.OK) {
+//					log.info("container delete success : " + cmanContainerRes.getBody().getMessage());
+//					microServiceMapper.deleteContainer(container);
+//				}
+//
+//			} catch (HttpClientErrorException e) {
+//				e.printStackTrace();
+//				log.error(e.getMessage());
+//				throw new Exception(Constants.E50002);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				log.error(e.getMessage());
+//				throw new Exception(Constants.E50000);
+//			}
 		}
-		if (microServiceMapper.deleteMicroServiceByMicro(micro) == 0) {
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> containerEntity = new HttpEntity<>(headers);
+		URI uri = UriComponentsBuilder
+			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_DELETE_URL)
+				    .queryParam("projectName", "{projectName}")
+				    .encode()
+				    .buildAndExpand(micro, dbMicro.getService())
+				    .toUri();
+		try {
+			ResponseEntity<CmanImageDeleteRes> cmanImageRes = restTemplate.exchange(uri, 
+																					HttpMethod.DELETE, 
+																					containerEntity, 
+																					CmanImageDeleteRes.class);
+			if (cmanImageRes.getStatusCode() == HttpStatus.OK) {
+				log.info("container delete success : " + cmanImageRes.getBody().getMessage());
+				imageMapper.deleteImageByMicro(micro);
+			}
+		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new Exception(Constants.E50002);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new Exception(Constants.E50000);
+		}
+
+		if (microServiceMapper.deleteMicroService(micro) == 0) {
 			log.info("==== 마이크로서비스 삭제 실패 ====");
 		}
 
@@ -199,7 +267,7 @@ public class MicroService {
 		res.setMicroDomain(microReq.getMicroDomain());
 		
 		DbMicroService dbMicro = new DbMicroService();
-		dbMicro = microServiceMapper.selectMicroServiceByMicro(microReq.getMicroId());
+		dbMicro = microServiceMapper.selectMicroService(microReq.getMicroId());
 		if (dbMicro == null || dbMicro.getMicroService() == null) {
 			throw new Exception(Constants.E40004);
 		}
@@ -284,7 +352,7 @@ public class MicroService {
 	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) throws Exception {
 		log.info("MicroService : deleteMicroServiceDomain");
 		DbMicroService dbMicro = new DbMicroService();
-		dbMicro = microServiceMapper.selectMicroServiceByMicro(microId);
+		dbMicro = microServiceMapper.selectMicroService(microId);
 		List<String> containerList = new ArrayList<>();
 		containerList = microServiceMapper.selectContainerByMicro(microId);
 		if (dbMicro == null || containerList == null) {
