@@ -80,13 +80,13 @@ public class AppServiceController {
 	
 	// 응용서비스 삭제
 	@DeleteMapping()
-	public ResponseEntity<Object> deleteAppService(HttpServletRequest request, 
+	public ResponseEntity<Object> deleteService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotAppServiceDeleteReq serviceReq) {
 		
 		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
 		
 		try {
-			res = appService.deleteAppService(serviceReq.getServiceId());
+			res = appService.deleteService(serviceReq.getServiceId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

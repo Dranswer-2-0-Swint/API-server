@@ -14,13 +14,13 @@ public interface AppServiceMapper {
 	// 기업의 응용서비스 순번
 	public int getServiceSequence();
 	// 응용서비스 조회
-	public DbAppService selectAppServiceByService(@Param("service") String service);
+	public DbAppService selectService(@Param("service") String service);
 	// 응용서비스 목록 조회
-	public List<DbAppService> selectAppServiceByCompany(@Param("company") String company);
+	public List<DbAppService> selectServiceByCompany(@Param("company") String company);
 	// 응용서비스 생성
-	public int insertAppService(@Param("obj") DbAppService obj);
+	public int insertService(@Param("obj") DbAppService obj);
 	// 응용서비스 변경
-	public int updateAppService(@Param("obj") DbAppService obj);
+	public int updateService(@Param("obj") DbAppService obj);
 	// 응용서비스 삭제
-	public int deleteAppService(@Param("service") String service);
+	public int deleteService(@Param("service") String service);
 }

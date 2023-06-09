@@ -19,7 +19,7 @@ public interface ImageMapper {
 	// 응용서비스ID 조회
 	public String selectServiceByImage(@Param("image") String image);
 	// 이미지 조회
-	public DbImage selectImageByimage(@Param("image") String image);
+	public DbImage selectImage(@Param("image") String image);
 	// 마이크로서비스ID로 이미지 목록 조회
 	public List<DbImage> selectImageByMicro(@Param("microService") String microService);
 	// 이미지 등록
@@ -29,7 +29,7 @@ public interface ImageMapper {
 	// 이미지 상태 변경
 	public int updateImageStatus(@Param("image") String image, @Param("imageStatus") String imageStatus, @Param("imageStatusDetail") String imageStatusDetail);
 	// 이미지 삭제
-	public int deleteImageByImage(@Param("image") String image);
+	public int deleteImage(@Param("image") String image);
 	// 마이크로서비스에 속한 이미지 삭제
 	public int deleteImageByMicro(@Param("microService") String microService);
 	

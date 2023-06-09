@@ -26,11 +26,26 @@ public class ResponseUtil {
 			case Constants.E40003:
 				res.setRspMsg(Constants.E40003_MSG);
 				break;
+			case Constants.E40004:
+				res.setRspMsg(Constants.E40004_MSG);
+				break;
+			case Constants.E40005:
+				res.setRspMsg(Constants.E40005_MSG);
+				break;
+			case Constants.E40006:
+				res.setRspMsg(Constants.E40006_MSG);
+				break;
+			case Constants.E40007:
+				res.setRspMsg(Constants.E40007_MSG);
+				break;
 			case Constants.E50001:
 				res.setRspMsg(Constants.E50001_MSG);
 				break;
 			case Constants.E50002:
 				res.setRspMsg(Constants.E50002_MSG);
+				break;
+			case Constants.E50003:
+				res.setRspMsg(Constants.E50003_MSG);
 				break;
 			default:
 				res.setRspCode(Constants.E50000);

@@ -49,7 +49,7 @@ public class AppService {
 	public ServpotAppServiceListReadRes readAppServiceList(String company) {
 		log.info("MicroService : readAppServiceList");
 		List<DbAppService> dbAppServiceList = new ArrayList<>();
-		dbAppServiceList = appServiceMapper.selectAppServiceByCompany(company);
+		dbAppServiceList = appServiceMapper.selectServiceByCompany(company);
 		
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
 		res.setServiceList(new ArrayList<ServpotAppServiceListReadResSub>());
@@ -95,10 +95,9 @@ public class AppService {
 		dbAppService.setService(serviceId);
 		dbAppService.setCompany(serviceReq.getCompanyId());
 		dbAppService.setServiceName(serviceReq.getServiceName());
-		if (appServiceMapper.insertAppService(dbAppService) == 0) {
-			log.info("==== 응용서비스 저장 실패 ====");
-		}
-
+		
+		appServiceMapper.insertService(dbAppService);
+		
 		ServpotAppServiceCreateRes res = new ServpotAppServiceCreateRes();
 		res.setServiceId(dbAppService.getService());
 		res.setCompanyId(dbAppService.getCompany());
@@ -107,11 +106,10 @@ public class AppService {
 		return res;
 	}
 	
-	public ServpotAppServiceDeleteRes deleteAppService(String service) {
-		log.info("MicroService : deleteAppService");
-		if (appServiceMapper.deleteAppService(service) == 0) {
-			log.info("==== 응용서비스 삭제 실패 ====");
-		}
+	public ServpotAppServiceDeleteRes deleteService(String service) {
+		log.info("MicroService : deleteService");
+		
+		appServiceMapper.deleteService(service);
 		
 		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
 		res.setServiceId(service);

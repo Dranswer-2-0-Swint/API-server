@@ -16,19 +16,19 @@
     	select nextval('swint.swint_svc_seq')
     </select>
 
-   <select id="selectAppServiceByService" parameterType="String" resultType="DbAppService">
+   <select id="selectService" parameterType="String" resultType="DbAppService">
     	select	*
     	from	tb_service_info
     	where	service = #{service}
     </select>
 
-    <select id="selectAppServiceByCompany" parameterType="String" resultMap="dbAppServiceMap">
+    <select id="selectServiceByCompany" parameterType="String" resultMap="dbAppServiceMap">
     	select	*
     	from	tb_service_info
     	where	company = #{company}
     </select>
 
-    <insert id="insertAppService" parameterType="map">
+    <insert id="insertService" parameterType="map">
 		insert into tb_service_info
 		(
 			service,
@@ -41,7 +41,7 @@
 		)
     </insert>
     
-	<update id="updateAppService" parameterType="map">
+	<update id="updateService" parameterType="map">
 		update tb_service_info set 
 			service_name	= #{obj.serviceName},
 			mod_timestamp	= current_timestamp
@@ -50,7 +50,7 @@
 			and service		= #{obj.service}
     </update>
 
-	<delete id="deleteAppService" parameterType="String">
+	<delete id="deleteService" parameterType="String">
 		delete from tb_service_info
 		where
 			service = #{service}

@@ -177,7 +177,7 @@ public class ImageController {
 		ServpotImageDeleteRes res = new ServpotImageDeleteRes();
 		
 		try {
-			res = imageService.deleteImage(imageReq);
+			res = imageService.deleteImage(imageReq.getImageId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
