@@ -170,7 +170,7 @@ public class KeycloakService {
 
 	//요청 헤더에 있는 토큰검증
 	public boolean getAuthorizationByHeader(HttpServletRequest request) {
-		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+		String authorizationHeader = request.getHeader("access_token");
 		String token = authorizationHeader.substring(7);
 		//String refreshToken = "getAuthorizationByHeader is not using request token";
 		//if(token == null){

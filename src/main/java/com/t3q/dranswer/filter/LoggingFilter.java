@@ -51,8 +51,10 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("Request Body: {}", RequestBody);
         log.info("Response Body: {}", ResponseBody);
 
+
+
         ///jpa
-        //logEntity.setReq_id(requestWrapper.getParameter("request_id"));
+        //String req_id = requestWrapper.getHeader("request_id");
         logEntity.setReq_id("req_id test");
         logEntity.setReq_user("servpot");
         logEntity.setReq_body(RequestBody);

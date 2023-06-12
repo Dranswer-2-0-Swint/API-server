@@ -2,26 +2,24 @@ package com.t3q.dranswer.interceptor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.entity.LogEntity;
 import com.t3q.dranswer.repository.LoggingRepository;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Log4j2
 @Slf4j
@@ -41,8 +39,9 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         String requestBody = new String(body, StandardCharsets.UTF_8);
         ObjectMapper reqobjectMapper = new ObjectMapper();
         JsonNode reqNode = reqobjectMapper.readTree(requestBody);
-        String req_id = "test";
-        //String req_id = String.valueOf(reqNode.get("req_id"));
+
+
+
 
         // Log request data before sending the request
         logRequest(request, body);
@@ -57,6 +56,8 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Log response data after receiving the response
         logResponse(response);
 
+        //String req_id =  request.getHeaders().get("request_id");
+        String req_id = "req_id";
         logEntity.setReq_id(req_id);
         logEntity.setReq_user("swint");
         logEntity.setReq_body(requestBody);

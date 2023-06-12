@@ -23,6 +23,7 @@ public class ValidAOP {
     @Autowired
     private KeycloakService keycloakService;
 
+
     //@Pointcut("execution(* com.t3q.dranswer.controller..*.*(..))")
 
     @Before("@annotation(com.t3q.dranswer.aop.annotation.SwintValid)")
@@ -46,7 +47,5 @@ public class ValidAOP {
         } else {
             throw new Exception("토큰이 헤더에 존재하지 않습니다.");
         }
-
     }
-
 }
