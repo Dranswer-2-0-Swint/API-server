@@ -19,8 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.cman.CmanContainerDomainCreateDeleteRes;
-import com.t3q.dranswer.dto.cman.CmanContainerDomainCreateReq;
 import com.t3q.dranswer.dto.cman.CmanImageDeleteRes;
 import com.t3q.dranswer.dto.db.DbMicroService;
 import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
@@ -170,137 +168,30 @@ public class MicroService {
 	
 	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) throws Exception {
 		log.info("MicroService : createMicroServiceDomain");
-		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
-		res.setMicroId(microReq.getMicroId());
-		res.setMicroDomain(microReq.getMicroDomain());
-		
-		DbMicroService dbMicro = new DbMicroService();
-		dbMicro = microServiceMapper.selectMicroService(microReq.getMicroId());
-		if (dbMicro == null || dbMicro.getMicroService() == null) {
-			throw new Exception(Constants.E40004);
-		}
-		
-		// 마이크로서비스의 이미지(컨테이너) 목록 조회
-		List<String> containerList = new ArrayList<>();
-		containerList = microServiceMapper.selectContainerByMicro(dbMicro.getMicroService());
-		for (String container : containerList) {
-			// 이미지(컨테이너) 도메인 삭제 요청
-			if (dbMicro.getMicroServiceDomain() != null && dbMicro.getMicroServiceDomain().isEmpty() == false) {
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				HttpEntity<String> entity = new HttpEntity<>(headers);
-				URI uri = UriComponentsBuilder
-					    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_DELETE_URL)
-						    .queryParam("projectName", "{projectName}")
-					    	.encode()
-					    	.buildAndExpand(container, dbMicro.getService())
-					    	.toUri();
-				try {
-					ResponseEntity<CmanContainerDomainCreateDeleteRes> cmanRes = restTemplate.exchange(	uri, 
-																										HttpMethod.DELETE, 
-																										entity, 
-																										CmanContainerDomainCreateDeleteRes.class);
-					if (cmanRes.getStatusCode() == HttpStatus.OK) {
-						log.info("container domain delete : " + cmanRes.getBody().getMessage());
-					}
-				} catch (HttpClientErrorException e) {
-					e.printStackTrace();
-					log.error(e.getMessage());
-					//throw new Exception(Constants.E50002);
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.error(e.getMessage());
-					throw new Exception(Constants.E50000);
-				}
-			}
 
-			// 이미지(컨테이너) 도메인 생성 요청
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			CmanContainerDomainCreateReq cmanReq = new CmanContainerDomainCreateReq();
-			cmanReq.setDomainName(microReq.getMicroDomain());
-			cmanReq.setPort(80);		// fix			
-			HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(cmanReq, headers);
-			URI uri = UriComponentsBuilder
-				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_CREATE_URL)
-					    .queryParam("projectName", "{projectName}")
-				    	.encode()
-				    	.buildAndExpand(container, dbMicro.getService())
-				    	.toUri();
-			try {
-				ResponseEntity<CmanContainerDomainCreateDeleteRes> cmanRes = restTemplate.exchange(	uri, 
-																									HttpMethod.POST, 
-																									entity, 
-																									CmanContainerDomainCreateDeleteRes.class);
-				if (cmanRes.getStatusCode() == HttpStatus.OK) {
-					log.info("container domain create : " + cmanRes.getBody().getMessage());
-				}
-			} catch (HttpClientErrorException e) {
-				e.printStackTrace();
-				log.error(e.getMessage());
-				//throw new Exception(Constants.E50002);
-			} catch (Exception e) {
-				e.printStackTrace();
-				log.error(e.getMessage());
-				throw new Exception(Constants.E50000);
-			}
-		}
-
-		// 마이크로서비스 도메인 변경
 		DbMicroService dbMicroService = new DbMicroService();
 		dbMicroService.setMicroService(microReq.getMicroId());
 		dbMicroService.setMicroServiceDomain(microReq.getMicroDomain());
 		microServiceMapper.updateMicroServiceDomain(dbMicroService);
+
+		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
+		res.setMicroId(microReq.getMicroId());
+		res.setMicroDomain(microReq.getMicroDomain());
 
 		return res;
 	}
 	
 	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) throws Exception {
 		log.info("MicroService : deleteMicroServiceDomain");
-		DbMicroService dbMicro = new DbMicroService();
-		dbMicro = microServiceMapper.selectMicroService(microId);
-		List<String> containerList = new ArrayList<>();
-		containerList = microServiceMapper.selectContainerByMicro(microId);
-		if (dbMicro == null || containerList == null) {
-			throw new Exception(Constants.E40004);
-		}
+
+		DbMicroService dbMicroService = new DbMicroService();
+		dbMicroService.setMicroService(microId);
+		microServiceMapper.updateMicroServiceDomain(dbMicroService);
 		
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
 		res.setMicroId(microId);
 
-		for (String container : containerList) {
-			// 이미지(컨테이너) 도메인 삭제 요청
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity<String> entity = new HttpEntity<>(headers);
-			URI uri = UriComponentsBuilder
-				    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_DELETE_URL)
-				    	.queryParam("projectName", "{projectName}")
-				    	.encode()
-				    	.buildAndExpand(container, dbMicro.getService())
-				    	.toUri();
-			try {
-				ResponseEntity<CmanContainerDomainCreateDeleteRes> cmanRes = restTemplate.exchange(	uri, 
-																									HttpMethod.DELETE, 
-																									entity, 
-																									CmanContainerDomainCreateDeleteRes.class);
-				if (cmanRes.getStatusCode() == HttpStatus.OK) {
-					log.info("container domain delete : " + cmanRes.getBody().getMessage());
-				}
-			} catch (HttpClientErrorException e) {
-				e.printStackTrace();
-				log.error(e.getMessage());
-				//throw new Exception(Constants.E50002);
-			} catch (Exception e) {
-				e.printStackTrace();
-				log.error(e.getMessage());
-				throw new Exception(Constants.E50000);
-			}
-		}
-		// 마이크로서비스 도메인 변경
-		DbMicroService dbMicroService = new DbMicroService();
-		dbMicroService.setMicroService(microId);
-		microServiceMapper.updateMicroServiceDomain(dbMicroService);
 		return res;
 	}
+	
 }

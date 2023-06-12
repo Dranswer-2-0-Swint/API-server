@@ -1,28 +1,30 @@
 package com.t3q.dranswer.filter;
 
-import com.t3q.dranswer.entity.LogEntity;
-import com.t3q.dranswer.repository.LoggingRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.entity.LogEntity;
+import com.t3q.dranswer.repository.LoggingRepository;
+
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
@@ -51,8 +53,14 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("Request Body: {}", RequestBody);
         log.info("Response Body: {}", ResponseBody);
 
+		String requestId = request.getHeader("request_id");
+		String accessToken = request.getHeader("access_token");
+		if (StringUtils.hasText(requestId) && StringUtils.hasText(accessToken)) {
+			RequestContext.setContextData(requestId, accessToken);
+		}
+		
         ///jpa
-        //logEntity.setReq_id(requestWrapper.getParameter("request_id"));
+        //logEntity.setReq_id(requestId);
         logEntity.setReq_id("req_id test");
         logEntity.setReq_user("servpot");
         logEntity.setReq_body(RequestBody);
