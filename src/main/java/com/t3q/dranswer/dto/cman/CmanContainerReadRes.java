@@ -21,7 +21,7 @@ public class CmanContainerReadRes {
 	private String exposeType;								// 컨테이너 노출 방식, ClusterIP만 사용될 예정
 	private List<CmanContainerReadResEnv> env;				// 환경변수
 	private CmanContainerReadResHost volumeMounts;			// 컨테이너 볼륨연결
-	private List<CmanContainerReadResPort> servicePort;		// 컨테이너 포트지정
+	private List<CmanContainerReadResPort> ports;			// 컨테이너 포트지정
 	private int replicas;									// 컨테이너에 설정된 replicas 값
 	private List<String> innerDomain;						// 현재 컨테이너에 연결하기 위한 도메인 경로
 	private String domain;									// 현재 컨테이너가 외부로 노출되는 domain을 가지고 있을 경우 그 url를 보여줌
