@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.t3q.dranswer.dto.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -133,6 +134,9 @@ public class MicroService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_DELETE_URL)

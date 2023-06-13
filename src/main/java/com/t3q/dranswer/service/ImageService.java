@@ -4,6 +4,7 @@ import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.cman.*;
 import com.t3q.dranswer.dto.db.DbContainer;
 import com.t3q.dranswer.dto.db.DbImage;
@@ -385,6 +386,9 @@ public class ImageService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		
 		HttpEntity<CmanContainerUpdateReq> containerEntity = new HttpEntity<>(cmanContainerReq, headers);
 		URI uri = UriComponentsBuilder
@@ -478,6 +482,9 @@ public class ImageService {
 		cmanImageReq.setTag(imageId);
 
 		HttpHeaders headers = new HttpHeaders();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<CmanImageRegistReq> imageEntity = new HttpEntity<>(cmanImageReq, headers);
 		URI uri = UriComponentsBuilder
@@ -588,6 +595,9 @@ public class ImageService {
 		CmanContainerReadRes res = new CmanContainerReadRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_READ_URL)
@@ -623,6 +633,9 @@ public class ImageService {
 		CmanContainerTimeReadRes res = new CmanContainerTimeReadRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_TIME_READ_URL)
@@ -658,6 +671,9 @@ public class ImageService {
 		CmanContainerPodReadRes res = new CmanContainerPodReadRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_POD_READ_URL)
@@ -694,6 +710,9 @@ public class ImageService {
 		CmanContainerStatusReadRes res = new CmanContainerStatusReadRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_STATUS_READ_URL)
@@ -730,6 +749,9 @@ public class ImageService {
 		CmanContainerDeployRes res = new CmanContainerDeployRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DEPLOY_URL)
@@ -764,6 +786,9 @@ public class ImageService {
 		CmanContainerRecycleRes res = new CmanContainerRecycleRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_RECYCLE_URL)
@@ -794,6 +819,9 @@ public class ImageService {
 		CmanContainerDomainCreateDeleteRes res = new CmanContainerDomainCreateDeleteRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		CmanContainerDomainCreateReq cmanReq = new CmanContainerDomainCreateReq();
 		cmanReq.setDomainName(domain);
 		cmanReq.setPort(80);		// fix
@@ -829,6 +857,9 @@ public class ImageService {
 		List<CmanImageReadRes> res = new ArrayList<>();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_READ_URL)
@@ -866,6 +897,9 @@ public class ImageService {
 		CmanContainerDeleteRes res = new CmanContainerDeleteRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DELETE_URL)
@@ -901,6 +935,9 @@ public class ImageService {
 		CmanContainerDomainCreateDeleteRes res = new CmanContainerDomainCreateDeleteRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_DELETE_URL)
@@ -933,6 +970,9 @@ public class ImageService {
 		List<CmanImageReadRes> res = new ArrayList<>();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_READ_URL)
@@ -971,6 +1011,9 @@ public class ImageService {
 		List<CmanImageReadRes> res = new ArrayList<>();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_READ_URL)
@@ -1008,6 +1051,9 @@ public class ImageService {
 		CmanContainerDeleteRes res = new CmanContainerDeleteRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_TAG_DELETE_URL)
