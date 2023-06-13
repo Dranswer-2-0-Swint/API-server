@@ -10,6 +10,7 @@ import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.servpot.ApiResponse;
 import com.t3q.dranswer.service.KeycloakService;
 import org.apache.tomcat.util.json.JSONParser;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,6 +19,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +28,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+>>>>>>> main
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -72,16 +77,13 @@ public class ValidAOP {
         body.add("token", 			token);
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<String> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL)
-                                                                                , keycloakRequest
-                                                                                , String.class);
+        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL)
+                , keycloakRequest
+                , KeycloakIntroSpectRes.class);
 
-        log.info(entity.getBody());
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode response = objectMapper.readTree(entity.getBody());
-        boolean active = response.get("active").asBoolean();
+        log.info(String.valueOf(entity.getBody()));
 
-        if(active) return true;
+        if(entity.getBody().isActive()) return true;
         return false;
     }
 }
