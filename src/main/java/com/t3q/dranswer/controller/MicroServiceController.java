@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 목록 조회
 	@GetMapping("/list")
+	@SwintValid
 	public ResponseEntity<Object> readMicroServiceList(HttpServletRequest request, 
 														@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
@@ -68,6 +70,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 생성
 	@PostMapping()
+	@SwintValid
 	public ResponseEntity<Object> createMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
 		
@@ -87,6 +90,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 변경
 	@PutMapping()
+	@SwintValid
 	public ResponseEntity<Object> updateMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
 		
@@ -106,6 +110,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 삭제
 	@DeleteMapping()
+	@SwintValid
 	public ResponseEntity<Object> deleteMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceDeleteReq microReq) {
 		
@@ -125,6 +130,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 도메인 설정
 	@PostMapping("/domain")
+	@SwintValid
 	public ResponseEntity<Object> createMicroServiceDomain(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceDomainMergeReq microReq) {
 		
@@ -144,6 +150,7 @@ public class MicroServiceController {
 	
 	// 마이크로서비스 도메인 삭제
 	@DeleteMapping("/domain")
+	@SwintValid
 	public ResponseEntity<Object> deleteMicroServiceDomain(HttpServletRequest request, 
 															@RequestBody @Valid final ServpotMicroServiceDomainDeleteReq microReq) {
 		

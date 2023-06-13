@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,7 @@ public class ImageController {
 
 	// 이미지 목록 조회
 	@GetMapping("/list")
+	@SwintValid
 	public ResponseEntity<Object> readImageList(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
@@ -66,6 +68,7 @@ public class ImageController {
 	
 	// 이미지 조회
 	@GetMapping()
+	@SwintValid
 	public ResponseEntity<Object> readImage(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
@@ -90,6 +93,7 @@ public class ImageController {
 	
 	// 이미지 상태 조회
 	@GetMapping("/status")
+	@SwintValid
 	public ResponseEntity<Object> readImageStatus(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
@@ -114,6 +118,7 @@ public class ImageController {
 	
 	// 이미지 상태 변경
 	@PutMapping("/status")
+	@SwintValid
 	public ResponseEntity<Object> updateImageStatus(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageStatusUpdateReq imageReq) {
 		
@@ -133,6 +138,7 @@ public class ImageController {
 	
 	// 이미지 등록
 	@PostMapping("/regist")
+	@SwintValid
 	public ResponseEntity<Object> createImageRegist(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageRegistReq imageReq) {
 		
@@ -152,6 +158,7 @@ public class ImageController {
 	
 	// 이미지 등록 변경
 	@PutMapping("/regist")
+	@SwintValid
 	public ResponseEntity<Object> updateImageRegist(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageRegistUpdateReq imageReq) {
 		
@@ -171,6 +178,7 @@ public class ImageController {
 	
 	// 이미지 삭제
 	@DeleteMapping()
+	@SwintValid
 	public ResponseEntity<Object> deleteImage(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageDeleteReq imageReq) {
 		

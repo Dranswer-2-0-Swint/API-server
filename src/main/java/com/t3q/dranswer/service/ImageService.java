@@ -1,5 +1,6 @@
 package com.t3q.dranswer.service;
 
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
@@ -590,6 +591,7 @@ public class ImageService {
 			imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
 		}
 	}
+
 
 	public CmanContainerReadRes getContainerInfo(String container) throws Exception {
 		CmanContainerReadRes res = new CmanContainerReadRes();

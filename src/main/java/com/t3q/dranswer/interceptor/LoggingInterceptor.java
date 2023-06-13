@@ -63,7 +63,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Log response data after receiving the response
         logResponse(response);
 
-        String req_id = String.valueOf(request.getHeaders().get("request_id"));
+        String req_id = request.getHeaders().getFirst("request_id");
         logEntity.setReq_id(req_id);
         logEntity.setReq_user("swint");
         logEntity.setReq_body(requestBody);
