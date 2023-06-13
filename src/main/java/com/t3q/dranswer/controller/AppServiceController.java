@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -61,6 +62,7 @@ public class AppServiceController {
 	
 	// 응용서비스 생성
 	@PostMapping()
+	@SwintValid
 	public ResponseEntity<Object> createAppService(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotAppServiceCreateReq serviceReq) {
 		
