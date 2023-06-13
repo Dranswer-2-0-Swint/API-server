@@ -3,6 +3,7 @@ package com.t3q.dranswer.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -60,11 +61,10 @@ public class MicroService {
     
 	public ServpotMicroServiceListReadRes readMicroServiceList(String service) {
 		log.info("MicroService : readMicroServiceList");
-		List<DbMicroService> dbMicroServiceList = new ArrayList<>();
-		dbMicroServiceList = microServiceMapper.selectMicroServiceByService(service);
+		List<DbMicroService> dbMicroServiceList = microServiceMapper.selectMicroServiceByService(service);
 		
 		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
-		res.setMicroList(new ArrayList<ServpotMicroServiceListReadResSub>());
+		res.setMicroList(new ArrayList<>());
 		res.setServiceId(service);
 		for (DbMicroService dbMicroService : dbMicroServiceList) {
 			ServpotMicroServiceListReadResSub sub = new ServpotMicroServiceListReadResSub();
@@ -113,8 +113,7 @@ public class MicroService {
 	
 	public ServpotMicroServiceDeleteRes deleteMicroService(String micro) throws Exception {
 		log.info("MicroService : deleteMicroService");
-		List<String> imageList = new ArrayList<>();
-		imageList = microServiceMapper.selectImageByMicro(micro);
+		List<String> imageList = microServiceMapper.selectImageByMicro(micro);
 
 		for (String image : imageList) {
 			try {
@@ -166,7 +165,7 @@ public class MicroService {
 		return res;
 	}
 	
-	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) throws Exception {
+	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) {
 		log.info("MicroService : createMicroServiceDomain");
 
 		DbMicroService dbMicroService = new DbMicroService();
@@ -181,7 +180,7 @@ public class MicroService {
 		return res;
 	}
 	
-	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) throws Exception {
+	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) {
 		log.info("MicroService : deleteMicroServiceDomain");
 
 		DbMicroService dbMicroService = new DbMicroService();

@@ -49,11 +49,10 @@ public class AppService {
     
 	public ServpotAppServiceListReadRes readAppServiceList(String company) {
 		log.info("MicroService : readAppServiceList");
-		List<DbAppService> dbAppServiceList = new ArrayList<>();
-		dbAppServiceList = appServiceMapper.selectServiceByCompany(company);
+		List<DbAppService> dbAppServiceList = appServiceMapper.selectServiceByCompany(company);
 		
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
-		res.setServiceList(new ArrayList<ServpotAppServiceListReadResSub>());
+		res.setServiceList(new ArrayList<>());
 		res.setCompanyId(company);
 		for (DbAppService dbAppService : dbAppServiceList) {
 			ServpotAppServiceListReadResSub sub = new ServpotAppServiceListReadResSub();
