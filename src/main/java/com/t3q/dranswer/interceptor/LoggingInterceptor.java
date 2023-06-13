@@ -65,7 +65,6 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
 
         String req_id = String.valueOf(request.getHeaders().get("request_id"));
         logEntity.setReq_id(req_id);
-
         logEntity.setReq_user("swint");
         logEntity.setReq_body(requestBody);
         logEntity.setReq_dt(LocalDateTime.now());

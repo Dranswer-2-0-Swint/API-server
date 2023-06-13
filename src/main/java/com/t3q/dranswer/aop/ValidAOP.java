@@ -33,9 +33,9 @@ public class ValidAOP {
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         //TODO getHeader 부분 "access_token" 으로 변경할 것
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = request.getHeader("access_token");
         String request_id = request.getHeader("request_id");
-        token = token.substring(7);
+        //token = token.substring(7);
         boolean isValidToken = validateToken(token,request_id);
 
         if(!isValidToken){
@@ -82,13 +82,13 @@ public class ValidAOP {
         RestTemplate resTmpl = new RestTemplate();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_id", 		"swint");
-        body.add("client_secret", 	"Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP");
+        body.add("client_secret", 	"K91G3XhKY3z2qussprBEAC24cksv0qNk");
         body.add("username", "swint-dev");
         body.add("password", "1234");
         body.add("grant_type", "password");
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<KeycloakTokenRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL)
+        ResponseEntity<KeycloakTokenRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_SYSTEM_REALM + AuthConstants.KEYCLOAK_TOKEN_URL)
                 , keycloakRequest
                 , KeycloakTokenRes.class);
         String swintToken = entity.getBody().getAccessToken();

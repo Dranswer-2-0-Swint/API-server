@@ -14,6 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -47,6 +49,9 @@ public class LoggingFilter extends OncePerRequestFilter {
         String RequestBody = contentBody(requestWrapper.getContentAsByteArray());
         String ResponseBody = contentBody(responseWrapper.getContentAsByteArray());
 
+        ObjectMapper resobjectMapper = new ObjectMapper();
+        JsonNode resNode = resobjectMapper.readTree(ResponseBody);
+
         log.info("=======URI: [{}], METHOD: [{}]=======", request.getRequestURI(), request.getMethod());
         log.info("Headers: {}", Headers);
         log.info("QueryString: {}", queryString);
@@ -54,14 +59,9 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("Response Body: {}", ResponseBody);
 
 
-
         ///jpa
 		String requestId = request.getHeader("request_id");
-		String accessToken = request.getHeader("access_token");
-		if (StringUtils.hasText(requestId) && StringUtils.hasText(accessToken)) {
-			RequestContext.setContextData(requestId, accessToken);
-		}
-		
+
         ///jpa
         logEntity.setReq_id(requestId);
         logEntity.setReq_user("servpot");
@@ -72,8 +72,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         logEntity.setRes_user("swint");
         logEntity.setRes_body(ResponseBody);
         logEntity.setRes_dt(LocalDateTime.now());
-        //logEntity.setRes_msg(request.getParameter("message"));
-        logEntity.setRes_msg("this is filter's msg : " + request.getParameter("message"));
+        logEntity.setRes_msg("this is filter's msg : " + resNode.get("message"));
         logEntity.setRes_status(responseWrapper.getStatus());
 
         loggingRepository.save(logEntity);
