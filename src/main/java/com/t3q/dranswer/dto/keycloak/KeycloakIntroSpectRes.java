@@ -13,7 +13,7 @@ public class KeycloakIntroSpectRes {
 	private int	iat;
 	private String jti;
 	private String iss;
-	private String aud;
+	private Object aud;
 	private String sub;
 	private String typ;
 	private String azp;
@@ -25,7 +25,7 @@ public class KeycloakIntroSpectRes {
 	private String	preferredUsername;
 	
 	@JsonProperty("email_verified")
-	private String emailVerified;
+	private boolean emailVerified;
 	
 	private String acr;
 	
@@ -33,7 +33,6 @@ public class KeycloakIntroSpectRes {
 	private KeycloakIntroSpectRoleRes realmAccess;
 	
 	@JsonProperty("resource_access")
-	//private KcIntroSpectRoleRes resourceAccess;
 	private Map<String, KeycloakIntroSpectRoleRes> resourceAccess;
 	
 	private String scope;

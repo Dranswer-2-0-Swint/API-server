@@ -13,7 +13,7 @@ public class AuthConstants {
 	public static final String KEYCLOAK_SYSTEM_REALM 	= "service-system-dev";
 	public static final String KEYCLOAK_SYSTEM_CLIENT 	= "swint";
 	public static final String KEYCLOAK_SYSTEM_SECRET 	= "K91G3XhKY3z2qussprBEAC24cksv0qNk";
-	public static final String KEYCLOAK_SERVER 			= "http://27.96.130.179:5010/";
+	public static final String KEYCLOAK_SERVER 			= "https://auth.svc.dranswer.co.kr/";
 	public static final String KEYCLOAK_URL 			= KEYCLOAK_SERVER + "auth/";
 	public static final String KEYCLOAK_BASE_URL 		= KEYCLOAK_URL + "realms/";
 	public static final String KEYCLOAK_CALLBACK_URL 	= "/callback";
