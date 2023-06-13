@@ -8,8 +8,8 @@ public class AuthConstants {
 	
 	// keycloak
 	public static final String KEYCLOAK_USER_REALM 		= "service-user-dev";
-	public static final String KEYCLOAK_USER_CLIENT 	= "login";
-	public static final String KEYCLOAK_USER_SECRET 	= "JG6eaVSJVzbUp5Sgp7MAyByrraZX7xNC";
+	public static final String KEYCLOAK_USER_CLIENT 	= "swint";
+	public static final String KEYCLOAK_USER_SECRET 	= "Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP";
 	public static final String KEYCLOAK_SYSTEM_REALM 	= "service-system-dev";
 	public static final String KEYCLOAK_SYSTEM_CLIENT 	= "swint";
 	public static final String KEYCLOAK_SYSTEM_SECRET 	= "K91G3XhKY3z2qussprBEAC24cksv0qNk";
