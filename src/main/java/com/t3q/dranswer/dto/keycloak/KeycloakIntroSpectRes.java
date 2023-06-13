@@ -17,31 +17,30 @@ public class KeycloakIntroSpectRes {
 	private String sub;
 	private String typ;
 	private String azp;
-	
+
 	@JsonProperty("session_state")
 	private String sessionState;
-	
+
 	@JsonProperty("preferred_username")
 	private String	preferredUsername;
-	
+
 	@JsonProperty("email_verified")
 	private boolean emailVerified;
-	
+
 	private String acr;
-	
+
 	@JsonProperty("realm_access")
 	private KeycloakIntroSpectRoleRes realmAccess;
-	
+
 	@JsonProperty("resource_access")
-	//private KcIntroSpectRoleRes resourceAccess;
-	private Object resourceAccess;
 	private Map<String, KeycloakIntroSpectRoleRes> resourceAccess;
+
 	private String scope;
 	private String sid;
 
 	@JsonProperty("client_id")
 	private String clientId;
-	
+
 	private String username;
 
 	@JsonProperty("active")

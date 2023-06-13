@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.t3q.dranswer.dto.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -67,9 +68,20 @@ public class AppService {
 	public ServpotAppServiceCreateRes createAppService(ServpotAppServiceCreateReq serviceReq) {
 		log.info("MicroService : createAppService");
 		String serviceId = Constants.PREFIX_SVC + HashUtil.makeCRC32(appServiceMapper.getServiceSequence());
-
+		RequestContext.RequestContextData asdf = RequestContext.getContextData();
 		HttpHeaders headers = new HttpHeaders();
+
+
+
+
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("request_id", asdf.getRequestId());
+		headers.add("access_token",asdf.getAccessToken());
+		log.info("#####this is threadlocal test {}", headers.toString());
+
+
+
+
 		CmanInitProjectReq cmanReq = new CmanInitProjectReq();
 		cmanReq.setProjectName(serviceId);
 		HttpEntity<CmanInitProjectReq> entity = new HttpEntity<>(cmanReq, headers);

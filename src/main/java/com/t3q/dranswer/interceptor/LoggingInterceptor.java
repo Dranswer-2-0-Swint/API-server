@@ -63,7 +63,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Log response data after receiving the response
         logResponse(response);
 
-        String req_id = request.getHeaders().get("request_id").toString();
+        String req_id = String.valueOf(request.getHeaders().get("request_id"));
         logEntity.setReq_id(req_id);
 
         logEntity.setReq_user("swint");
@@ -74,7 +74,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
 
         //TODO keycloak인지 cman인지?
 
-        logEntity.setRes_user(response.getHeaders().getHost().getHostName());
+        logEntity.setRes_user("cman");
         logEntity.setRes_body(responseBody);
         logEntity.setRes_dt(LocalDateTime.now());
         logEntity.setRes_msg(String.valueOf(resNode.get("message")));
