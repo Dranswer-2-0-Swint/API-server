@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.t3q.dranswer.aop.annotation.SwintValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Controller
 @RequestMapping("/api/v1/service")
+
 public class AppServiceController {
 
 	@Autowired
@@ -37,6 +39,7 @@ public class AppServiceController {
 	
 	// 응용서비스 목록 조회
 	@GetMapping("/list")
+	@SwintValid
 	public ResponseEntity<Object> readAppServiceList(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
@@ -61,6 +64,7 @@ public class AppServiceController {
 	
 	// 응용서비스 생성
 	@PostMapping()
+	@SwintValid
 	public ResponseEntity<Object> createAppService(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotAppServiceCreateReq serviceReq) {
 		
@@ -80,6 +84,7 @@ public class AppServiceController {
 	
 	// 응용서비스 삭제
 	@DeleteMapping()
+	@SwintValid
 	public ResponseEntity<Object> deleteService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotAppServiceDeleteReq serviceReq) {
 		

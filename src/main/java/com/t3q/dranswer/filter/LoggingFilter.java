@@ -56,7 +56,6 @@ public class LoggingFilter extends OncePerRequestFilter {
 
 
         ///jpa
-        //String req_id = requestWrapper.getHeader("request_id");
 		String requestId = request.getHeader("request_id");
 		String accessToken = request.getHeader("access_token");
 		if (StringUtils.hasText(requestId) && StringUtils.hasText(accessToken)) {
@@ -64,8 +63,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 		}
 		
         ///jpa
-        //logEntity.setReq_id(requestId);
-        logEntity.setReq_id("req_id test");
+        logEntity.setReq_id(requestId);
         logEntity.setReq_user("servpot");
         logEntity.setReq_body(RequestBody);
         logEntity.setReq_dt(LocalDateTime.now());
@@ -75,7 +73,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         logEntity.setRes_body(ResponseBody);
         logEntity.setRes_dt(LocalDateTime.now());
         //logEntity.setRes_msg(request.getParameter("message"));
-        logEntity.setRes_msg("msg test");
+        logEntity.setRes_msg("this is filter's msg : " + request.getParameter("message"));
         logEntity.setRes_status(responseWrapper.getStatus());
 
         loggingRepository.save(logEntity);

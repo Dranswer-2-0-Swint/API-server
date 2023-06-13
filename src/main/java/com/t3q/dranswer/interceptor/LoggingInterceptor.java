@@ -33,6 +33,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body,
                                         ClientHttpRequestExecution execution) throws IOException {
+
         LogEntity logEntity = new LogEntity();
 
         String requestBody = new String(body, StandardCharsets.UTF_8);
@@ -45,8 +46,15 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Log request data before sending the request
         logRequest(request, body);
 
+
+
+
+
         // Execute the request
         ClientHttpResponse response = execution.execute(request, body);
+
+
+
 
         String responseBody = getResponseBody(response);
         ObjectMapper resobjectMapper = new ObjectMapper();
@@ -55,15 +63,18 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Log response data after receiving the response
         logResponse(response);
 
-        //String req_id =  request.getHeaders().get("request_id");
-        String req_id = "req_id";
+        String req_id = request.getHeaders().get("request_id").toString();
         logEntity.setReq_id(req_id);
+
         logEntity.setReq_user("swint");
         logEntity.setReq_body(requestBody);
         logEntity.setReq_dt(LocalDateTime.now());
         logEntity.setReq_uri(String.valueOf(request.getURI()));
         logEntity.setReq_md(request.getMethodValue());
-        logEntity.setRes_user("cman");
+
+        //TODO keycloak인지 cman인지?
+
+        logEntity.setRes_user(response.getHeaders().getHost().getHostName());
         logEntity.setRes_body(responseBody);
         logEntity.setRes_dt(LocalDateTime.now());
         logEntity.setRes_msg(String.valueOf(resNode.get("message")));
@@ -92,8 +103,6 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         log.info("########hihihihihihi this is response SC!!!!! {}",statusCode);
         log.info("this is bodybody {}", responseBody);
 
-        // Save response data to the database
-        // ...
     }
 
     private String getResponseBody(ClientHttpResponse response) throws IOException {

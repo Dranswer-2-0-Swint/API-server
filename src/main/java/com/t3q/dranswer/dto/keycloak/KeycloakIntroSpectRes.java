@@ -34,7 +34,7 @@ public class KeycloakIntroSpectRes {
 	
 	@JsonProperty("resource_access")
 	//private KcIntroSpectRoleRes resourceAccess;
-	private Map<String, KeycloakIntroSpectRoleRes> resourceAccess;
+	private Object resourceAccess;
 	
 	private String scope;
 	private String sid;
