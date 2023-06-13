@@ -42,6 +42,7 @@ public class ValidAOP {
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         //swint token 발급 및 threadlocal에 저장
         String swintToken = getToken(request_id);
         RequestContext.setContextData(request_id,swintToken);
