@@ -12,7 +12,7 @@ spring:
   application:
     name: dranswer
   datasource:
-    url: jdbc:postgresql://${DB_HOST:27.96.134.98}:${DB_PORT:5432}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
+    url: jdbc:postgresql://${DB_HOST:27.96.134.98}:${DB_PORT:5444}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
   jpa:
