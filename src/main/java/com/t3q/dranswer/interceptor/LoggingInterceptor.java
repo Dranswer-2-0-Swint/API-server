@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 
 
 @Log4j2
-@Slf4j
 @Component
 public class LoggingInterceptor implements ClientHttpRequestInterceptor {
     private final LoggingRepository loggingRepository;

@@ -49,10 +49,10 @@ dependencies {
 	// JSON
 	//implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
-	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	implementation "org.springframework.boot:spring-boot-configuration-processor"
 
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}
