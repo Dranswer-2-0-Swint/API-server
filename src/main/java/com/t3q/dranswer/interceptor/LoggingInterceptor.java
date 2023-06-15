@@ -70,6 +70,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         logEntity.setReq_dt(LocalDateTime.now());
         logEntity.setReq_uri(String.valueOf(request.getURI()));
         logEntity.setReq_md(request.getMethodValue());
+        logEntity.setQry_prm(request.getURI().getQuery());
 
         //TODO keycloak인지 cman인지?
 
