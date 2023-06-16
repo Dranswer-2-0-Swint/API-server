@@ -29,4 +29,3 @@ mybatis:
 setup:
   callbackUrl: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}
   cmanUrl: http://${CMAN_HOST:115.85.182.6}:${CMAN_PORT:30330}
-
