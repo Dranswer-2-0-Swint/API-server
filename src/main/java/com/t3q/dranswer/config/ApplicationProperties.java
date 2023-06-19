@@ -10,6 +10,8 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "setup")
 public class ApplicationProperties {
 
-	private String callbackUrl;
+	private String authUrl;
 	private String cmanUrl;
+	private String callbackUrl;
+
 }

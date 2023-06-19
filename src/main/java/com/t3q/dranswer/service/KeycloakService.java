@@ -1,29 +1,17 @@
 package com.t3q.dranswer.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.t3q.dranswer.config.ApplicationProperties;
+import com.t3q.dranswer.config.AuthConstants;
+import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.t3q.dranswer.config.ApplicationProperties;
-import com.t3q.dranswer.config.AuthConstants;
-import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
-import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRoleRes;
-import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
-
-import lombok.extern.log4j.Log4j2;
+import javax.servlet.http.HttpServletRequest;
 
 @Log4j2
 @Service
@@ -38,7 +26,7 @@ public class KeycloakService {
 
 	// keycloak login page
 	public String getRedirectUrl(HttpServletRequest request) {
-		String authUrl = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_AUTH_URL;
+		String authUrl = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_AUTH_URL;
 		String clientId = AuthConstants.KEYCLOAK_USER_CLIENT;
 		String redirectUri = applicationProperties.getCallbackUrl() + AuthConstants.KEYCLOAK_CALLBACK_URL;
 		String responseType = "code";
@@ -62,7 +50,7 @@ public class KeycloakService {
 		map.add("code", code);
 
 		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-		String url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
+		String url = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
 		try {
 			ResponseEntity<KeycloakTokenRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakTokenRes.class);
 			if (response.getStatusCode() == HttpStatus.OK) {
@@ -99,7 +87,7 @@ public class KeycloakService {
 //		map.add("token",			accessToken.toString());
 //
 //		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-//		String url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL;
+//		String url = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL;
 //		try {
 //			ResponseEntity<KeycloakIntroSpectRes> response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);
 //
@@ -124,7 +112,7 @@ public class KeycloakService {
 //					getTokenMap.add("grant_type",		"client_credentials");
 //
 //					HttpEntity<MultiValueMap<String, String>> getTokenRequest = new HttpEntity<>(getTokenMap, headers);
-//					url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
+//					url = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
 //					try {
 //						ResponseEntity<KeycloakTokenRes> getTokenResponse = restTemplate.postForEntity(url, getTokenRequest, KeycloakTokenRes.class);
 //						if (response.getStatusCode() == HttpStatus.OK) {
@@ -145,7 +133,7 @@ public class KeycloakService {
 //
 //					headers.setBearerAuth(clientToken);
 //					HttpEntity<MultiValueMap<String, String>> getNewTokenRequest = new HttpEntity<>(getNewTokenMap, headers);
-//					url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
+//					url = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_TOKEN_URL;
 //					try {
 //						ResponseEntity<KeycloakTokenRes> getNewTokenResponse = restTemplate.postForEntity(url, getNewTokenRequest, KeycloakTokenRes.class);
 //						if (getNewTokenResponse.getStatusCode() == HttpStatus.OK) {
@@ -185,7 +173,7 @@ public class KeycloakService {
 //		map.add("token", 			token);
 //
 //		HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(map, headers);
-//		String url = AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL;
+//		String url = applicationProperties.getAuthUrl() + AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL;
 //		ResponseEntity<KeycloakIntroSpectRes> response = null;
 //		try {
 //			response = restTemplate.postForEntity(url, keycloakRequest, KeycloakIntroSpectRes.class);

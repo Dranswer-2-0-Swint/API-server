@@ -27,5 +27,6 @@ mybatis:
   type-aliases-package: com.t3q.dranswer.dto
 
 setup:
-  callbackUrl: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}
+  authUrl: https://${AUTH_HOST:auth.svc.dranswer.co.kr}
   cmanUrl: http://${CMAN_HOST:115.85.182.6}:${CMAN_PORT:30330}
+  callbackUrl: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}
