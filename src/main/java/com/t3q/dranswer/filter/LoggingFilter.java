@@ -64,7 +64,10 @@ public class LoggingFilter extends OncePerRequestFilter {
 
         ///jpa
         logEntity.setReq_id(requestId);
-        logEntity.setReq_user("servpot");
+
+        RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
+        logEntity.setReq_user(localdata.getReq_user());
         logEntity.setQry_prm(requestWrapper.getQueryString());
         logEntity.setReq_body(RequestBody);
         logEntity.setReq_dt(LocalDateTime.now());

@@ -43,12 +43,13 @@ public class ValidAOP {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        //swint token 발급 및 threadlocal에 저장
-        String swintToken = getToken(request_id);
-        RequestContext.setContextData(request_id,swintToken);
+
         return joinPoint.proceed();
 
     }
+
+
+
     private boolean validateToken(String token, String request_id) throws JSONException, JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -68,8 +69,13 @@ public class ValidAOP {
                 , keycloakRequest
                 , KeycloakIntroSpectRes.class);
 
-        //log.info(String.valueOf(entity.getBody()));
+        //사용자 이름가져오기
+        String req_user = entity.getBody().getPreferredUsername();
 
+        //swint token 발급 및 threadlocal에 저장
+        String swintToken = getToken(request_id);
+
+        RequestContext.setContextData(request_id,swintToken,req_user);
         if(entity.getBody().isActive()) return true;
         return false;
     }
