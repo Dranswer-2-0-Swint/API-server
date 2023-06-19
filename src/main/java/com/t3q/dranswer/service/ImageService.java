@@ -235,7 +235,7 @@ public class ImageService {
 		res.setImageId(imageReq.getImageId());
 		
 		if (container != null) {
-			if (imageReq.getImageStatus().equals(Constants.STATUS_RUN) && !dbImage.getImageStatus().equals(Constants.STATUS_SEARCH_FAILED)) {
+			if (imageReq.getImageStatus().equals(Constants.STATUS_RUN)) {
 
 				imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_POD_DEPLOYING, Constants.DETAIL_DEPLOYING);
 			
@@ -247,6 +247,7 @@ public class ImageService {
 					if (!StringUtils.hasText(domain) && StringUtils.hasText(cmanRes.getDomain())) {
 						delContainerDomain(service, container);
 					} else if (StringUtils.hasText(domain) && !domain.equals(cmanRes.getDomain())) {
+						delContainerDomain(service, container);
 						setContainerDomain(service, container, domain);
 					}
 
@@ -262,6 +263,9 @@ public class ImageService {
 					log.error(msg);
 					if (msg.equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
+						throw new Exception(Constants.E40004);
+					} else if (msg.equals(Constants.DETAIL_ERROR_DUPLICATED)) {
+						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_REGIST_FAILED, Constants.DETAIL_DOMAIN_DUPLICATED);
 						throw new Exception(Constants.E40004);
 					} else if (msg.equals(Constants.DETAIL_ERROR_IMAGE_PULL)
 							|| msg.equals(Constants.DETAIL_ERROR_OOM)
@@ -495,6 +499,9 @@ public class ImageService {
 				    .buildAndExpand("false")
 				    .toUri();
 
+		String imageName = "";
+		String containerId = "";
+
 		try {
 			ResponseEntity<CmanImageRegistRes> cmanImageRes = restTemplate.exchange(uri, 
 																					HttpMethod.POST, 
@@ -503,86 +510,106 @@ public class ImageService {
 			
 			if (cmanImageRes.getStatusCode() == HttpStatus.OK) {
 				log.info("imagename : " + cmanImageRes.getBody().getImage_name());
-				
+
 				// 컨테이너ID 생성
-				String containerId = Constants.PREFIX_CON + HashUtil.makeCRC32(imageMapper.getContainerSequence());
+				containerId = Constants.PREFIX_CON + HashUtil.makeCRC32(imageMapper.getContainerSequence());
 				String[] pushCommand = cmanImageRes.getBody().getPush_command().split(Constants.SPACE);
-				String imageName = pushCommand[2];
-
-				// 이미지(harbor) 변경
-				imageMapper.updateImageRealName(imageId, imageName);
-
-				CmanContainerCreateReq cmanContainerReq = new CmanContainerCreateReq();
-				cmanContainerReq.setEnv(new ArrayList<>());
-				cmanContainerReq.setServicePort(new ArrayList<>());
-				cmanContainerReq.setVolumeMounts(new ArrayList<>());
-				cmanContainerReq.setProjectName(service);
-				cmanContainerReq.setConName(containerId);
-				cmanContainerReq.setImage(imageName);
-				
-				List<ServpotImageRegistReqSub> setupList = imageReq.getSetupList()
-																	.stream()
-																	.filter(set -> set.getSetupType().equals(Constants.TYPE_OPEN))
-																	.collect(Collectors.toList());
-				for (ServpotImageRegistReqSub setup : setupList) {
-					String[] value = setup.getSetupValue().split(Constants.SLASH);
-					CmanContainerCreateReqPort sub = new CmanContainerCreateReqPort();
-					sub.setPort(Integer.parseInt(value[0]));
-					sub.setProtocol(value[1]);
-					cmanContainerReq.getServicePort().add(sub);
-				}
-				setupList.clear();
-				setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_MOUNT)).collect(Collectors.toList());
-				for (ServpotImageRegistReqSub setup : setupList) {
-					String[] value = setup.getSetupValue().split(Constants.COLONS);
-					CmanContainerCreateReqVol sub = new CmanContainerCreateReqVol();
-					sub.setName(String.valueOf(setup.getSetupSeq()));
-					sub.setPath(value[0]);
-					sub.setMountPath(value[1]);
-					cmanContainerReq.getVolumeMounts().add(sub);
-				}
-				setupList.clear();
-				setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_ENV)).collect(Collectors.toList());
-				for (ServpotImageRegistReqSub setup : setupList) {
-					CmanContainerCreateReqEnv sub = new CmanContainerCreateReqEnv();
-					sub.setName(setup.getSetupKey());
-					sub.setValue(setup.getSetupValue());
-					cmanContainerReq.getEnv().add(sub);
-				}
-				
-				HttpEntity<CmanContainerCreateReq> containerEntity = new HttpEntity<>(cmanContainerReq, headers);
-				uri = UriComponentsBuilder
-					    .fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_CREATE_URL)
-					    .build()
-					    .encode()
-					    .toUri();
-
-				ResponseEntity<CmanContainerCreateRes> cmanContainerRes = restTemplate.exchange(	uri, 
-																									HttpMethod.POST, 
-																									containerEntity, 
-																									CmanContainerCreateRes.class);
-				
-				if (cmanContainerRes.getStatusCode() == HttpStatus.OK) {
-					log.info("imagename : " + cmanContainerRes.getBody().getConName());
-
-					// 이미지(container) 변경
-					List<DbContainer> containerList = new ArrayList<>();
-					for (String innerDomain : cmanContainerRes.getBody().getInnerDomain()) {
-						DbContainer container = new DbContainer();
-						container.setImage(imageId);
-						container.setContainer(containerId);
-						container.setContainerDomain(innerDomain);
-						containerList.add(container);
-					}
-					imageMapper.insertContainer(containerList);
-					imageMapper.updateImageStatus(imageId, Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
-				}
+				imageName = pushCommand[2];
 			}
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
-				String status = errRes.getMsg().equals(Constants.DETAIL_ERROR_LOAD)? Constants.DETAIL_ERROR_LOAD: Constants.DETAIL_ERROR_PUSH; 
-				imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, status);
+				String status = errRes.getMsg();
+				if (status.equals(Constants.DETAIL_ERROR_LOAD) || status.equals(Constants.DETAIL_ERROR_PUSH)) {
+					imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, status);
+				} else if (status.equals(Constants.DETAIL_ERROR_DUPLICATED)) {
+					imageMapper.updateImageStatus(imageId, Constants.STATUS_REGIST_FAILED, Constants.DETAIL_IMAGE_DUPLICATED);
+				}
+			} else {
+				imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
+			}
+			throw new Exception(Constants.E50002);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
+			throw new Exception(Constants.E50000);
+		}
+
+		// 이미지(harbor) 변경
+		imageMapper.updateImageRealName(imageId, imageName);
+
+		CmanContainerCreateReq cmanContainerReq = new CmanContainerCreateReq();
+		cmanContainerReq.setEnv(new ArrayList<>());
+		cmanContainerReq.setServicePort(new ArrayList<>());
+		cmanContainerReq.setVolumeMounts(new ArrayList<>());
+		cmanContainerReq.setProjectName(service);
+		cmanContainerReq.setConName(containerId);
+		cmanContainerReq.setImage(imageName);
+
+		List<ServpotImageRegistReqSub> setupList = imageReq.getSetupList()
+															.stream()
+															.filter(set -> set.getSetupType().equals(Constants.TYPE_OPEN))
+															.collect(Collectors.toList());
+		for (ServpotImageRegistReqSub setup : setupList) {
+			String[] value = setup.getSetupValue().split(Constants.SLASH);
+			CmanContainerCreateReqPort sub = new CmanContainerCreateReqPort();
+			sub.setPort(Integer.parseInt(value[0]));
+			sub.setProtocol(value[1]);
+			cmanContainerReq.getServicePort().add(sub);
+		}
+		setupList.clear();
+		setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_MOUNT)).collect(Collectors.toList());
+		for (ServpotImageRegistReqSub setup : setupList) {
+			String[] value = setup.getSetupValue().split(Constants.COLONS);
+			CmanContainerCreateReqVol sub = new CmanContainerCreateReqVol();
+			sub.setName(String.valueOf(setup.getSetupSeq()));
+			sub.setPath(value[0]);
+			sub.setMountPath(value[1]);
+			cmanContainerReq.getVolumeMounts().add(sub);
+		}
+		setupList.clear();
+		setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_ENV)).collect(Collectors.toList());
+		for (ServpotImageRegistReqSub setup : setupList) {
+			CmanContainerCreateReqEnv sub = new CmanContainerCreateReqEnv();
+			sub.setName(setup.getSetupKey());
+			sub.setValue(setup.getSetupValue());
+			cmanContainerReq.getEnv().add(sub);
+		}
+
+		HttpEntity<CmanContainerCreateReq> containerEntity = new HttpEntity<>(cmanContainerReq, headers);
+		uri = UriComponentsBuilder
+				.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_CREATE_URL)
+				.build()
+				.encode()
+				.toUri();
+
+		try {
+			ResponseEntity<CmanContainerCreateRes> cmanContainerRes = restTemplate.exchange(	uri,
+																								HttpMethod.POST,
+																								containerEntity,
+																								CmanContainerCreateRes.class);
+				
+			if (cmanContainerRes.getStatusCode() == HttpStatus.OK) {
+				log.info("imagename : " + cmanContainerRes.getBody().getConName());
+
+				// 이미지(container) 변경
+				List<DbContainer> containerList = new ArrayList<>();
+				for (String innerDomain : cmanContainerRes.getBody().getInnerDomain()) {
+					DbContainer container = new DbContainer();
+					container.setImage(imageId);
+					container.setContainer(containerId);
+					container.setContainerDomain(innerDomain);
+					containerList.add(container);
+				}
+				imageMapper.insertContainer(containerList);
+				imageMapper.updateImageStatus(imageId, Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
+			}
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
+				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_DUPLICATED)) {
+					imageMapper.updateImageStatus(imageId, Constants.STATUS_REGIST_FAILED, Constants.DETAIL_CONTAINER_DUPLICATED);
+				}
 			} else {
 				imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
 			}
@@ -843,8 +870,13 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
 			log.error(e.getMessage());
+			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
+				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
+					throw new Exception(Constants.DETAIL_ERROR_NOT_EXIST);
+				}
+			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -956,8 +988,13 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
 			log.error(e.getMessage());
+			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
+				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
+					throw new Exception(Constants.DETAIL_ERROR_NOT_EXIST);
+				}
+			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
 			e.printStackTrace();

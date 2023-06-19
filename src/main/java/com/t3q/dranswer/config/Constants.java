@@ -52,6 +52,7 @@ public class Constants {
 	public static final String STATUS_IMAGE_UPLOAD_FAILED	= "IMAGE_UPLOAD_FAILED";
 	public static final String STATUS_DEPLOY_FAILED			= "DEPLOY_FAILED";
 	public static final String STATUS_SEARCH_FAILED			= "SEARCH_FAILED";
+	public static final String STATUS_REGIST_FAILED			= "REGIST_FAILED";
 	// container status detail
 	public static final String DETAIL_RUNNING				= "RUNNING";
 	public static final String DETAIL_UPLOADING				= "UPLOADING";
@@ -68,6 +69,10 @@ public class Constants {
 	public static final String DETAIL_ERROR_NOT_EXIST		= "ERROR_NOT_EXIST";
 	public static final String DETAIL_IMAGE_NOT_EXIST		= "ERROR_IMAGE_NOT_EXIST";
 	public static final String DETAIL_CONTAINER_NOT_EXIST	= "ERROR_CONTAINER_NOT_EXIST";
+	public static final String DETAIL_ERROR_DUPLICATED		= "ERROR_DUPLICATED";
+	public static final String DETAIL_IMAGE_DUPLICATED		= "ERROR_IMAGE_DUPLICATED";
+	public static final String DETAIL_CONTAINER_DUPLICATED	= "ERROR_CONTAINER_DUPLICATED";
+	public static final String DETAIL_DOMAIN_DUPLICATED		= "ERROR_DOMAIN_DUPLICATED";
 
 	// error code
 	public static final String E00000		 		= "00000";
