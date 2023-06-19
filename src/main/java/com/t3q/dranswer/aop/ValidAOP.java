@@ -2,7 +2,6 @@ package com.t3q.dranswer.aop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.t3q.dranswer.config.ApplicationProperties;
-import com.t3q.dranswer.config.AuthConstants;
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
@@ -72,14 +71,10 @@ public class ValidAOP {
         body.add("token_type_hint", "access_token");
         body.add("token", 			token);
 
-        URI uri = UriComponentsBuilder
-                .fromUriString(applicationProperties.getAuthUrl() +
-                                AuthConstants.KEYCLOAK_BASE_URL +
-                                AuthConstants.KEYCLOAK_USER_REALM +
-                                AuthConstants.KEYCLOAK_SPEC_URL)
-                .build()
-                .encode()
-                .toUri();
+        URI uri = UriComponentsBuilder.fromUriString(applicationProperties.getUserSpecUrl())
+                                        .build()
+                                        .encode()
+                                        .toUri();
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
         ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(   uri,
@@ -110,14 +105,10 @@ public class ValidAOP {
         body.add("password",        "1234");
         body.add("grant_type",      "password");
 
-        URI uri = UriComponentsBuilder
-                .fromUriString(applicationProperties.getAuthUrl() +
-                                AuthConstants.KEYCLOAK_BASE_URL +
-                                AuthConstants.KEYCLOAK_SYSTEM_REALM +
-                                AuthConstants.KEYCLOAK_TOKEN_URL)
-                .build()
-                .encode()
-                .toUri();
+        URI uri = UriComponentsBuilder.fromUriString(applicationProperties.getSystemTokenUrl())
+                                        .build()
+                                        .encode()
+                                        .toUri();
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
         ResponseEntity<KeycloakTokenRes> entity = resTmpl.postForEntity(uri,

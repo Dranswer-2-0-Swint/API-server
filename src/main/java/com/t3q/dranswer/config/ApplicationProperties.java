@@ -7,11 +7,29 @@ import lombok.Data;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "setup")
+@ConfigurationProperties(prefix = "env")
 public class ApplicationProperties {
 
 	private String authUrl;
+
+	private String userRealm;
+	private String userClient;
+	private String userSecret;
+	private String userAuthUrl;
+	private String userTokenUrl;
+	private String userSpecUrl;
+
+	private String systemRealm;
+	private String systemClient;
+	private String systemSecret;
+	private String systemAuthUrl;
+	private String systemTokenUrl;
+	private String systemSpecUrl;
+
 	private String cmanUrl;
 	private String callbackUrl;
+
+	private String accessTokenName;
+	private String refreshTokenName;
 
 }

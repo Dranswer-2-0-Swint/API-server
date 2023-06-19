@@ -1,7 +1,5 @@
 package com.t3q.dranswer.dto;
 
-import com.sun.org.apache.xpath.internal.objects.XString;
-
 public class RequestContext {
 	
     private static final ThreadLocal<RequestContextData> threadLocalData = new ThreadLocal<>();
