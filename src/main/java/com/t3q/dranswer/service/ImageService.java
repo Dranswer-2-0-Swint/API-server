@@ -1,6 +1,5 @@
 package com.t3q.dranswer.service;
 
-import com.t3q.dranswer.aop.annotation.SwintValid;
 import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
@@ -261,19 +260,20 @@ public class ImageService {
 				} catch (Exception e) {
 					String msg = e.getMessage();
 					log.error(msg);
-					if (msg.equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
-						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
-						throw new Exception(Constants.E40004);
-					} else if (msg.equals(Constants.DETAIL_ERROR_DUPLICATED)) {
-						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_REGIST_FAILED, Constants.DETAIL_DOMAIN_DUPLICATED);
-						throw new Exception(Constants.E40004);
-					} else if (msg.equals(Constants.DETAIL_ERROR_IMAGE_PULL)
-							|| msg.equals(Constants.DETAIL_ERROR_OOM)
-							|| msg.equals(Constants.DETAIL_ERROR_PENDING)
-							|| msg.equals(Constants.DETAIL_ERROR_CRASHED)
-							|| msg.equals(Constants.DETAIL_ERROR_INTERNAL_ERR)) {
-						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_DEPLOY_FAILED, e.getMessage());
-						throw new Exception(Constants.E50002);
+					switch (msg) {
+						case Constants.DETAIL_ERROR_NOT_EXIST:
+							imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
+							throw new Exception(Constants.E40004);
+						case Constants.DETAIL_ERROR_DUPLICATED:
+							imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_REGIST_FAILED, Constants.DETAIL_DOMAIN_DUPLICATED);
+							throw new Exception(Constants.E40004);
+						case Constants.DETAIL_ERROR_IMAGE_PULL:
+						case Constants.DETAIL_ERROR_OOM:
+						case Constants.DETAIL_ERROR_PENDING:
+						case Constants.DETAIL_ERROR_CRASHED:
+						case Constants.DETAIL_ERROR_INTERNAL_ERR:
+							imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_DEPLOY_FAILED, msg);
+							throw new Exception(Constants.E50002);
 					}
 					imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_DEPLOY_FAILED, Constants.DETAIL_ERROR_INTERNAL_ERR);
 					throw new Exception(e.getMessage());
@@ -886,46 +886,6 @@ public class ImageService {
 		
 		return res;
 	}
-	
-	public List<CmanImageReadRes> modContainer(String service, String micro) throws Exception {
-		List<CmanImageReadRes> res = new ArrayList<>();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
-		headers.add("request_id", localdata.getRequestId());
-		headers.add("access_token", localdata.getAccessToken());
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-		URI uri = UriComponentsBuilder
-			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_READ_URL)
-				    .queryParam("projectName", "{projectName}")
-				    .encode()
-				    .buildAndExpand(micro, service)
-				    .toUri();
-		try {
-			ResponseEntity<CmanImageReadRes[]> cmanRes = restTemplate.exchange(uri, 
-																					HttpMethod.GET, 
-																					entity, 
-																					CmanImageReadRes[].class);
-			if (cmanRes.getStatusCode() == HttpStatus.OK) {
-				log.info("image delete success");
-				res = Arrays.asList(cmanRes.getBody());
-			}
-		} catch (HttpClientErrorException e) {
-			log.error(e.getMessage());
-			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
-				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
-					throw new Exception(Constants.DETAIL_ERROR_NOT_EXIST);
-				}
-			}
-			throw new Exception(Constants.E50002);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			throw new Exception(Constants.E50000);
-		}
-		
-		return res;
-	}
 
 	public CmanContainerDeleteRes delContainer(String container) throws Exception {
 		CmanContainerDeleteRes res = new CmanContainerDeleteRes();
@@ -1024,46 +984,6 @@ public class ImageService {
 			ResponseEntity<CmanImageReadRes[]> cmanRes = restTemplate.exchange(	uri, 
 																				HttpMethod.GET, 
 																				entity, 
-																				CmanImageReadRes[].class);
-			if (cmanRes.getStatusCode() == HttpStatus.OK) {
-				log.info("image delete success");
-				res = Arrays.asList(cmanRes.getBody());
-			}
-		} catch (HttpClientErrorException e) {
-			log.error(e.getMessage());
-			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
-				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
-					throw new Exception(Constants.DETAIL_ERROR_NOT_EXIST);
-				}
-			}
-			throw new Exception(Constants.E50002);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			throw new Exception(Constants.E50000);
-		}
-		
-		return res;
-	}
-
-	public List<CmanImageReadRes> setImage(String service, String micro) throws Exception {
-		List<CmanImageReadRes> res = new ArrayList<>();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
-		headers.add("request_id", localdata.getRequestId());
-		headers.add("access_token", localdata.getAccessToken());
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-		URI uri = UriComponentsBuilder
-			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_IMAGE_READ_URL)
-				    .queryParam("projectName", "{projectName}")
-				    .encode()
-				    .buildAndExpand(micro, service)
-				    .toUri();
-		try {
-			ResponseEntity<CmanImageReadRes[]> cmanRes = restTemplate.exchange(	uri,
-																				HttpMethod.GET,
-																				entity,
 																				CmanImageReadRes[].class);
 			if (cmanRes.getStatusCode() == HttpStatus.OK) {
 				log.info("image delete success");

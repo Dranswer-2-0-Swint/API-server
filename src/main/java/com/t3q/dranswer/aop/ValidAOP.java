@@ -1,7 +1,7 @@
 package com.t3q.dranswer.aop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.t3q.dranswer.config.AuthConstants;
+import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -26,7 +28,12 @@ import java.net.URI;
 @Component
 public class ValidAOP {
 
+    private final ApplicationProperties applicationProperties;
 
+    @Autowired
+    public ValidAOP(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
 
     @Around("@annotation(com.t3q.dranswer.aop.annotation.SwintValid)")
     public Object SwintAuth(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -89,10 +96,15 @@ public class ValidAOP {
         body.add("token_type_hint", "access_token");
         body.add("token", 			token);
 
+        URI uri = UriComponentsBuilder.fromUriString(applicationProperties.getUserSpecUrl())
+                                        .build()
+                                        .encode()
+                                        .toUri();
+
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL)
-                , keycloakRequest
-                , KeycloakIntroSpectRes.class);
+        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(   uri,
+                                                                                keycloakRequest,
+                                                                                KeycloakIntroSpectRes.class);
 
         //사용자 이름가져오기
         //String req_user = entity.getBody().getPreferredUsername();
@@ -111,14 +123,19 @@ public class ValidAOP {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_id", 		"swint");
         body.add("client_secret", 	"K91G3XhKY3z2qussprBEAC24cksv0qNk");
-        body.add("username", "swint-dev");
-        body.add("password", "1234");
-        body.add("grant_type", "password");
+        body.add("username",        "swint-dev");
+        body.add("password",        "1234");
+        body.add("grant_type",      "password");
+
+        URI uri = UriComponentsBuilder.fromUriString(applicationProperties.getSystemTokenUrl())
+                                        .build()
+                                        .encode()
+                                        .toUri();
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<KeycloakTokenRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_SYSTEM_REALM + AuthConstants.KEYCLOAK_TOKEN_URL)
-                , keycloakRequest
-                , KeycloakTokenRes.class);
+        ResponseEntity<KeycloakTokenRes> entity = resTmpl.postForEntity(uri,
+                                                                        keycloakRequest,
+                                                                        KeycloakTokenRes.class);
         String swintToken = entity.getBody().getAccessToken();
         return swintToken;
     }

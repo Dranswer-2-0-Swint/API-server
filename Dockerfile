@@ -1,6 +1,6 @@
 
 # docker build -t swint .
-# docker run -d -p 8888:8888 -e DB_HOST=swint-db -e LOCAL_URL=27.96.134.98 --network swint-network --name swint-was swint:e18f894
+# docker run -d -p 8888:8888 --network swint-network --name swint-was swint-was:e18f894
 # docker exec -it swint /bin/bash
 
 FROM centos:7
@@ -61,5 +61,6 @@ RUN chmod +x gradlew
 RUN ./gradlew build
 
 CMD ["java", "-jar", "/app/build/libs/service_portal-0.0.1-SNAPSHOT.jar"]
+#CMD ["/bin/bash"]
 
 EXPOSE 8888
