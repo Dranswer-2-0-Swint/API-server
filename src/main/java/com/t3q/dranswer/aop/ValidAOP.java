@@ -2,6 +2,7 @@ package com.t3q.dranswer.aop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.t3q.dranswer.config.ApplicationProperties;
+import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
@@ -59,7 +60,7 @@ public class ValidAOP {
         body.add("token", 			token);
 
         HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(URI.create(AuthConstants.KEYCLOAK_BASE_URL + AuthConstants.KEYCLOAK_USER_REALM + AuthConstants.KEYCLOAK_SPEC_URL)
+        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(URI.create(applicationProperties.getUserSpecUrl())
                 , keycloakRequest
                 , KeycloakIntroSpectRes.class);
 
