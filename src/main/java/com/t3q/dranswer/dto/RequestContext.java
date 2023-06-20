@@ -1,13 +1,11 @@
 package com.t3q.dranswer.dto;
 
-import com.sun.org.apache.xpath.internal.objects.XString;
-
 public class RequestContext {
 	
     private static final ThreadLocal<RequestContextData> threadLocalData = new ThreadLocal<>();
 
     public static void setContextData(String request_id, String access_token, String req_user) {
-        RequestContextData data = new RequestContextData(request_id, access_token, req_user);
+        RequestContextData data = new RequestContextData(request_id, access_token,req_user);
         threadLocalData.set(data);
     }
 

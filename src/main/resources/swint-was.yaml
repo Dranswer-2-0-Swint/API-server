@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swint-was
+  namespace: swint-system
+  labels:
+    app: swint-was
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swint-was
+  template:
+    metadata:
+      labels:
+        app: swint-was
+    spec:
+      imagePullSecrets:
+      - name: harbor-swint
+      containers:
+      - name: swint-was
+        image: harbor.svc.dranswer.co.kr/swint/swint-was:c61084b
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8888
+        env:
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: svc_plf
+        - name: DB_SCHEMA
+          value: swint
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASS
+          value: postgres
+        - name: DB_HOST
+          value: swint-db.swint-system.svc.svc-plf
+        - name: CMAN_HOST
+          value: cman-api-server.cman-system.svc.svc-plf
+        - name: CMAN_PORT
+          value: "80"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: swint-was
+  namespace: swint-system
+spec:
+  type: NodePort
+  selector:
+    app: swint-was
+  ports:
+    - port: 8888
+      targetPort: 8888
+      nodePort: 30332
+      
