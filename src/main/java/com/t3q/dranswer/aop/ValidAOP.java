@@ -45,16 +45,17 @@ public class ValidAOP {
         String request_id = request.getHeader("request_id");
         //token = token.substring(7);
         //boolean isValidToken = validateToken(token,request_id);
-        boolean active = validateToken(token,request_id);
-        if(!active){
+        KeycloakIntroSpectRes response = validateToken(token,request_id);
+
+
+        if(!response.isActive()){
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         //swint token 발급 및 threadlocal에 저장
         String swintToken = getToken(request_id);
-
-        RequestContext.setContextData(request_id, swintToken);
+        RequestContext.setContextData(request_id, swintToken,response.getPreferredUsername());
 
         return joinPoint.proceed();
 
@@ -62,7 +63,7 @@ public class ValidAOP {
 
 
 
-    private boolean validateToken(String token, String request_id) throws JSONException, JsonProcessingException {
+    private KeycloakIntroSpectRes validateToken(String token, String request_id) throws JSONException, JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("request_id", request_id);
@@ -89,8 +90,38 @@ public class ValidAOP {
         //사용자 이름가져오기
         //String req_user = entity.getBody().getPreferredUsername();
 
-        if(entity.getBody().isActive()) return true;
-        return false;
+        return entity.getBody();
+    }
+
+    private String getUser(String token, String request_id) throws JSONException, JsonProcessingException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("request_id", request_id);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        //ClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        RestTemplate resTmpl = new RestTemplate();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", 		"swint");
+        body.add("client_secret", 	"Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP");
+        body.add("token_type_hint", "access_token");
+        body.add("token", 			token);
+
+        URI uri = UriComponentsBuilder.fromUriString(applicationProperties.getUserSpecUrl())
+                .build()
+                .encode()
+                .toUri();
+
+        HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
+        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(   uri,
+                keycloakRequest,
+                KeycloakIntroSpectRes.class);
+
+        //사용자 이름가져오기
+        String req_user = entity.getBody().getPreferredUsername();
+
+        if(entity.getBody().isActive()) return req_user;
+        return null;
     }
 
 
