@@ -27,7 +27,7 @@ mybatis:
   type-aliases-package: com.t3q.dranswer.dto
 
 env:
-  authUrl: https://${AUTH_HOST:auth.svc.dranswer.co.kr}
+  authUrl: ${AUTH_HOST:https://auth.svc.dranswer.co.kr}
 
   userRealm: ${USER_REALM:service-user-dev}
   userClient: ${USER_CLIENT:swint}
@@ -43,8 +43,8 @@ env:
   systemTokenUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token
   systemSpecUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token/introspect
 
-  cmanUrl: http://${CMAN_HOST:115.85.182.6}:${CMAN_PORT:30330}
-  callbackUrl: http://${LOCAL_HOST:localhost}:${LOCAL_PORT:8888}/callback
+  cmanUrl: ${CMAN_HOST:http://115.85.182.6:30330}
+  callbackUrl: ${LOCAL_HOST:http://localhost:8888/callback}
 
   accessTokenName: dr_access_token
   refreshTokenName: dr_refresh_token
