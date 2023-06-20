@@ -45,27 +45,7 @@ public class ValidAOP {
         String request_id = request.getHeader("request_id");
         //token = token.substring(7);
         //boolean isValidToken = validateToken(token,request_id);
-
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("request_id", request_id);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        //ClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        RestTemplate resTmpl = new RestTemplate();
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", 		"swint");
-        body.add("client_secret", 	"Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP");
-        body.add("token_type_hint", "access_token");
-        body.add("token", 			token);
-
-        HttpEntity<MultiValueMap<String, String>> keycloakRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<KeycloakIntroSpectRes> entity = resTmpl.postForEntity(URI.create(applicationProperties.getUserSpecUrl())
-                , keycloakRequest
-                , KeycloakIntroSpectRes.class);
-
-        boolean active = entity.getBody().isActive();
-        String req_user = entity.getBody().getPreferredUsername();
+        boolean active = validateToken(token,request_id);
         if(!active){
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -74,8 +54,7 @@ public class ValidAOP {
         //swint token 발급 및 threadlocal에 저장
         String swintToken = getToken(request_id);
 
-        //String req_user = getUser(token,request_id);
-        RequestContext.setContextData(request_id, swintToken, req_user);
+        RequestContext.setContextData(request_id, swintToken);
 
         return joinPoint.proceed();
 
