@@ -95,6 +95,7 @@ public class ImageService {
 				res.setRunningTime(cmanRes.getTotalAge());
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(e.getMessage());
 				if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 					imageMapper.updateImageStatus(image, Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_IMAGE_NOT_EXIST);
@@ -145,6 +146,7 @@ public class ImageService {
 					imageMapper.insertContainer(containerList);
 					
 				} catch (Exception e) {
+					e.printStackTrace();
 					log.error(e.getMessage());
 					if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 						imageMapper.updateImageStatus(image, Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
@@ -160,6 +162,7 @@ public class ImageService {
 					log.info("container pod name : " + pod);
 
 				} catch (Exception e) {
+					e.printStackTrace();
 					log.error(e.getMessage());
 					if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 						imageMapper.updateImageStatus(image, Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
@@ -203,6 +206,7 @@ public class ImageService {
 				imageMapper.updateImageStatus(image, dbImage.getImageStatus(), dbImage.getImageStatusDetail());
 
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(e.getMessage());
 				if (e.getMessage().equals(Constants.E50002)) {
 					dbImage.setImageStatus(Constants.STATUS_POD_STOPPED);
@@ -245,6 +249,8 @@ public class ImageService {
 					// 2. 컨테이너 도메인 설정
 					if (!StringUtils.hasText(domain) && StringUtils.hasText(cmanRes.getDomain())) {
 						delContainerDomain(service, container);
+					} else if (StringUtils.hasText(domain) && !StringUtils.hasText(cmanRes.getDomain())) {
+						setContainerDomain(service, container, domain);
 					} else if (StringUtils.hasText(domain) && !domain.equals(cmanRes.getDomain())) {
 						delContainerDomain(service, container);
 						setContainerDomain(service, container, domain);
@@ -258,8 +264,9 @@ public class ImageService {
 					imageMapper.updateImageStatus(imageReq.getImageId(), dbImage.getImageStatus(), dbImage.getImageStatusDetail());
 
 				} catch (Exception e) {
+					e.printStackTrace();
+					log.error(e.getMessage());
 					String msg = e.getMessage();
-					log.error(msg);
 					switch (msg) {
 						case Constants.DETAIL_ERROR_NOT_EXIST:
 							imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
@@ -290,6 +297,7 @@ public class ImageService {
 					dbImage.setImageStatusDetail(Constants.DETAIL_TERMINATING);
 					
 				} catch (Exception e) {
+					e.printStackTrace();
 					log.error(e.getMessage());
 					if (e.getMessage().equals(Constants.E50002)) {
 						imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_DEPLOY_FAILED, Constants.DETAIL_ERROR_INTERNAL_ERR);
@@ -318,13 +326,14 @@ public class ImageService {
 		dbImage.setImageStatus(Constants.STATUS_IMAGE_UPLOADING);
 		dbImage.setImageStatusDetail(Constants.DETAIL_UPLOADING);
 		imageMapper.insertImage(dbImage);
-		
+
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		// 비동기 호출 
 		CompletableFuture.runAsync(() -> {
 			try {
-				asyncImageRegist(imageId, imageReq);
+				asyncImageRegist(localdata, imageId, imageReq);
 			} catch (Exception e) {
-				imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_LOAD);
 				e.printStackTrace();
 			}
 		});
@@ -408,9 +417,11 @@ public class ImageService {
 																								containerEntity, 
 																								CmanContainerUpdateRes.class);
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -442,6 +453,7 @@ public class ImageService {
 				imageMapper.deleteContainerByImage(dbImage.getImage());
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(e.getMessage());
 				if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 					imageMapper.updateImageStatus(dbImage.getImage(), Constants.STATUS_DEPLOY_FAILED, Constants.DETAIL_ERROR_INTERNAL_ERR);
@@ -465,6 +477,7 @@ public class ImageService {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (!e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 				throw new Exception(e.getMessage());
@@ -476,7 +489,7 @@ public class ImageService {
 		return res;
 	}
 
-	public void asyncImageRegist(String imageId, ServpotImageRegistReq imageReq) throws Exception {
+	public void asyncImageRegist(RequestContext.RequestContextData localdata, String imageId, ServpotImageRegistReq imageReq) throws Exception {
 		log.info("ImageService : asyncImageRegist");
 		String service = imageMapper.selectServiceByMicro(imageReq.getMicroId());
 		
@@ -487,7 +500,7 @@ public class ImageService {
 		cmanImageReq.setTag(imageId);
 
 		HttpHeaders headers = new HttpHeaders();
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		//RequestContext.RequestContextData localdata = RequestContext.getContextData();
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -517,6 +530,8 @@ public class ImageService {
 				imageName = pushCommand[2];
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
 				String status = errRes.getMsg();
@@ -530,6 +545,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
 			throw new Exception(Constants.E50000);
@@ -605,6 +621,8 @@ public class ImageService {
 				imageMapper.updateImageStatus(imageId, Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
 				if (errRes.getMsg().equals(Constants.DETAIL_ERROR_DUPLICATED)) {
@@ -614,6 +632,7 @@ public class ImageService {
 				imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			imageMapper.updateImageStatus(imageId, Constants.STATUS_IMAGE_UPLOAD_FAILED, Constants.DETAIL_ERROR_PUSH);
 		}
@@ -642,6 +661,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -651,6 +671,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -680,6 +701,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -689,6 +711,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -719,6 +742,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -728,6 +752,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -758,6 +783,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -767,6 +793,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -797,6 +824,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -804,6 +832,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -834,9 +863,11 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -870,6 +901,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -909,6 +941,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -918,6 +951,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -948,6 +982,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -990,6 +1025,7 @@ public class ImageService {
 				res = Arrays.asList(cmanRes.getBody());
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -999,6 +1035,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}
@@ -1029,6 +1066,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -1038,6 +1076,7 @@ public class ImageService {
 			}
 			throw new Exception(Constants.E50002);
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			throw new Exception(Constants.E50000);
 		}

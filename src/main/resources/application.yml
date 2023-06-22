@@ -12,7 +12,7 @@ spring:
   application:
     name: dranswer
   datasource:
-    url: jdbc:postgresql://${DB_HOST:27.96.134.98}:${DB_PORT:5444}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
+    url: jdbc:postgresql://${DB_HOST:175.45.214.82}:${DB_PORT:30333}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
   jpa:
@@ -27,7 +27,7 @@ mybatis:
   type-aliases-package: com.t3q.dranswer.dto
 
 env:
-  authUrl: ${AUTH_HOST:https://auth.svc.dranswer.co.kr}
+  authUrl: ${AUTH_HOST:https://auth.dev.dranswer-g.co.kr}
 
   userRealm: ${USER_REALM:service-user-dev}
   userClient: ${USER_CLIENT:swint}
@@ -43,7 +43,7 @@ env:
   systemTokenUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token
   systemSpecUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token/introspect
 
-  cmanUrl: ${CMAN_HOST:http://115.85.182.6:30330}
+  cmanUrl: ${CMAN_HOST:http://175.45.214.82:30330}
   callbackUrl: ${LOCAL_HOST:http://localhost:8888/callback}
 
   accessTokenName: dr_access_token
