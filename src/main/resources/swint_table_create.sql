@@ -143,10 +143,11 @@ ALTER TABLE swint.tb_micro_info ADD CONSTRAINT tb_micro_service_fk FOREIGN KEY (
 CREATE TABLE swint.tb_micro_domain (
                                      micro_service varchar NOT NULL, -- 마이크로서비스ID
                                      domain varchar NOT NULL, -- 마이크로서비스도메인
+                                     path varchar NOT NULL, -- 마이크로서비스도메인패스
                                      port varchar NOT NULL, -- 마이크로서비스포트
                                      mod_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 변경일시
                                      reg_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 등록일시
-                                     CONSTRAINT tb_micro_domain_pk PRIMARY KEY (micro_service, domain)
+                                     CONSTRAINT tb_micro_domain_pk PRIMARY KEY (micro_service, domain, path)
 );
 COMMENT ON TABLE swint.tb_micro_domain IS '기업 응용서비스에 생성된 마이크로서비스 도메인 저장';
 
@@ -154,6 +155,7 @@ COMMENT ON TABLE swint.tb_micro_domain IS '기업 응용서비스에 생성된 �
 
 COMMENT ON COLUMN swint.tb_micro_domain.micro_service IS '마이크로서비스ID';
 COMMENT ON COLUMN swint.tb_micro_domain.domain IS '마이크로서비스도메인';
+COMMENT ON COLUMN swint.tb_micro_domain.path IS '마이크로서비스도메인패스';
 COMMENT ON COLUMN swint.tb_micro_domain.port IS '마이크로서비스포트';
 COMMENT ON COLUMN swint.tb_micro_domain.mod_timestamp IS '변경일시';
 COMMENT ON COLUMN swint.tb_micro_domain.reg_timestamp IS '등록일시';
