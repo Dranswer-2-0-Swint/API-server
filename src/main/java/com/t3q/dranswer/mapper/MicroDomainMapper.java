@@ -12,27 +12,14 @@ import java.util.List;
 public interface MicroDomainMapper {
 
     public int getMicroSequence();
-    // 마이크로서비스도메인 조회
+    // 마이크로서비스도메인 조회 V
     public DbMicroDomain selectMicroDomain(@Param("microService") String microService);
-    // 마이크로서비스도메인 목록 조회
-    public List<DbMicroDomain> selectMicroDomainDomainByDomain(@Param("service") String domain);
-    // 마이크로서비스도메인 생성
+    // 마이크로서비스도메인 목록 조회 V
+    public List<DbMicroDomain> selectMicroDomainDomainByService(@Param("service") String service);
+    // 마이크로서비스도메인 생성 V
     public int insertMicroDomain(@Param("obj") DbMicroDomain obj);
-    // 마이크로서비스도메인명 변경
-    public int updateMicroDomainName(@Param("obj") DbMicroDomain obj);
-    // 마이크로서비스도메인 변경
+    // 마이크로서비스도메인 변경 V
     public int updateMicroDomain(@Param("obj") DbMicroDomain obj);
-    // 마이크로서비스 삭제
-    public int deleteMicroDomain(@Param("MicroDomain") String MicroDomain);
-    // 응용서비스에 속한 마이크로서비스 삭제
-    public int deleteMicroDomainByService(@Param("service") String service);
-
-    // 컨테이너 조회(마이크로서비스 도메인 변경 시 해당하는 모든 컨테이너의 외부 도메인을 변경)
-    public List<String> selectContainerByMicro(@Param("micro") String micro);
-    // 응용서비스 조회
-    public String selectServiceByMicro(@Param("micro") String micro);
-    // 컨테이너 삭제
-    public int deleteContainer(@Param("container") String container);
-    // 이미지 목록 조회
-    public List<String> selectImageByMicro(@Param("micro") String micro);
+    // 마이크로서비스도메인 삭제 V
+    public int deleteMicroDomain(@Param("microService") String microService);
 }

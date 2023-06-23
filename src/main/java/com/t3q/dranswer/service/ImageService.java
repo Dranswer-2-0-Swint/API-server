@@ -846,6 +846,7 @@ public class ImageService {
 		return res;
 	}
 
+	//요거는 지우지 말아봐 씨맨에서 지운거
 	public CmanContainerDomainCreateDeleteRes setContainerDomain(String service, String container, String domain) throws Exception {
 		CmanContainerDomainCreateDeleteRes res = new CmanContainerDomainCreateDeleteRes();
 		HttpHeaders headers = new HttpHeaders();
@@ -926,6 +927,8 @@ public class ImageService {
 		
 		return res;
 	}
+
+	//요거는 지우지 말아봐 씨맨에서 지운거
 
 	public CmanContainerDomainCreateDeleteRes delContainerDomain(String service, String container) throws Exception {
 		CmanContainerDomainCreateDeleteRes res = new CmanContainerDomainCreateDeleteRes();
