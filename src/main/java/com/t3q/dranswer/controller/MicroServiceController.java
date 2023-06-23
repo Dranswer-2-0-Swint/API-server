@@ -42,6 +42,7 @@ public class MicroServiceController {
 
 	@Autowired
 	MicroService microService;
+
 	
 	// 마이크로서비스 목록 조회
 	@GetMapping("/list")
@@ -67,7 +68,6 @@ public class MicroServiceController {
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
-	
 	// 마이크로서비스 생성
 	@PostMapping()
 	@SwintValid

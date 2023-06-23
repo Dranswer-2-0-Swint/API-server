@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.t3q.dranswer.mapper.MicroServiceDomainMapper">
+
+    <resultMap type="DbMicroService" id="dbMicroDomainMap">
+        <result property="MicroDomain"			column="micro_service" />
+        <result property="service"				column="service" />
+        <result property="MicroDomainName"		column="micro_service_name" />
+        <result property="MicroDomainDomain"	column="micro_service_domain" />
+        <result property="modTimestamp"			column="mod_timestamp" />
+        <result property="regTimestamp"			column="reg_timestamp" />
+    </resultMap>
+
+    <select id="getMicroSequence" resultType="int">
+        select nextval('swint.swint_mic_seq')
+    </select>
+
+    <select id="selectMicroDomain" parameterType="String" resultType="DbMicroDomain">
+        select	*
+        from	tb_micro_info
+        where	micro_service = #{MicroDomain}
+    </select>
+
+    <select id="selectMicroDomainByService" parameterType="String" resultMap="dbMicroDomainMap">
+        select	*
+        from	tb_micro_info
+        where	service = #{service}
+    </select>
+
+    <select id="selectContainerByMicro" parameterType="String" resultType="String">
+        select	c.container
+        from	tb_micro_info a,
+                tb_image_info b,
+                tb_container_info c
+        where	a.micro_service = #{micro}
+          and		a.micro_service = b.micro_service
+          and		b.image = c.image
+          and		c.container is not null
+        group by c.container
+    </select>
+
+    <select id="selectImageByMicro" parameterType="String" resultType="String">
+        select	b.image
+        from	tb_micro_info a,
+                tb_image_info b
+        where	a.micro_service = #{micro}
+          and		a.micro_service = b.micro_service
+    </select>
+
+    <select id="selectServiceByMicro" parameterType="String" resultType="String">
+        select	service
+        from	tb_micro_info
+        where	micro_service = #{micro}
+    </select>
+
+    <insert id="insertMicroDomain" parameterType="map">
+        insert into tb_micro_info
+        (
+            micro_service,
+            service,
+            micro_service_name,
+            micro_service_domain
+        ) values (
+                     #{obj.MicroDomain},
+                     #{obj.service},
+                     #{obj.MicroDomainName},
+                     #{obj.MicroDomainDomain}
+                 )
+    </insert>
+
+    <update id="updateMicroDomainName" parameterType="map">
+        update tb_micro_info set
+                                 micro_service_name	= #{obj.MicroDomainName},
+                                 mod_timestamp		= current_timestamp
+        where
+            micro_service		= #{obj.MicroDomain}
+    </update>
+
+    <update id="updateMicroDomainDomain" parameterType="map">
+        update tb_micro_info set
+                                 micro_service_domain	= #{obj.MicroDomainDomain},
+                                 mod_timestamp			= current_timestamp
+        where
+            micro_service			= #{obj.MicroDomain}
+    </update>
+
+    <delete id="deleteMicroDomain" parameterType="String">
+        delete from tb_micro_info
+        where
+            micro_service = #{MicroDomain}
+    </delete>
+
+    <delete id="deleteMicroDomainByService" parameterType="String">
+        delete from tb_micro_info
+        where
+            service = #{service}
+    </delete>
+
+    <delete id="deleteContainer" parameterType="String">
+        delete from tb_container_info
+        where
+            container = #{container}
+    </delete>
+
+</mapper>

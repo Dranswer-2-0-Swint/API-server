@@ -19,7 +19,7 @@ spec:
       - name: harbor-swint
       containers:
       - name: swint-was
-        image: harbor.svc.dranswer.co.kr/swint/swint-was:c61084b
+        image: harbor.dev.dranswer-g.co.kr/svc-plf/swint-was:b225ef2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
@@ -40,6 +40,10 @@ spec:
           value: cman-api-server.cman-system.svc.svc-plf
         - name: CMAN_PORT
           value: "80"
+        - name: AUTH_HOST
+          value: https://auth.dev.dranswer-g.co.kr
+        
+
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       

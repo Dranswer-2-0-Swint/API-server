@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.dto.db.DbMicroDomain;
+import com.t3q.dranswer.mapper.MicroDomainMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -50,6 +52,9 @@ public class MicroService {
 	
 	@Autowired
 	MicroServiceMapper microServiceMapper;
+
+	@Autowired
+	MicroDomainMapper microDomainMapper;
 	
 	private final RestTemplate restTemplate;
 	private final ApplicationProperties applicationProperties;
@@ -61,20 +66,22 @@ public class MicroService {
     }
     
 	public ServpotMicroServiceListReadRes readMicroServiceList(String service) {
+
 		log.info("MicroService : readMicroServiceList");
 		List<DbMicroService> dbMicroServiceList = microServiceMapper.selectMicroServiceByService(service);
-		
 		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
 		res.setMicroList(new ArrayList<>());
 		res.setServiceId(service);
+
 		for (DbMicroService dbMicroService : dbMicroServiceList) {
 			ServpotMicroServiceListReadResSub sub = new ServpotMicroServiceListReadResSub();
 			sub.setMicroId(dbMicroService.getMicroService());
 			sub.setMicroName(dbMicroService.getMicroServiceName());
-			sub.setMicroDomain(dbMicroService.getMicroServiceDomain());
+
+
 			res.getMicroList().add(sub);
 		}
-		
+
 		return res;
 	}
 	
@@ -93,9 +100,11 @@ public class MicroService {
 		res.setServiceId(dbMicroService.getService());
 		res.setMicroId(dbMicroService.getMicroService());
 		res.setMicroName(dbMicroService.getMicroServiceName());
-		
+
 		return res;
 	}
+
+
 	
 	public ServpotMicroServiceUpdateRes updateMicroService(ServpotMicroServiceUpdateReq microReq) {
 		log.info("MicroService : updateMicroService");
@@ -173,9 +182,13 @@ public class MicroService {
 		log.info("MicroService : createMicroServiceDomain");
 
 		DbMicroService dbMicroService = new DbMicroService();
+		DbMicroDomain dbMicroDomain = new DbMicroDomain();
+
 		dbMicroService.setMicroService(microReq.getMicroId());
-		dbMicroService.setMicroServiceDomain(microReq.getMicroDomain());
+		dbMicroDomain.setMicroService(microReq.getMicroId());
+		dbMicroDomain.setDomain(microReq.getMicroDomain());
 		microServiceMapper.updateMicroServiceDomain(dbMicroService);
+
 
 		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		res.setMicroId(microReq.getMicroId());
