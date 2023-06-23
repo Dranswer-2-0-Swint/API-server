@@ -15,7 +15,7 @@ public interface MicroDomainMapper {
     // 마이크로서비스도메인 조회 V
     public DbMicroDomain selectMicroDomain(@Param("microService") String microService);
     // 마이크로서비스도메인 목록 조회 V
-    public List<DbMicroDomain> selectMicroDomainDomainByService(@Param("service") String service);
+    public List<DbMicroDomain> selectMicroDomainByService(@Param("microService") String microService);
     // 마이크로서비스도메인 생성 V
     public int insertMicroDomain(@Param("obj") DbMicroDomain obj);
     // 마이크로서비스도메인 변경 V
