@@ -92,7 +92,7 @@ public class ImageService {
 				res.setModifyTime(cmanRes.getLastUpdateTime());
 				res.setStartTime(cmanRes.getLastDeployTime());
 				res.setStopTime(cmanRes.getLastRecycleTime());
-				res.setRunningTime(cmanRes.getTotalAge());
+				res.setRunningTime(String.valueOf(cmanRes.getTotalAge()));
 				
 			} catch (Exception e) {
 				e.printStackTrace();
