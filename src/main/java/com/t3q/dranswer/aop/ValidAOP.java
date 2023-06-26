@@ -40,7 +40,6 @@ public class ValidAOP {
     public Object SwintAuth(ProceedingJoinPoint joinPoint) throws Throwable {
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        //TODO getHeader 부분 "access_token" 으로 변경할 것
         String token = request.getHeader("access_token");
         String request_id = request.getHeader("request_id");
         //token = token.substring(7);

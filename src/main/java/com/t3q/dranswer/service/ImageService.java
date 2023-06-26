@@ -251,7 +251,7 @@ public class ImageService {
 						delContainerDomain(service, container);
 						setContainerDomain(service, container, domain);
 					}
-
+					//TODO 전처리하던가 말던가
 					// 3. 컨테이너 배포
 					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container);
 					log.info("container deploy success.\nenvName : " + cmanDeployRes.getEnvName());
@@ -775,7 +775,8 @@ public class ImageService {
 
 		return res;
 	}
-	
+	//TODO  CMAN에서 준 DTO받아서 만들고 여기에 포함시켜서 호출할 것! 마이크로도메인의 도메인이랑 컨테이너 도메인이랑 포트 비교 일치하는애를 연결 해준다.
+
 	public CmanContainerDeployRes setContainerDeploy(String service, String container) throws Exception {
 		CmanContainerDeployRes res = new CmanContainerDeployRes();
 		HttpHeaders headers = new HttpHeaders();
@@ -783,7 +784,12 @@ public class ImageService {
 		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
-		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		CmanContainerDomainCreateReq cmanReq = new CmanContainerDomainCreateReq();
+		cmanReq.setHasDomain(false);
+
+		HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(cmanReq, headers);
+
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DEPLOY_URL)
 				    .queryParam("projectName", "{projectName}")
@@ -855,8 +861,8 @@ public class ImageService {
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 		CmanContainerDomainCreateReq cmanReq = new CmanContainerDomainCreateReq();
-		cmanReq.setDomainName(domain);
-		cmanReq.setPort(80);		// fix
+		//cmanReq.setDomainName(domain);
+		//cmanReq.setPort(80);		// fix
 		HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(cmanReq, headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DOMAIN_CREATE_URL)
