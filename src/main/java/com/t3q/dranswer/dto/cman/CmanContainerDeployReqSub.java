@@ -4,8 +4,8 @@ package com.t3q.dranswer.dto.cman;
 import lombok.Data;
 
 @Data
-public class CmanContainerDomainSub {
+public class CmanContainerDeployReqSub {
     private String domain;
-    private int prot;
+    private int port;
     private String path;
 }

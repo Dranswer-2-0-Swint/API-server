@@ -8,8 +8,10 @@ import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.cman.*;
 import com.t3q.dranswer.dto.db.DbContainer;
 import com.t3q.dranswer.dto.db.DbImage;
+import com.t3q.dranswer.dto.db.DbMicroDomain;
 import com.t3q.dranswer.dto.servpot.*;
 import com.t3q.dranswer.mapper.ImageMapper;
+import com.t3q.dranswer.mapper.MicroDomainMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -23,9 +25,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
+import java.util.stream.Stream;
 
 
 @Log4j2
@@ -34,7 +37,10 @@ public class ImageService {
 	
 	@Autowired
 	ImageMapper imageMapper;
-	
+
+	@Autowired
+	MicroDomainMapper microDomainMapper;
+
 	private final RestTemplate restTemplate;
 	private final ApplicationProperties applicationProperties;
 	
@@ -83,7 +89,7 @@ public class ImageService {
 		if (container != null && !dbImage.getImageStatus().equals(Constants.STATUS_IMAGE_UPLOAD_FAILED)) {
 			for (DbContainer dbCon : dbContainerList) {
 				ServpotImageReadResSub sub = new ServpotImageReadResSub();
-				sub.setImageDomain(dbCon.getContainerDomain());
+				sub.setImageDomain(dbCon.getDomain());
 				res.getImageDomainList().add(sub);
 			}
 	
@@ -140,7 +146,7 @@ public class ImageService {
 						DbContainer dbContainer = new DbContainer();
 						dbContainer.setImage(image);
 						dbContainer.setContainer(container);
-						dbContainer.setContainerDomain(innerDomain);
+						dbContainer.setDomain(innerDomain);
 						containerList.add(dbContainer);
 					}
 					imageMapper.deleteContainerByImage(image);
@@ -226,7 +232,7 @@ public class ImageService {
 		DbImage dbImage = imageMapper.selectImage(imageReq.getImageId());
 		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
 		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
-		String domain = imageMapper.selectDomainByMicro(dbImage.getMicroService());
+		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByService(dbImage.getMicroService());
 		
 		if (dbImage == null || service == null) {
 			throw new Exception(Constants.E40004);
@@ -244,17 +250,40 @@ public class ImageService {
 					// 1. 컨테이너 정보 조회
 					CmanContainerReadRes cmanRes = getContainerInfo(container);
 
-					// 2. 컨테이너 도메인 설정
-					if (!StringUtils.hasText(domain) && StringUtils.hasText(cmanRes.getDomain())) {
-						delContainerDomain(service, container);
-					} else if (StringUtils.hasText(domain) && !domain.equals(cmanRes.getDomain())) {
-						delContainerDomain(service, container);
-						setContainerDomain(service, container, domain);
+					//TODO 수정하라고 신주임.
+					CmanContainerDeployReq cmanDeployReq = new CmanContainerDeployReq();
+					cmanDeployReq.setDomains(new ArrayList<>());
+
+					if (!microDomains.isEmpty()) {
+
+						//이미지id로 컨테이너 목록 가져오기
+						List<DbContainer> dbContainerList = imageMapper.selectContainerByImage(imageReq.getImageId());
+
+						for(DbContainer dbContainer : dbContainerList) {
+
+							//DbMicroDomain dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
+							Optional<DbMicroDomain> dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
+							//if (dbMicroDomain != null) {
+							if (dbMicroDomain.isPresent()) {
+
+								CmanContainerDeployReqSub cmanContainerDomainSub = new CmanContainerDeployReqSub();
+								cmanContainerDomainSub.setDomain(dbMicroDomain.get().getDomain());
+								cmanContainerDomainSub.setPort(dbMicroDomain.get().getPort());
+								cmanContainerDomainSub.setPath(dbMicroDomain.get().getPath());
+								cmanDeployReq.setHas_domain(true);
+								cmanDeployReq.getDomains().add(cmanContainerDomainSub);
+							}
+
+//							boolean match = microDomains.stream().anyMatch(s -> s.getPort() == (dbContainer.getPort()));
+//							if(match){
+//
+//							}
+//							String findport = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).toString();
+//							if()
+
+						}
 					}
-
-					// 컨테이너의 "포트개방"이 1개라고 가정한다.
-
-					//TODO 전처리하던가 말던가
+					//넵!
 					// 3. 컨테이너 배포
 					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container);
 					log.info("container deploy success.\nenvName : " + cmanDeployRes.getEnvName());
@@ -603,7 +632,7 @@ public class ImageService {
 					DbContainer container = new DbContainer();
 					container.setImage(imageId);
 					container.setContainer(containerId);
-					container.setContainerDomain(innerDomain);
+					container.setDomain(innerDomain);
 					containerList.add(container);
 				}
 				imageMapper.insertContainer(containerList);
