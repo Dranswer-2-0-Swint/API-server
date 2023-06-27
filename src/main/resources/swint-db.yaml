@@ -26,6 +26,9 @@ spec:
         volumeMounts:
         - name: pgdata
           mountPath: /var/lib/pgsql/13/data/
+        env:
+          - name: TZ
+            value: "Asia/Seoul"
       volumes:
       - name: pgdata
         hostPath:

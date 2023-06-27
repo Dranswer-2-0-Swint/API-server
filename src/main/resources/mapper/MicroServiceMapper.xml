@@ -59,7 +59,7 @@
 		(
 			micro_service,
 			service,
-			micro_service_name,
+			micro_service_name
 		) values (
 			#{obj.microService},
 			#{obj.service},

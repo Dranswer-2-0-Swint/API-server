@@ -251,6 +251,9 @@ public class ImageService {
 						delContainerDomain(service, container);
 						setContainerDomain(service, container, domain);
 					}
+
+					// 컨테이너의 "포트개방"이 1개라고 가정한다.
+
 					//TODO 전처리하던가 말던가
 					// 3. 컨테이너 배포
 					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container);
@@ -785,10 +788,9 @@ public class ImageService {
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 
-		CmanContainerDomainCreateReq cmanReq = new CmanContainerDomainCreateReq();
-		cmanReq.setHasDomain(false);
 
-		HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(cmanReq, headers);
+
+		HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(headers);
 
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DEPLOY_URL)

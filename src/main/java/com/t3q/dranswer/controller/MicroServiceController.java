@@ -145,7 +145,6 @@ public class MicroServiceController {
 	public ResponseEntity<Object> updateMicroServiceDomain(HttpServletRequest request,
 														   @RequestBody @Valid final ServpotMicroServiceDomainPutReq microReq){
 
-		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
 
 		try {

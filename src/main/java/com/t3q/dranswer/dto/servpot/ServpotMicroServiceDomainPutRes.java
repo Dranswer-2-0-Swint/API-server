@@ -13,5 +13,5 @@ public class ServpotMicroServiceDomainPutRes extends ApiResponse{
     private String microId;				// 마이크로서비스ID
     private String microDomain;			// 마이크로서비스 도메인
     private String microPath; 			// 마이크로서비스 도메인 패스
-    private String microPort;			// 마이크로서비스 도메인 포트
+    private int microPort;			// 마이크로서비스 도메인 포트
 }

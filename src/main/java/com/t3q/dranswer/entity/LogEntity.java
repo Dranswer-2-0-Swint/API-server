@@ -33,6 +33,6 @@ public class LogEntity {
     LocalDateTime res_dt;
     String res_msg;
     int res_status;
-    String qry_prm;
+    String req_prm;
 
 }

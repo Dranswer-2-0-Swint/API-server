@@ -16,6 +16,6 @@ public class ServpotMicroServiceDomainPostReq {
     @NotNull
     private  String microDomainPath;    // 마이크로서비스 도메인 패스
     @NotNull
-    private  String microDomainPort;    // 마이크로 서비스 도메인 포트
+    private  int microDomainPort;    // 마이크로 서비스 도메인 포트
 
 }

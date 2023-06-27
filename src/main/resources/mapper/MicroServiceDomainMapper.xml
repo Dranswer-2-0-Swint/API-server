@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.t3q.dranswer.mapper.MicroServiceDomainMapper">
+<mapper namespace="com.t3q.dranswer.mapper.MicroDomainMapper">
 
-    <resultMap type="DbMicroService" id="dbMicroDomainMap">
+    <resultMap type="DbMicroDomain" id="dbMicroDomainMap">
         <result property="microService"			column="micro_service" />
         <result property="domain"				column="domain" />
         <result property="path"		            column="path" />
@@ -19,25 +19,20 @@
 
     <select id="selectMicroDomain" parameterType="String" resultType="DbMicroDomain">
         select	*
-        from	tb_micro_domain_info
+        from	tb_micro_domain
         where	micro_service = #{microService}
     </select>
 
 
-    <select id="selectContainerByMicro" parameterType="String" resultType="String">
-        select	c.container
-        from	tb_micro_domain_info a,
-                tb_image_info b,
-                tb_container_info c
-        where	a.micro_service = #{micro}
-          and		a.micro_service = b.micro_service
-          and		b.image = c.image
-          and		c.container is not null
-        group by c.container
+    <select id="selectMicroDomainByService" parameterType="String" resultMap="dbMicroDomainMap">
+        select	*
+        from	tb_micro_domain
+        where	micro_service = #{microService}
     </select>
 
+
     <insert id="insertMicroDomain" parameterType="map">
-        insert into tb_micro_info
+        insert into tb_micro_domain
         (
             micro_service,
             domain,
@@ -53,15 +48,17 @@
 
 
     <update id="updateMicroDomain" parameterType="map">
-        update tb_micro_info set
+        update tb_micro_domain set
                                  domain	                = #{obj.domain},
+                                 path                   = #{obj.path},
+                                 port                   = #{obj.port},
                                  mod_timestamp			= current_timestamp
         where
             micro_service			= #{obj.microService}
     </update>
 
     <delete id="deleteMicroDomain" parameterType="String">
-        delete from tb_micro_domain_info
+        delete from tb_micro_domain
         where
             micro_service = #{microService}
     </delete>

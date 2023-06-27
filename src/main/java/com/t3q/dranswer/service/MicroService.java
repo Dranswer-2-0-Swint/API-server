@@ -173,16 +173,15 @@ public class MicroService {
 	public ServpotMicroServiceDomainPostRes createMicroServiceDomain(ServpotMicroServiceDomainPostReq microReq) {
 		log.info("MicroService : createMicroServiceDomain");
 
-		DbMicroService dbMicroService = new DbMicroService();
 		DbMicroDomain dbMicroDomain = new DbMicroDomain();
 
-		dbMicroService.setMicroService(microReq.getMicroId());
 		dbMicroDomain.setMicroService(microReq.getMicroId());
 		dbMicroDomain.setDomain(microReq.getMicroDomain());
-		microServiceMapper.updateMicroServiceDomain(dbMicroService);
+		dbMicroDomain.setPath(microReq.getMicroDomainPath());
+		dbMicroDomain.setPort(microReq.getMicroDomainPort());
 
+		microDomainMapper.insertMicroDomain(dbMicroDomain);
 
-		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		ServpotMicroServiceDomainPostRes res = new ServpotMicroServiceDomainPostRes();
 		res.setMicroId(microReq.getMicroId());
 		res.setMicroDomain(microReq.getMicroDomain());
@@ -195,16 +194,16 @@ public class MicroService {
 
 	//TODO 마이크로서비스 도메인 설정 후 돌려줄 RES 만들기 V
 	public ServpotMicroServiceDomainPutRes updateMicroServiceDomain(ServpotMicroServiceDomainPutReq microReq){
-		DbMicroService dbMicroService = new DbMicroService();
+
 		DbMicroDomain dbMicroDomain = new DbMicroDomain();
 
-		dbMicroService.setMicroService(microReq.getMicroId());
 		dbMicroDomain.setMicroService(microReq.getMicroId());
 		dbMicroDomain.setDomain(microReq.getMicroDomain());
-		microServiceMapper.updateMicroServiceDomain(dbMicroService);
+		dbMicroDomain.setPath(microReq.getMicroDomainPath());
+		dbMicroDomain.setPort(microReq.getMicroDomainPort());
 
+		microDomainMapper.updateMicroDomain(dbMicroDomain);
 
-		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
 		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
 		res.setMicroId(microReq.getMicroId());
 		res.setMicroDomain(microReq.getMicroDomain());

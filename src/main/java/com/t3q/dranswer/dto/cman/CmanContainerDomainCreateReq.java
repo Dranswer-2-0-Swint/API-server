@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class CmanContainerDomainCreateReq {
 
-	private boolean	 hasDomain;
-	private List<CmanContainerDomain> domainList;
+	private String domainName;				// 도메인명
+	private int port;						// 포트
 }
 
