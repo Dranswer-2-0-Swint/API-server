@@ -3,6 +3,7 @@ package com.t3q.dranswer.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.db.DbMicroDomain;
@@ -195,20 +196,29 @@ public class MicroService {
 	//TODO 마이크로서비스 도메인 설정 후 돌려줄 RES 만들기 V
 	public ServpotMicroServiceDomainPutRes updateMicroServiceDomain(ServpotMicroServiceDomainPutReq microReq){
 
-		DbMicroDomain dbMicroDomain = new DbMicroDomain();
+		ServpotMicroServiceDomainPutReq servpotMicroServiceDomainPutReq = new ServpotMicroServiceDomainPutReq();
 
-		dbMicroDomain.setMicroService(microReq.getMicroId());
-		dbMicroDomain.setDomain(microReq.getMicroDomain());
-		dbMicroDomain.setPath(microReq.getMicroDomainPath());
-		dbMicroDomain.setPort(microReq.getMicroDomainPort());
+		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByService(microReq.getMicroId());
 
-		microDomainMapper.updateMicroDomain(dbMicroDomain);
+		for(DbMicroDomain microDomain: microDomains) {
+
+			if( microDomain.getDomain() == microReq.getPresentMicroDomain()){
+				servpotMicroServiceDomainPutReq.setMicroDomainPath(microReq.getMicroDomainPath());
+				servpotMicroServiceDomainPutReq.setRenewMicroDomain(microReq.getRenewMicroDomain());
+				servpotMicroServiceDomainPutReq.setMicroDomainPort(microReq.getMicroDomainPort());
+				servpotMicroServiceDomainPutReq.setPresentMicroDomain(microReq.getPresentMicroDomain());
+
+			}
+
+		}
+
+		microDomainMapper.updateMicroDomain(servpotMicroServiceDomainPutReq);
 
 		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
 		res.setMicroId(microReq.getMicroId());
-		res.setMicroDomain(microReq.getMicroDomain());
-		res.setMicroPath(microReq.getMicroDomainPath());
-		res.setMicroPort(microReq.getMicroDomainPort());
+		res.setRenewMicroDomain(microReq.getRenewMicroDomain());
+		res.setMicroDomainPath(microReq.getMicroDomainPath());
+		res.setMicroDomainPort(microReq.getMicroDomainPort());
 
 		return res;
 	}

@@ -250,7 +250,6 @@ public class ImageService {
 					// 1. 컨테이너 정보 조회
 					CmanContainerReadRes cmanRes = getContainerInfo(container);
 
-					//TODO 수정하라고 신주임.
 					CmanContainerDeployReq cmanDeployReq = new CmanContainerDeployReq();
 					cmanDeployReq.setDomains(new ArrayList<>());
 
@@ -260,10 +259,8 @@ public class ImageService {
 						List<DbContainer> dbContainerList = imageMapper.selectContainerByImage(imageReq.getImageId());
 
 						for(DbContainer dbContainer : dbContainerList) {
-
-							//DbMicroDomain dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
 							Optional<DbMicroDomain> dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
-							//if (dbMicroDomain != null) {
+
 							if (dbMicroDomain.isPresent()) {
 
 								CmanContainerDeployReqSub cmanContainerDomainSub = new CmanContainerDeployReqSub();
@@ -274,16 +271,8 @@ public class ImageService {
 								cmanDeployReq.getDomains().add(cmanContainerDomainSub);
 							}
 
-//							boolean match = microDomains.stream().anyMatch(s -> s.getPort() == (dbContainer.getPort()));
-//							if(match){
-//
-//							}
-//							String findport = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).toString();
-//							if()
-
 						}
 					}
-					//넵!
 					// 3. 컨테이너 배포
 					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container);
 					log.info("container deploy success.\nenvName : " + cmanDeployRes.getEnvName());
