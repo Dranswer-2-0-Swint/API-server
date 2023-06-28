@@ -47,12 +47,6 @@
     	where	micro_service = #{microService}
     </select>
 
-    <select id="selectDomainByMicro" parameterType="String" resultType="String">
-    	select	micro_service_domain
-    	from	tb_micro_info
-    	where	micro_service = #{microService}
-    </select>
-
     <insert id="insertImage" parameterType="map">
 		insert into tb_image_info
 		(
@@ -149,7 +143,7 @@
 		(
 			image,
 			container,
-			container_domain
+			domain
 		) values
 		<foreach collection="list" item="obj" separator=",">
 		(

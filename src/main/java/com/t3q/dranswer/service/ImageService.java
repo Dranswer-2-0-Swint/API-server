@@ -234,39 +234,34 @@ public class ImageService {
 	public ServpotImageStatusRes updateImageStatus(ServpotImageStatusUpdateReq imageReq) throws Exception {
 		log.info("ImageService : updateImageStatus");
 		DbImage dbImage = imageMapper.selectImage(imageReq.getImageId());
-		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
-		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
-		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByService(dbImage.getMicroService());
-		
-		if (dbImage == null || service == null) {
+		if (dbImage == null) {
 			throw new Exception(Constants.E40004);
 		}
-		
+		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
+		if (service == null) {
+			throw new Exception(Constants.E40004);
+		}
+		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
+		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByMicro(dbImage.getMicroService());
+
 		ServpotImageStatusRes res = new ServpotImageStatusRes();
 		res.setImageId(imageReq.getImageId());
 		
 		if (container != null) {
 			if (imageReq.getImageStatus().equals(Constants.STATUS_RUN)) {
-
 				imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_POD_DEPLOYING, Constants.DETAIL_DEPLOYING);
-			
 				try {
 					// 1. 컨테이너 정보 조회
 					CmanContainerReadRes cmanRes = getContainerInfo(container);
-
 					CmanContainerDeployReq cmanDeployReq = new CmanContainerDeployReq();
 					cmanDeployReq.setDomains(new ArrayList<>());
 
 					if (!microDomains.isEmpty()) {
-
 						//이미지id로 컨테이너 목록 가져오기
 						List<DbContainer> dbContainerList = imageMapper.selectContainerByImage(imageReq.getImageId());
-
 						for(DbContainer dbContainer : dbContainerList) {
 							Optional<DbMicroDomain> dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
-
 							if (dbMicroDomain.isPresent()) {
-
 								CmanContainerDeployReqSub cmanContainerDomainSub = new CmanContainerDeployReqSub();
 								cmanContainerDomainSub.setDomain(dbMicroDomain.get().getDomain());
 								cmanContainerDomainSub.setPort(dbMicroDomain.get().getPort());
@@ -274,11 +269,11 @@ public class ImageService {
 								cmanDeployReq.setHas_domain(true);
 								cmanDeployReq.getDomains().add(cmanContainerDomainSub);
 							}
-
 						}
 					}
+
 					// 3. 컨테이너 배포
-					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container);
+					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container, cmanDeployReq);
 					log.info("container deploy success.\nenvName : " + cmanDeployRes.getEnvName());
 					dbImage.setImageStatus(Constants.STATUS_POD_DEPLOYING);
 					dbImage.setImageStatusDetail(Constants.DETAIL_DEPLOYING);
@@ -823,7 +818,7 @@ public class ImageService {
 	}
 	//TODO  CMAN에서 준 DTO받아서 만들고 여기에 포함시켜서 호출할 것! 마이크로도메인의 도메인이랑 컨테이너 도메인이랑 포트 비교 일치하는애를 연결 해준다.
 
-	public CmanContainerDeployRes setContainerDeploy(String service, String container) throws Exception {
+	public CmanContainerDeployRes setContainerDeploy(String service, String container, CmanContainerDeployReq cmanReq) throws Exception {
 		CmanContainerDeployRes res = new CmanContainerDeployRes();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -831,10 +826,7 @@ public class ImageService {
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 
-
-
-		HttpEntity<CmanContainerDomainCreateReq> entity = new HttpEntity<>(headers);
-
+		HttpEntity<CmanContainerDeployReq> entity = new HttpEntity<>(cmanReq, headers);
 		URI uri = UriComponentsBuilder
 			    	.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_DEPLOY_URL)
 				    .queryParam("projectName", "{projectName}")
@@ -987,7 +979,6 @@ public class ImageService {
 	}
 
 	//요거는 지우지 말아봐 씨맨에서 지운거
-
 	public CmanContainerDomainCreateDeleteRes delContainerDomain(String service, String container) throws Exception {
 		CmanContainerDomainCreateDeleteRes res = new CmanContainerDomainCreateDeleteRes();
 		HttpHeaders headers = new HttpHeaders();

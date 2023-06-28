@@ -91,13 +91,13 @@ public class AppService {
 			    	.encode()
 			    	.toUri();
 		try {
-			ResponseEntity<CmanInitProjectRes> cmanRes = restTemplate.exchange(	uri, 
-																				HttpMethod.POST, 
-																				entity, 
-																				CmanInitProjectRes.class);
-			if (cmanRes.getStatusCode() == HttpStatus.OK) {
-				log.info("message : " + cmanRes.getBody().getMessage());
-			}
+//			ResponseEntity<CmanInitProjectRes> cmanRes = restTemplate.exchange(	uri,
+//																				HttpMethod.POST,
+//																				entity,
+//																				CmanInitProjectRes.class);
+//			if (cmanRes.getStatusCode() == HttpStatus.OK) {
+//				log.info("message : " + cmanRes.getBody().getMessage());
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e.getMessage());

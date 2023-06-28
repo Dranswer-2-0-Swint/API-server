@@ -122,10 +122,10 @@ public class MicroServiceController {
 	@PostMapping("/domain")
 	@SwintValid
 	public ResponseEntity<Object> createMicroServiceDomain(HttpServletRequest request, 
-														@RequestBody @Valid final ServpotMicroServiceDomainPostReq microReq) {
+														@RequestBody @Valid final ServpotMicroServiceDomainCreateReq microReq) {
 		
 		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
-		ServpotMicroServiceDomainPostRes res = new ServpotMicroServiceDomainPostRes();
+		ServpotMicroServiceDomainCreateRes res = new ServpotMicroServiceDomainCreateRes();
 		
 		try {
 			res = microService.createMicroServiceDomain(microReq);
@@ -143,9 +143,9 @@ public class MicroServiceController {
 	@PutMapping("/domain")
 	@SwintValid
 	public ResponseEntity<Object> updateMicroServiceDomain(HttpServletRequest request,
-														   @RequestBody @Valid final ServpotMicroServiceDomainPutReq microReq){
+														   @RequestBody @Valid final ServpotMicroServiceDomainUpdateReq microReq){
 
-		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
+		ServpotMicroServiceDomainUpdateRes res = new ServpotMicroServiceDomainUpdateRes();
 
 		try {
 			res = microService.updateMicroServiceDomain(microReq);
@@ -168,7 +168,7 @@ public class MicroServiceController {
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
 		
 		try {
-			res = microService.deleteMicroServiceDomain(microReq.getMicroId());
+			res = microService.deleteMicroServiceDomain(microReq);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

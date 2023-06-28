@@ -36,7 +36,6 @@
     	where	a.micro_service = #{micro}
     	and		a.micro_service = b.micro_service
     	and		b.image = c.image 
-    	and		c.container is not null
     	group by c.container
     </select>
 

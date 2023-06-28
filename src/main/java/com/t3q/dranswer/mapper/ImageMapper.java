@@ -23,8 +23,6 @@ public interface ImageMapper {
 	// 마이크로서비스ID로 이미지 목록 조회
 	public List<DbImage> selectImageByMicro(@Param("microService") String microService);
 	// 마이크로서비스 도메인 조회
-	public String selectDomainByMicro(@Param("microService") String microService);
-	// 이미지 등록
 	public int insertImage(@Param("obj") DbImage obj);
 	// 이미지 이름 변경(harbor)
 	public int updateImageRealName(@Param("image") String image, @Param("imageRealName") String imageRealName);

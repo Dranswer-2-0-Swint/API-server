@@ -13,5 +13,6 @@ public class ServpotMicroServiceDomainDeleteReq {
 
 	@NotNull
 	private String microId;				// 마이크로서비스ID
+	private String domain;				// 마이크로서비스도메인
 
 }

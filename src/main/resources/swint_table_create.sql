@@ -252,13 +252,13 @@ ALTER TABLE swint.tb_container_info ADD CONSTRAINT tb_container_info_fk FOREIGN 
 -- DROP TABLE swint.tb_api_log;
 
 CREATE TABLE swint.tb_api_log (
-                                  seq_id bigint NOT NULL,
+                                  seq_id bigint NOT NULL DEFAULT NEXTVAL('swint.swint_api_seq'::regclass),
                                   req_id varchar NOT NULL, -- 요청ID
                                   req_user varchar NOT NULL, -- API 요청자
                                   req_md varchar NOT NULL, -- API Method
                                   req_uri varchar NOT NULL, -- API URI
-                                  req_prm varchar NOT NULL, -- 요청 param
-                                  req_body varchar NOT NULL, -- 요청 Body
+                                  req_prm varchar NULL, -- 요청 param
+                                  req_body varchar NULL, -- 요청 Body
                                   req_dt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 요청 일시
                                   res_user varchar NOT NULL, -- API 응답자
                                   res_msg varchar NOT NULL, -- 응답 메시지

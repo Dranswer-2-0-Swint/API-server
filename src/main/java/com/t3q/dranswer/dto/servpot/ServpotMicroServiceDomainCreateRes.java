@@ -7,12 +7,12 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainPostRes extends ApiResponse{
+public class ServpotMicroServiceDomainCreateRes extends ApiResponse{
 
     private String requestId;			// 요청ID
     private String microId;				// 마이크로서비스ID
-    private String microDomain;			// 마이크로서비스 도메인
-    private String microPath; 			// 마이크로서비스 도메인 패스
-    private int microPort;			// 마이크로서비스 도메인 포트
+    private String domain;		    	// 마이크로서비스 도메인
+    private String path; 		    	// 마이크로서비스 도메인 패스
+    private int port;			        // 마이크로서비스 도메인 포트
 
 }
