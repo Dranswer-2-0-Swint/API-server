@@ -19,7 +19,7 @@ spec:
       - name: harbor-swint
       containers:
       - name: swint-was
-        image: harbor.svc.dranswer.co.kr/swint/swint-was:c61084b
+        image: harbor.dev.dranswer-g.co.kr/svc-plf/swint-was:3bcc424-230626
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
@@ -37,9 +37,14 @@ spec:
         - name: DB_HOST
           value: swint-db.swint-system.svc.svc-plf
         - name: CMAN_HOST
-          value: cman-api-server.cman-system.svc.svc-plf
+          value: http://cman-api-server.cman-system.svc.svc-plf
         - name: CMAN_PORT
           value: "80"
+        - name: AUTH_HOST
+          value: http://172.16.200.10
+        - name: TZ
+          value: "Asia/Seoul"        
+
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       

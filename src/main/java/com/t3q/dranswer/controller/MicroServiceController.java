@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.dto.servpot.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,17 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.t3q.dranswer.common.util.ResponseUtil;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDeleteReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateRes;
 import com.t3q.dranswer.service.MicroService;
 
 import lombok.extern.log4j.Log4j2;
@@ -42,6 +32,7 @@ public class MicroServiceController {
 
 	@Autowired
 	MicroService microService;
+
 	
 	// 마이크로서비스 목록 조회
 	@GetMapping("/list")
@@ -67,7 +58,6 @@ public class MicroServiceController {
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
-	
 	// 마이크로서비스 생성
 	@PostMapping()
 	@SwintValid
@@ -132,9 +122,10 @@ public class MicroServiceController {
 	@PostMapping("/domain")
 	@SwintValid
 	public ResponseEntity<Object> createMicroServiceDomain(HttpServletRequest request, 
-														@RequestBody @Valid final ServpotMicroServiceDomainMergeReq microReq) {
+														@RequestBody @Valid final ServpotMicroServiceDomainPostReq microReq) {
 		
-		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
+		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
+		ServpotMicroServiceDomainPostRes res = new ServpotMicroServiceDomainPostRes();
 		
 		try {
 			res = microService.createMicroServiceDomain(microReq);
@@ -147,7 +138,27 @@ public class MicroServiceController {
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
-	
+
+	//TODO put으로 updateMicroServiceDomain 맹글것 V
+	@PutMapping("/domain")
+	@SwintValid
+	public ResponseEntity<Object> updateMicroServiceDomain(HttpServletRequest request,
+														   @RequestBody @Valid final ServpotMicroServiceDomainPutReq microReq){
+
+		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
+
+		try {
+			res = microService.updateMicroServiceDomain(microReq);
+		}catch (Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage());
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()),
+					new HttpHeaders(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
+	}
 	// 마이크로서비스 도메인 삭제
 	@DeleteMapping("/domain")
 	@SwintValid

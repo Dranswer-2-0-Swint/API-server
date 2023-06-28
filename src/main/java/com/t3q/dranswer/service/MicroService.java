@@ -3,9 +3,11 @@ package com.t3q.dranswer.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.dto.db.DbMicroDomain;
+import com.t3q.dranswer.dto.servpot.*;
+import com.t3q.dranswer.mapper.MicroDomainMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,16 +25,6 @@ import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.cman.CmanImageDeleteRes;
 import com.t3q.dranswer.dto.db.DbMicroService;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceCreateRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceDomainMergeRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceListReadResSub;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateReq;
-import com.t3q.dranswer.dto.servpot.ServpotMicroServiceUpdateRes;
 import com.t3q.dranswer.mapper.ImageMapper;
 import com.t3q.dranswer.mapper.MicroServiceMapper;
 
@@ -50,6 +42,9 @@ public class MicroService {
 	
 	@Autowired
 	MicroServiceMapper microServiceMapper;
+
+	@Autowired
+	MicroDomainMapper microDomainMapper;
 	
 	private final RestTemplate restTemplate;
 	private final ApplicationProperties applicationProperties;
@@ -61,22 +56,26 @@ public class MicroService {
     }
     
 	public ServpotMicroServiceListReadRes readMicroServiceList(String service) {
+
 		log.info("MicroService : readMicroServiceList");
 		List<DbMicroService> dbMicroServiceList = microServiceMapper.selectMicroServiceByService(service);
-		
 		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
 		res.setMicroList(new ArrayList<>());
 		res.setServiceId(service);
+
 		for (DbMicroService dbMicroService : dbMicroServiceList) {
 			ServpotMicroServiceListReadResSub sub = new ServpotMicroServiceListReadResSub();
 			sub.setMicroId(dbMicroService.getMicroService());
 			sub.setMicroName(dbMicroService.getMicroServiceName());
-			sub.setMicroDomain(dbMicroService.getMicroServiceDomain());
+
+
 			res.getMicroList().add(sub);
 		}
-		
+
 		return res;
 	}
+
+
 	
 	public ServpotMicroServiceCreateRes createMicroService(ServpotMicroServiceCreateReq microReq) {
 		log.info("MicroService : createMicroService");
@@ -93,9 +92,11 @@ public class MicroService {
 		res.setServiceId(dbMicroService.getService());
 		res.setMicroId(dbMicroService.getMicroService());
 		res.setMicroName(dbMicroService.getMicroServiceName());
-		
+
 		return res;
 	}
+
+
 	
 	public ServpotMicroServiceUpdateRes updateMicroService(ServpotMicroServiceUpdateReq microReq) {
 		log.info("MicroService : updateMicroService");
@@ -168,22 +169,51 @@ public class MicroService {
 
 		return res;
 	}
-	
-	public ServpotMicroServiceDomainMergeRes createMicroServiceDomain(ServpotMicroServiceDomainMergeReq microReq) {
+	//TODO 수정해야됌 ServpotMicroServiceDomainPostReq으로 변경후 mapper 사용할 것 V
+	public ServpotMicroServiceDomainPostRes createMicroServiceDomain(ServpotMicroServiceDomainPostReq microReq) {
 		log.info("MicroService : createMicroServiceDomain");
 
-		DbMicroService dbMicroService = new DbMicroService();
-		dbMicroService.setMicroService(microReq.getMicroId());
-		dbMicroService.setMicroServiceDomain(microReq.getMicroDomain());
-		microServiceMapper.updateMicroServiceDomain(dbMicroService);
+		DbMicroDomain dbMicroDomain = new DbMicroDomain();
 
-		ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
+		dbMicroDomain.setMicroService(microReq.getMicroId());
+		dbMicroDomain.setDomain(microReq.getMicroDomain());
+		dbMicroDomain.setPath(microReq.getMicroDomainPath());
+		dbMicroDomain.setPort(microReq.getMicroDomainPort());
+
+		microDomainMapper.insertMicroDomain(dbMicroDomain);
+
+		ServpotMicroServiceDomainPostRes res = new ServpotMicroServiceDomainPostRes();
 		res.setMicroId(microReq.getMicroId());
 		res.setMicroDomain(microReq.getMicroDomain());
+		res.setMicroPath(microReq.getMicroDomainPath());
+		res.setMicroPort(microReq.getMicroDomainPort());
 
 		return res;
 	}
-	
+
+
+	//TODO 마이크로서비스 도메인 설정 후 돌려줄 RES 만들기 V
+	public ServpotMicroServiceDomainPutRes updateMicroServiceDomain(ServpotMicroServiceDomainPutReq microReq){
+
+		DbMicroDomain dbMicroDomain = new DbMicroDomain();
+
+		dbMicroDomain.setMicroService(microReq.getMicroId());
+		dbMicroDomain.setDomain(microReq.getMicroDomain());
+		dbMicroDomain.setPath(microReq.getMicroDomainPath());
+		dbMicroDomain.setPort(microReq.getMicroDomainPort());
+
+		microDomainMapper.updateMicroDomain(dbMicroDomain);
+
+		ServpotMicroServiceDomainPutRes res = new ServpotMicroServiceDomainPutRes();
+		res.setMicroId(microReq.getMicroId());
+		res.setMicroDomain(microReq.getMicroDomain());
+		res.setMicroPath(microReq.getMicroDomainPath());
+		res.setMicroPort(microReq.getMicroDomainPort());
+
+		return res;
+	}
+
+
 	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(String microId) {
 		log.info("MicroService : deleteMicroServiceDomain");
 

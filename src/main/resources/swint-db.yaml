@@ -19,13 +19,16 @@ spec:
       - name: harbor-swint
       containers:
       - name: swint-db
-        image: harbor.svc.dranswer.co.kr/swint/swint-db:c61084b
+        image: harbor.dev.dranswer-g.co.kr/svc-plf/swint-db:b225ef2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5432
         volumeMounts:
         - name: pgdata
           mountPath: /var/lib/pgsql/13/data/
+        env:
+          - name: TZ
+            value: "Asia/Seoul"
       volumes:
       - name: pgdata
         hostPath:

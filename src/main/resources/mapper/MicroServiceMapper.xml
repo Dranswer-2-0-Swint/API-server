@@ -8,7 +8,6 @@
 		<result property="microService"			column="micro_service" />
 		<result property="service"				column="service" />
 		<result property="microServiceName"		column="micro_service_name" />
-		<result property="microServiceDomain"	column="micro_service_domain" />
 		<result property="modTimestamp"			column="mod_timestamp" />
 		<result property="regTimestamp"			column="reg_timestamp" />
     </resultMap>
@@ -60,13 +59,11 @@
 		(
 			micro_service,
 			service,
-			micro_service_name,
-			micro_service_domain
+			micro_service_name
 		) values (
 			#{obj.microService},
 			#{obj.service},
-			#{obj.microServiceName},
-			#{obj.microServiceDomain}
+			#{obj.microServiceName}
 		)
     </insert>
     
@@ -78,13 +75,6 @@
 			micro_service		= #{obj.microService}
     </update>
 
-	<update id="updateMicroServiceDomain" parameterType="map">
-		update tb_micro_info set
-			micro_service_domain	= #{obj.microServiceDomain},
-			mod_timestamp			= current_timestamp
-		where
-			micro_service			= #{obj.microService}
-    </update>
 
 	<delete id="deleteMicroService" parameterType="String">
 		delete from tb_micro_info

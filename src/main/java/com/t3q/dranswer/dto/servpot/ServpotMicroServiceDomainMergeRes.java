@@ -12,5 +12,4 @@ public class ServpotMicroServiceDomainMergeRes extends ApiResponse {
 	private String requestId;			// 요청ID
 	private String microId;				// 마이크로서비스ID
 	private String microDomain;			// 마이크로서비스 도메인
-
 }
