@@ -47,15 +47,25 @@
     </insert>
 
 
-    <update id="updateMicroDomain" parameterType="map">
+    <update id="updateMicroDomain" parameterType="DbMicroDomain">
         update tb_micro_domain set
-                                 domain	                = #{obj.domain},
+                                 domain	                = #{obj.renewMicroDomain},
                                  path                   = #{obj.path},
                                  port                   = #{obj.port},
                                  mod_timestamp			= current_timestamp
         where
             micro_service			= #{obj.microService}
+        and
+            domain                  = #{obj.PresentMicroDomain}
+
     </update>
+
+    <select id="selectMicroDomainByServiceAndDomain" parameterType="DbMicroDomain">
+        select *
+        from tb_micro_domain
+        where micro_service         ={obj.microService}
+        and   domin                 ={obj.domain}
+    </select>
 
     <delete id="deleteMicroDomain" parameterType="String">
         delete from tb_micro_domain

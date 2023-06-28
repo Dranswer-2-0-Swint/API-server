@@ -12,10 +12,14 @@ public class ServpotMicroServiceDomainPutReq {
     @NotNull
     private String microId;				// 마이크로서비스ID
     @NotNull
-    private String microDomain;			// 마이크로서비스 도메인
+    private String presentMicroDomain;  // 현재 마이크로서비스 도메인
+
+    private String renewMicroDomain;	// 변경할 마이크로서비스 도메인
     @NotNull
     private  String microDomainPath;    // 마이크로서비스 도메인 패스
     @NotNull
-    private  int microDomainPort;    // 마이크로 서비스 도메인 포트
+    private  int microDomainPort;       // 마이크로 서비스 도메인 포트
+
+
 
 }
