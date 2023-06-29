@@ -50,8 +50,8 @@
     <update id="updateMicroDomain" parameterType="DbMicroDomain">
         update tb_micro_domain set
                                  domain	                = #{obj.renewMicroDomain},
-                                 path                   = #{obj.path},
-                                 port                   = #{obj.port},
+                                 path                   = #{obj.microDomainPath},
+                                 port                   = #{obj.microDomainPort},
                                  mod_timestamp			= current_timestamp
         where
             micro_service			= #{obj.microService}
@@ -63,7 +63,7 @@
     <select id="selectMicroDomainByServiceAndDomain" parameterType="DbMicroDomain">
         select *
         from tb_micro_domain
-        where micro_service         ={obj.microService}
+        where micro_service         ={obj.microId}
         and   domin                 ={obj.domain}
     </select>
 

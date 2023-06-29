@@ -202,7 +202,7 @@ public class MicroService {
 
 		for(DbMicroDomain microDomain: microDomains) {
 
-			if( microDomain.getDomain() == microReq.getPresentMicroDomain()){
+			if( microDomain.getDomain().equals(microReq.getPresentMicroDomain())){
 				servpotMicroServiceDomainPutReq.setMicroDomainPath(microReq.getMicroDomainPath());
 				servpotMicroServiceDomainPutReq.setRenewMicroDomain(microReq.getRenewMicroDomain());
 				servpotMicroServiceDomainPutReq.setMicroDomainPort(microReq.getMicroDomainPort());
