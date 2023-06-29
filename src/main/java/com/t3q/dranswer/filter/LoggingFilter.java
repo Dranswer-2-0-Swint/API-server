@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.t3q.dranswer.common.util.HashUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -78,6 +79,8 @@ public class LoggingFilter extends OncePerRequestFilter {
         logEntity.setRes_dt(LocalDateTime.now());
         logEntity.setRes_msg("this is filter's msg : " + resNode.get("message"));
         logEntity.setRes_status(responseWrapper.getStatus());
+
+
 
         loggingRepository.save(logEntity);
 

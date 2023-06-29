@@ -12,7 +12,7 @@ spring:
   application:
     name: dranswer
   datasource:
-    url: jdbc:postgresql://${DB_HOST:27.96.134.98}:${DB_PORT:5444}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
+    url: jdbc:postgresql://${DB_HOST:192.168.85.134}:${DB_PORT:5432}/${DB_NAME:svc_plf}?currentSchema=${DB_SCHEMA:swint}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
   jpa:
@@ -43,7 +43,7 @@ env:
   systemTokenUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token
   systemSpecUrl: ${env.authUrl}/auth/realms/${env.systemRealm}/protocol/openid-connect/token/introspect
 
-  cmanUrl: ${CMAN_HOST:http://115.85.182.6:30330}
+  cmanUrl: ${CMAN_HOST:http://175.45.214.82:30330}
   callbackUrl: ${LOCAL_HOST:http://localhost:8888/callback}
 
   accessTokenName: dr_access_token

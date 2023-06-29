@@ -20,15 +20,23 @@
     	select	*
     	from	tb_service_info
     	where	service = #{service}
+    	and		del_yn	= 'N'
     </select>
 
-    <select id="selectServiceByCompany" parameterType="String" resultMap="dbAppServiceMap">
-    	select	*
-    	from	tb_service_info
-    	where	company = #{company}
-    </select>
+	<select id="selectServiceAll" parameterType="String" resultMap="dbAppServiceMap">
+		select	*
+		from	tb_service_info
+		where	del_yn	= 'N'
+	</select>
 
-    <insert id="insertService" parameterType="map">
+	<select id="selectServiceByCompany" parameterType="String" resultMap="dbAppServiceMap">
+		select	*
+		from	tb_service_info
+		where	company = #{company}
+		and		del_yn	= 'N'
+	</select>
+
+	<insert id="insertService" parameterType="map">
 		insert into tb_service_info
 		(
 			service,
@@ -48,9 +56,18 @@
 		where
 			company			= #{obj.company}
 			and service		= #{obj.service}
+			and	del_yn		= 'N'
     </update>
 
-	<delete id="deleteService" parameterType="String">
+	<update id="deleteService" parameterType="String">
+		update tb_service_info set
+			del_yn 			= 'Y',
+			mod_timestamp 	= current_timestamp
+		where
+			service = #{service}
+	</update>
+
+	<delete id="removeService" parameterType="String">
 		delete from tb_service_info
 		where
 			service = #{service}

@@ -20,11 +20,11 @@
     <select id="selectMicroDomain" parameterType="String" resultType="DbMicroDomain">
         select	*
         from	tb_micro_domain
-        where	micro_service = #{microService}
+        where	domain = #{domain}
     </select>
 
 
-    <select id="selectMicroDomainByService" parameterType="String" resultMap="dbMicroDomainMap">
+    <select id="selectMicroDomainByMicro" parameterType="String" resultMap="dbMicroDomainMap">
         select	*
         from	tb_micro_domain
         where	micro_service = #{microService}
@@ -39,40 +39,42 @@
             path,
             port
         ) values (
-                     #{obj.microService},
-                     #{obj.domain},
-                     #{obj.path},
-                     #{obj.port}
-                 )
+            #{obj.microService},
+            #{obj.domain},
+            #{obj.path},
+            #{obj.port}
+        )
     </insert>
 
 
-    <update id="updateMicroDomain" parameterType="DbMicroDomain">
+    <update id="updateMicroDomain" parameterType="map">
         update tb_micro_domain set
-                                 domain	                = #{obj.renewMicroDomain},
-                                 path                   = #{obj.microDomainPath},
-                                 port                   = #{obj.microDomainPort},
-                                 mod_timestamp			= current_timestamp
-        where
-            micro_service			= #{obj.microService}
-        and
-            domain                  = #{obj.PresentMicroDomain}
-
+            domain              = #{obj.renewDomain},
+            path                = #{obj.path},
+            port                = #{obj.port},
+            mod_timestamp       = current_timestamp
+        where   micro_service   = #{obj.microId}
+        and     domain          = #{obj.presentDomain}
     </update>
 
     <select id="selectMicroDomainByServiceAndDomain" parameterType="DbMicroDomain">
         select *
-        from tb_micro_domain
-        where micro_service         ={obj.microId}
-        and   domin                 ={obj.domain}
+        from    tb_micro_domain
+        where   micro_service   = #{obj.microService}
+        and     domain          = #{obj.domain}
     </select>
 
-    <delete id="deleteMicroDomain" parameterType="String">
+    <update id="deleteMicroDomainByMicro" parameterType="String">
+        update tb_micro_domain set
+            del_yn  = 'Y',
+            mod_timestamp = current_timestamp
+        where   micro_service = #{microService}
+    </update>
+
+    <delete id="deleteMicroDomain" parameterType="map">
         delete from tb_micro_domain
-        where
-            micro_service = #{microService}
+        where   micro_service   = #{obj.microId}
+        and     domain          = #{obj.domain}
     </delete>
-
-
 
 </mapper>

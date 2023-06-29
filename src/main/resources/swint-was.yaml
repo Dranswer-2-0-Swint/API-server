@@ -23,6 +23,9 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8888
+        volumeMounts:
+        - name: swint-log
+          mountPath: /data/log/
         env:
         - name: DB_PORT
           value: "5432"
@@ -43,11 +46,14 @@ spec:
         - name: AUTH_HOST
           value: http://172.16.200.10
         - name: TZ
-          value: "Asia/Seoul"        
-
+          value: "Asia/Seoul"
+      volumes:
+      - name: swint-log
+        hostPath:
+          path: /data/swint/log
+          type: Directory
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      
 
 ---
 
@@ -64,4 +70,3 @@ spec:
     - port: 8888
       targetPort: 8888
       nodePort: 30332
-      

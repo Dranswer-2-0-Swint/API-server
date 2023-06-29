@@ -22,7 +22,8 @@
     <select id="selectServiceByMicro" parameterType="String" resultType="String">
     	select	service
     	from	tb_micro_info
-    	where	micro_service = #{micro}
+    	where	micro_service	= #{micro}
+    	and		del_yn			= 'N'
     	limit	1
     </select>
 
@@ -32,25 +33,23 @@
     			tb_image_info B
     	where	B.image = #{image}
     	and		B.micro_service = A.micro_service
-    	limit	1
+		and		A.del_yn		= 'N'
+		and		A.del_yn		= B.del_yn
+		limit	1
     </select>
 
     <select id="selectImage" parameterType="String" resultType="DbImage">
     	select	*
     	from	tb_image_info
-    	where	image = #{image}
+    	where	image 	= #{image}
+		and		del_yn	= 'N'
     </select>
 
     <select id="selectImageByMicro" parameterType="String" resultMap="dbImageMap">
     	select	*
     	from	tb_image_info
-    	where	micro_service = #{microService}
-    </select>
-
-    <select id="selectDomainByMicro" parameterType="String" resultType="String">
-    	select	micro_service_domain
-    	from	tb_micro_info
-    	where	micro_service = #{microService}
+    	where	micro_service	= #{microService}
+		and		del_yn			= 'N'
     </select>
 
     <insert id="insertImage" parameterType="map">
@@ -76,42 +75,57 @@
 		update tb_image_info set
 			image_name		= #{imageName},
 			mod_timestamp	= current_timestamp
-		where
-			image = #{image}
-    </update>
+		where	image		= #{image}
+		and		del_yn		= 'N'
+	</update>
 
 	<update id="updateImageRealName" parameterType="String">
 		update tb_image_info set
 			image_real_name	= #{imageRealName},
 			mod_timestamp	= current_timestamp
-		where
-			image = #{image}
-    </update>
+		where	image		= #{image}
+		and		del_yn		= 'N'
+	</update>
 
 	<update id="updateImageStatus" parameterType="String">
 		update tb_image_info set
 			image_status		= #{imageStatus},
 			image_status_detail	= #{imageStatusDetail},
 			mod_timestamp		= current_timestamp
-		where
-			image = #{image}
+		where	image			= #{image}
+		and		del_yn			= 'N'
     </update>
 
-	<delete id="deleteImage" parameterType="String">
+	<update id="deleteImage" parameterType="String">
+		update tb_image_info set
+			del_yn			= 'Y',
+			mod_timestamp	= current_timestamp
+		where	image	= #{image}
+	</update>
+
+	<update id="deleteImageByMicro" parameterType="String">
+		update tb_image_info set
+			del_yn			= 'Y',
+			mod_timestamp	= current_timestamp
+		where	micro_service	= #{microService}
+	</update>
+
+	<delete id="removeImage" parameterType="String">
 		delete from tb_image_info
 		where
 			image = #{image}
 	</delete>
 
-	<delete id="deleteImageByMicro" parameterType="String">
+	<delete id="removeImageByMicro" parameterType="String">
 		delete from tb_image_info
 		where
 			micro_service = #{microService}
 	</delete>
-	
-	
-	
-	
+
+
+
+
+
 	<resultMap type="DbContainer" id="dbContainerMap">
 		<result property="image"				column="image" />
 		<result property="container"			column="container" />
@@ -149,7 +163,7 @@
 		(
 			image,
 			container,
-			container_domain
+			domain
 		) values
 		<foreach collection="list" item="obj" separator=",">
 		(
@@ -159,8 +173,16 @@
 		)
 		</foreach>
     </insert>
-    
-    <delete id="deleteContainerByImage" parameterType="String">
+
+	<update id="deleteContainerByImage" parameterType="String">
+		update tb_container_info set
+		    del_yn			= 'Y',
+		    mod_timestamp	= current_timestamp
+		where
+			image = #{image}
+	</update>
+
+	<delete id="removeContainerByImage" parameterType="String">
 		delete from tb_container_info
 		where
 			image = #{image}

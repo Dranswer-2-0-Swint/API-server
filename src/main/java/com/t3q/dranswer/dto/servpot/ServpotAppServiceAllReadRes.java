@@ -1,19 +1,16 @@
 package com.t3q.dranswer.dto.servpot;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceDomainMergeReq {
+public class ServpotAppServiceAllReadRes extends ApiResponse {
 
-	@NotNull
-	private String microId;				// 마이크로서비스ID
-	@NotNull
-	private String microDomain;			// 마이크로서비스 도메인
+	private String requestId;											// 요청ID
+	private List<ServpotAppServiceAllReadResCompany> companyList;		// 기업목록
 
 }

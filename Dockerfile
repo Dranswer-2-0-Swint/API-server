@@ -47,10 +47,8 @@ ENV DB_NAME=svc_plf
 ENV DB_SCHEMA=swint
 ENV DB_USER=postgres
 ENV DB_PASS=postgres
-ENV LOCAL_HOST=localhost
-ENV LOCAL_PORT=8888
-ENV CMAN_HOST=115.85.182.6
-ENV CMAN_PORT=30330
+ENV LOCAL_HOST=http://localhost:8888/callback
+ENV CMAN_HOST=http://175.45.214.82:30330
 
 
 # 6. Copy and Build

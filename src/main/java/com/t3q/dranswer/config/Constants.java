@@ -76,15 +76,15 @@ public class Constants {
 
 	// error code
 	public static final String E00000		 		= "00000";
-	public static final String E00000_MSG	 		= "성공";
+	public static final String E00000_MSG	 		= "Success";
 	public static final String E40001		 		= "40001";
-	public static final String E40001_MSG	 		= "필수 항목 없음";
+	public static final String E40001_MSG	 		= "Non required";
 	public static final String E40002		 		= "40002";
-	public static final String E40002_MSG	 		= "필수 헤더항목 없음";
+	public static final String E40002_MSG	 		= "No required headers";
 	public static final String E40003		 		= "40003";
-	public static final String E40003_MSG	 		= "토큰이 유효하지 않음";
+	public static final String E40003_MSG	 		= "Token is invalid";
 	public static final String E40004		 		= "40004";
-	public static final String E40004_MSG	 		= "ID 매칭 실패";
+	public static final String E40004_MSG	 		= "ID matching failed";
 	public static final String E40005		 		= "40005";
 	public static final String E40005_MSG	 		= "";
 	public static final String E40006		 		= "40006";
@@ -92,11 +92,11 @@ public class Constants {
 	public static final String E40007		 		= "40007";
 	public static final String E40007_MSG	 		= "";
 	public static final String E50001		 		= "50001";
-	public static final String E50001_MSG	 		= "시스템 접속 불가";
+	public static final String E50001_MSG	 		= "Unable to access the system";
 	public static final String E50002		 		= "50002";
-	public static final String E50002_MSG	 		= "API요청 처리 실패";
+	public static final String E50002_MSG	 		= "Failed to process API request";
 	public static final String E50003		 		= "50003";
-	public static final String E50003_MSG	 		= "알 수 없는 에러 발생";
+	public static final String E50003_MSG	 		= "An unknown error occurred";
 	public static final String E50000		 		= "50000";
 
 }

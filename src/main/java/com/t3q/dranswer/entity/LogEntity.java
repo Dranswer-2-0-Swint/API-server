@@ -23,16 +23,16 @@ public class LogEntity {
     Long seq_id;
     String req_id;
     String req_user;
+    String req_md;
+    String req_uri;
+    String req_prm;
     String req_body;
     LocalDateTime req_dt;
-    String req_uri;
-    String req_md;
 
     String res_user;
-    String res_body;
-    LocalDateTime res_dt;
     String res_msg;
     int res_status;
-    String req_prm;
+    String res_body;
+    LocalDateTime res_dt;
 
 }

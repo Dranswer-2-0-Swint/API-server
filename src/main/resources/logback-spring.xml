@@ -8,9 +8,9 @@
   </appender>
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>/data/log/apiportal/apiportal.log</file>
+    <file>/data/log/swint-was/swint-was.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <fileNamePattern>/data/log/apiportal/apiportal.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>
+      <fileNamePattern>/data/log/swint-was/swint-was.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>
       <maxFileSize>10MB</maxFileSize>
       <maxHistory>200</maxHistory>
       <cleanHistoryOnStart>true</cleanHistoryOnStart>

@@ -32,8 +32,6 @@ public interface MicroServiceMapper {
 	public List<String> selectContainerByMicro(@Param("micro") String micro);
 	// 응용서비스 조회
 	public String selectServiceByMicro(@Param("micro") String micro);
-	// 컨테이너 삭제
-	public int deleteContainer(@Param("container") String container);
 	// 이미지 목록 조회
 	public List<String> selectImageByMicro(@Param("micro") String micro);
 }
