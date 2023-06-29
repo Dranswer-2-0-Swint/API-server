@@ -19,13 +19,15 @@
     <select id="selectMicroService" parameterType="String" resultType="DbMicroService">
     	select	*
     	from	tb_micro_info
-    	where	micro_service = #{microService}
+    	where	micro_service	= #{microService}
+		and		del_yn			= 'N'
     </select>
 
     <select id="selectMicroServiceByService" parameterType="String" resultMap="dbMicroServiceMap">
     	select	*
     	from	tb_micro_info
     	where	service = #{service}
+		and		del_yn	= 'N'
     </select>
 
     <select id="selectContainerByMicro" parameterType="String" resultType="String">
@@ -35,7 +37,9 @@
     			tb_container_info c
     	where	a.micro_service = #{micro}
     	and		a.micro_service = b.micro_service
-    	and		b.image = c.image 
+    	and		b.image			= c.image
+		and		a.del_yn		= 'N'
+    	and		a.del_yn		= b.del_yn
     	group by c.container
     </select>
 
@@ -45,12 +49,15 @@
 				tb_image_info b
 		where	a.micro_service = #{micro}
 		and		a.micro_service = b.micro_service
-    </select>
+		and		a.del_yn		= 'N'
+		and		a.del_yn		= b.del_yn
+	</select>
 
     <select id="selectServiceByMicro" parameterType="String" resultType="String">
     	select	service
     	from	tb_micro_info
-    	where	micro_service = #{micro}
+    	where	micro_service	= #{micro}
+    	and		del_yn			= 'N'
     </select>
 
     <insert id="insertMicroService" parameterType="map">
@@ -70,27 +77,36 @@
 		update tb_micro_info set
 			micro_service_name	= #{obj.microServiceName},
 			mod_timestamp		= current_timestamp
-		where
-			micro_service		= #{obj.microService}
+		where	micro_service	= #{obj.microService}
+		and		del_yn			= 'N'
     </update>
 
+	<update id="deleteMicroService" parameterType="String">
+		update tb_micro_info set
+			del_yn			= 'Y',
+			mod_timestamp 	= current_timestamp
+		where
+			micro_service	= #{microService}
+	</update>
 
-	<delete id="deleteMicroService" parameterType="String">
+	<update id="deleteMicroServiceByService" parameterType="String">
+		update tb_micro_info set
+			del_yn			= 'Y',
+			mod_timestamp 	= current_timestamp
+		where
+			service	= #{service}
+	</update>
+
+	<delete id="removeMicroService" parameterType="String">
 		delete from tb_micro_info
 		where
 			micro_service = #{microService}
 	</delete>
 
-	<delete id="deleteMicroServiceByService" parameterType="String">
+	<delete id="removeMicroServiceByService" parameterType="String">
 		delete from tb_micro_info
 		where
 			service = #{service}
-	</delete>
-
-    <delete id="deleteContainer" parameterType="String">
-		delete from tb_container_info
-		where
-			container = #{container}
 	</delete>
 
 </mapper>

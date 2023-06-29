@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.dto.servpot.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,11 +23,6 @@ import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.cman.CmanInitProjectReq;
 import com.t3q.dranswer.dto.cman.CmanInitProjectRes;
 import com.t3q.dranswer.dto.db.DbAppService;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateReq;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceListReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceListReadResSub;
 import com.t3q.dranswer.mapper.AppServiceMapper;
 
 import lombok.extern.log4j.Log4j2;
@@ -46,11 +42,27 @@ public class AppService {
         this.restTemplate = restTemplate;
         this.applicationProperties = applicationProperties;
     }
-    
+
+	public ServpotAppServiceAllReadRes readAppServiceAll() {
+		log.info("AppService : readAppServiceAll");
+		List<DbAppService> dbAppServiceList = appServiceMapper.selectServiceAll();
+
+		ServpotAppServiceAllReadRes res = new ServpotAppServiceAllReadRes();
+		res.setCompanyList(new ArrayList<>());
+		for (DbAppService dbAppService : dbAppServiceList) {
+			ServpotAppServiceListReadResSub sub = new ServpotAppServiceListReadResSub();
+			sub.setServiceId(dbAppService.getService());
+			sub.setServiceName(dbAppService.getServiceName());
+//			res.getServiceList().add(sub);
+		}
+
+		return res;
+	}
+
 	public ServpotAppServiceListReadRes readAppServiceList(String company) {
-		log.info("MicroService : readAppServiceList");
+		log.info("AppService : readAppServiceList");
 		List<DbAppService> dbAppServiceList = appServiceMapper.selectServiceByCompany(company);
-		
+
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
 		res.setServiceList(new ArrayList<>());
 		res.setCompanyId(company);
@@ -63,24 +75,17 @@ public class AppService {
 
 		return res;
 	}
-	
+
 	public ServpotAppServiceCreateRes createAppService(ServpotAppServiceCreateReq serviceReq) {
-		log.info("MicroService : createAppService");
+		log.info("AppService : createAppService");
 		String serviceId = Constants.PREFIX_SVC + HashUtil.makeCRC32(appServiceMapper.getServiceSequence());
 
 		HttpHeaders headers = new HttpHeaders();
-
-
-
-
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 		log.info("#####this is threadlocal test {}", headers.toString());
-
-
-
 
 		CmanInitProjectReq cmanReq = new CmanInitProjectReq();
 		cmanReq.setProjectName(serviceId);
@@ -91,13 +96,13 @@ public class AppService {
 			    	.encode()
 			    	.toUri();
 		try {
-//			ResponseEntity<CmanInitProjectRes> cmanRes = restTemplate.exchange(	uri,
-//																				HttpMethod.POST,
-//																				entity,
-//																				CmanInitProjectRes.class);
-//			if (cmanRes.getStatusCode() == HttpStatus.OK) {
-//				log.info("message : " + cmanRes.getBody().getMessage());
-//			}
+			ResponseEntity<CmanInitProjectRes> cmanRes = restTemplate.exchange(	uri,
+																				HttpMethod.POST,
+																				entity,
+																				CmanInitProjectRes.class);
+			if (cmanRes.getStatusCode() == HttpStatus.OK) {
+				log.info("message : " + cmanRes.getBody().getMessage());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -119,7 +124,7 @@ public class AppService {
 	}
 	
 	public ServpotAppServiceDeleteRes deleteService(String service) {
-		log.info("MicroService : deleteService");
+		log.info("AppService : deleteService");
 		
 		appServiceMapper.deleteService(service);
 		

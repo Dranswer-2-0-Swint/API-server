@@ -20,7 +20,7 @@
     <select id="selectMicroDomain" parameterType="String" resultType="DbMicroDomain">
         select	*
         from	tb_micro_domain
-        where	micro_service = #{microService}
+        where	domain = #{domain}
     </select>
 
 
@@ -60,14 +60,16 @@
     <select id="selectMicroDomainByServiceAndDomain" parameterType="DbMicroDomain">
         select *
         from    tb_micro_domain
-        where   micro_service     = #{obj.microService}
-        and     domain             = #{obj.domain}
+        where   micro_service   = #{obj.microService}
+        and     domain          = #{obj.domain}
     </select>
 
-    <delete id="deleteMicroDomainByMicro" parameterType="String">
-        delete from tb_micro_domain
+    <update id="deleteMicroDomainByMicro" parameterType="String">
+        update tb_micro_domain set
+            del_yn  = 'Y',
+            mod_timestamp = current_timestamp
         where   micro_service = #{microService}
-    </delete>
+    </update>
 
     <delete id="deleteMicroDomain" parameterType="map">
         delete from tb_micro_domain

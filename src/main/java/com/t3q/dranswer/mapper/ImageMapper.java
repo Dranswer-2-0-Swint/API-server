@@ -46,5 +46,6 @@ public interface ImageMapper {
 	public int insertContainer(@Param("list") List<DbContainer> list);
 	// 컨테이너 삭제
 	public int deleteContainerByImage(@Param("image") String image);
+	public int removeContainerByImage(@Param("image") String image);
 
 }

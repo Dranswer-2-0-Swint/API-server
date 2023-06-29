@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.dto.servpot.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.t3q.dranswer.common.util.ResponseUtil;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateReq;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceCreateRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceDeleteReq;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotAppServiceListReadRes;
 import com.t3q.dranswer.service.AppService;
 
 import lombok.extern.log4j.Log4j2;
@@ -36,32 +32,50 @@ public class AppServiceController {
 
 	@Autowired
 	AppService appService;
-	
+
+	// 응용서비스 목록 조회
+	@GetMapping("/all")
+	@SwintValid
+	public ResponseEntity<Object> readAppServiceAll(HttpServletRequest request) {
+
+		ServpotAppServiceAllReadRes res = new ServpotAppServiceAllReadRes();
+
+		try {
+			res = appService.readAppServiceAll();
+		}catch (Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage());
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()),
+					new HttpHeaders(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
+	}
 	// 응용서비스 목록 조회
 	@GetMapping("/list")
 	@SwintValid
-	public ResponseEntity<Object> readAppServiceList(HttpServletRequest request, 
-													@RequestParam(required = false) HashMap<String, Object> parameter) {
-		
+	public ResponseEntity<Object> readAppServiceList(HttpServletRequest request,
+													 @RequestParam(required = false) HashMap<String, Object> parameter) {
+
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
-		
+
 		String company = (String) parameter.get("company_id");
 		if (company == null || company.isEmpty() == true) {
 			// exception
 		}
-		
+
 		try {
 			res = appService.readAppServiceList(company);
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
-			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()), 
-												new HttpHeaders(), 
-												HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()),
+					new HttpHeaders(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
-	
+
 	// 응용서비스 생성
 	@PostMapping()
 	@SwintValid

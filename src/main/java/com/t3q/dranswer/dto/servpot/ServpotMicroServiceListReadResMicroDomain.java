@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotMicroServiceListReadResSubDomain {
+public class ServpotMicroServiceListReadResMicroDomain {
 
 	private String domain;				// 마이크로서비스ID
 	private String path;				// 마이크로서비스명

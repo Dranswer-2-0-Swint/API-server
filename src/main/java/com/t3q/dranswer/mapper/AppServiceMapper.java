@@ -15,6 +15,8 @@ public interface AppServiceMapper {
 	public int getServiceSequence();
 	// 응용서비스 조회
 	public DbAppService selectService(@Param("service") String service);
+	// 응용서비스 전체 조회
+	public List<DbAppService> selectServiceAll();
 	// 응용서비스 목록 조회
 	public List<DbAppService> selectServiceByCompany(@Param("company") String company);
 	// 응용서비스 생성

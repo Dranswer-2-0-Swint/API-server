@@ -54,13 +54,13 @@ public class MicroService {
 		res.setServiceId(service);
 
 		for (DbMicroService dbMicroService : dbMicroServiceList) {
-			ServpotMicroServiceListReadResSub sub = new ServpotMicroServiceListReadResSub();
+			ServpotMicroServiceListReadResMicro sub = new ServpotMicroServiceListReadResMicro();
 			sub.setMicroId(dbMicroService.getMicroService());
 			sub.setMicroName(dbMicroService.getMicroServiceName());
 			sub.setDomains(new ArrayList<>());
 			List<DbMicroDomain> dbMicroDomainList = microDomainMapper.selectMicroDomainByMicro(dbMicroService.getMicroService());
 			for (DbMicroDomain dbMicroDomain : dbMicroDomainList) {
-				ServpotMicroServiceListReadResSubDomain microDomain = new ServpotMicroServiceListReadResSubDomain();
+				ServpotMicroServiceListReadResMicroDomain microDomain = new ServpotMicroServiceListReadResMicroDomain();
 				microDomain.setDomain(dbMicroDomain.getDomain());
 				microDomain.setPath(dbMicroDomain.getPath());
 				microDomain.setPort(dbMicroDomain.getPort());

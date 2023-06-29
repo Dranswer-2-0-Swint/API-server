@@ -150,7 +150,7 @@ public class ImageService {
 						dbContainer.setDomain(innerDomain);
 						containerList.add(dbContainer);
 					}
-					imageMapper.deleteContainerByImage(image);
+					imageMapper.removeContainerByImage(image);
 					imageMapper.insertContainer(containerList);
 					
 				} catch (Exception e) {
