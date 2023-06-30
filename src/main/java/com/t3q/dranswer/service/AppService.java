@@ -3,6 +3,7 @@ package com.t3q.dranswer.service;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.servpot.*;
@@ -50,10 +51,24 @@ public class AppService {
 		ServpotAppServiceAllReadRes res = new ServpotAppServiceAllReadRes();
 		res.setCompanyList(new ArrayList<>());
 		for (DbAppService dbAppService : dbAppServiceList) {
-			ServpotAppServiceListReadResSub sub = new ServpotAppServiceListReadResSub();
-			sub.setServiceId(dbAppService.getService());
-			sub.setServiceName(dbAppService.getServiceName());
-//			res.getServiceList().add(sub);
+			if (res.getCompanyList().stream().anyMatch(obj -> obj.getCompanyId().equals(dbAppService.getCompany()))) {
+				continue;
+			}
+
+			ServpotAppServiceAllReadResCompany subCompany = new ServpotAppServiceAllReadResCompany();
+			subCompany.setCompanyId(dbAppService.getCompany());
+			subCompany.setServiceList(new ArrayList<>());
+
+			List<DbAppService> companyList = dbAppServiceList.stream().filter(obj -> obj.getCompany().equals(dbAppService.getCompany())).collect(Collectors.toList());
+			for (DbAppService company : companyList) {
+				ServpotAppServiceListReadResSub subService = new ServpotAppServiceListReadResSub();
+				subService.setServiceId(company.getService());
+				subService.setServiceName(company.getServiceName());
+				subCompany.getServiceList().add(subService);
+			}
+			res.getCompanyList().add(subCompany);
+			//dbAppServiceList.removeIf(obj -> obj.getCompany().equals(dbAppService.getCompany()));
+			//imageInfo.getTags().stream().anyMatch(tag -> tag.getName().equals(imageName))
 		}
 
 		return res;

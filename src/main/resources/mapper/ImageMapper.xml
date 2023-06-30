@@ -110,6 +110,13 @@
 		where	micro_service	= #{microService}
 	</update>
 
+	<update id="recoverImage" parameterType="String">
+		update tb_image_info set
+			del_yn			= 'N',
+			mod_timestamp	= current_timestamp
+		where	micro_service	= #{micro}
+	</update>
+
 	<delete id="removeImage" parameterType="String">
 		delete from tb_image_info
 		where
@@ -180,6 +187,14 @@
 		    mod_timestamp	= current_timestamp
 		where
 			image = #{image}
+	</update>
+
+	<update id="recoverContainer" parameterType="String">
+		update tb_container_info set
+			del_yn			= 'N',
+			mod_timestamp	= current_timestamp
+		where
+		    image = #{image}
 	</update>
 
 	<delete id="removeContainerByImage" parameterType="String">

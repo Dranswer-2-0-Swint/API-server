@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ServpotAppServiceAllReadResCompany extends ApiResponse {
+public class ServpotAppServiceAllReadResCompany {
 
 	private String companyId;										// 기업ID
 	private List<ServpotAppServiceListReadResSub> serviceList;		// 응용서비스목록

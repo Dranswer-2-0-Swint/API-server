@@ -24,4 +24,6 @@ public interface MicroDomainMapper {
     public int deleteMicroDomainByMicro(@Param("microService") String microService);
     // 마이크로서비스도메인 삭제 V
     public int deleteMicroDomain(@Param("obj") ServpotMicroServiceDomainDeleteReq obj);
+    // 마이크로서비스도메인 복구 V
+    public int recoverMicroDomain(@Param("micro") String micro);
 }
