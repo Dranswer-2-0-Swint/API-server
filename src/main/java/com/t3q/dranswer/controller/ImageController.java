@@ -41,6 +41,7 @@ public class ImageController {
 	@Autowired
 	ImageService imageService;
 
+
 	// 이미지 목록 조회
 	@GetMapping("/list")
 	@SwintValid

@@ -654,7 +654,6 @@ public class ImageService {
 		}
 	}
 
-
 	public CmanContainerReadRes getContainerInfo(String container) throws Exception {
 		CmanContainerReadRes res = new CmanContainerReadRes();
 		HttpHeaders headers = new HttpHeaders();
@@ -816,7 +815,6 @@ public class ImageService {
 
 		return res;
 	}
-	//TODO  CMAN에서 준 DTO받아서 만들고 여기에 포함시켜서 호출할 것! 마이크로도메인의 도메인이랑 컨테이너 도메인이랑 포트 비교 일치하는애를 연결 해준다.
 
 	public CmanContainerDeployRes setContainerDeploy(String service, String container, CmanContainerDeployReq cmanReq) throws Exception {
 		CmanContainerDeployRes res = new CmanContainerDeployRes();

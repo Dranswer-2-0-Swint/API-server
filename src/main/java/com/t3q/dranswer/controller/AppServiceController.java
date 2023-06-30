@@ -32,8 +32,30 @@ public class AppServiceController {
 
 	@Autowired
 	AppService appService;
+	// 응용서비스 세부정보 조회 (하위 마이크로서비스, 이미지 조회)
+	@GetMapping("/detail")
+	@SwintValid
+	public ResponseEntity<Object> readAllMicroAndImages(HttpServletRequest request,
+														@RequestParam(required = false) HashMap<String, Object> parameter) {
 
-	// 응용서비스 목록 조회
+
+		String service = (String) parameter.get("service_id");
+		ServpotAppServiceReadMicroServicesAndImagesRes res = new ServpotAppServiceReadMicroServicesAndImagesRes();
+
+		try {
+			res = appService.readMicroServicesAndImages(service);
+		}catch (Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage());
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()),
+					new HttpHeaders(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
+	}
+
+
+	// 전체 응용서비스 목록 조회
 	@GetMapping("/all")
 	@SwintValid
 	public ResponseEntity<Object> readAppServiceAll(HttpServletRequest request) {
