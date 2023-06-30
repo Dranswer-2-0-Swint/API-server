@@ -97,14 +97,6 @@
 			service	= #{service}
 	</update>
 
-	<update id="recoverMicroService" parameterType="String">
-		update tb_micro_info set
-			del_yn			= 'N',
-			mod_timestamp 	= current_timestamp
-		where
-			service	= #{service}
-	</update>
-
 	<delete id="removeMicroService" parameterType="String">
 		delete from tb_micro_info
 		where

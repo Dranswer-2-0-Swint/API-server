@@ -136,9 +136,14 @@ public class MicroService {
 
 		return res;
 	}
-	//TODO 수정해야됌 ServpotMicroServiceDomainPostReq으로 변경후 mapper 사용할 것 V
-	public ServpotMicroServiceDomainCreateRes createMicroServiceDomain(ServpotMicroServiceDomainCreateReq microReq) {
+
+	public ServpotMicroServiceDomainCreateRes createMicroServiceDomain(ServpotMicroServiceDomainCreateReq microReq) throws Exception {
 		log.info("MicroService : createMicroServiceDomain");
+		if (microDomainMapper.selectMicroDomain(microReq.getDomain()) != null) {
+			throw new Exception(Constants.E40005);
+		} else if (microDomainMapper.selectMicroDomainPort(microReq.getMicroId(), String.valueOf(microReq.getPort())) != null) {
+			throw new Exception(Constants.E40006);
+		}
 
 		DbMicroDomain dbMicroDomain = new DbMicroDomain();
 
@@ -158,10 +163,11 @@ public class MicroService {
 		return res;
 	}
 
-
-	//TODO 마이크로서비스 도메인 설정 후 돌려줄 RES 만들기 V
 	public ServpotMicroServiceDomainUpdateRes updateMicroServiceDomain(ServpotMicroServiceDomainUpdateReq microReq){
 		log.info("MicroService : updateMicroServiceDomain");
+		if (microDomainMapper.selectMicroDomain(microReq.getRenewDomain()) != null) {
+			new Exception(Constants.E40005);
+		}
 
 		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByMicro(microReq.getMicroId());
 		for(DbMicroDomain microDomain: microDomains) {
@@ -179,7 +185,6 @@ public class MicroService {
 
 		return res;
 	}
-
 
 	public ServpotMicroServiceDomainDeleteRes deleteMicroServiceDomain(ServpotMicroServiceDomainDeleteReq microReq) {
 		log.info("MicroService : deleteMicroServiceDomain");

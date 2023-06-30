@@ -23,6 +23,12 @@
         where	domain = #{domain}
     </select>
 
+    <select id="selectMicroDomainPort" parameterType="String" resultType="DbMicroDomain">
+        select	*
+        from	tb_micro_domain
+        where	micro_service   = #{microService}
+        and     port            = #{port}
+    </select>
 
     <select id="selectMicroDomainByMicro" parameterType="String" resultMap="dbMicroDomainMap">
         select	*
@@ -69,13 +75,6 @@
             del_yn  = 'Y',
             mod_timestamp = current_timestamp
         where   micro_service = #{microService}
-    </update>
-
-    <update id="recoverMicroDomain" parameterType="String">
-        update tb_micro_domain set
-            del_yn  = 'N',
-            mod_timestamp = current_timestamp
-        where   micro_service = #{micro}
     </update>
 
     <delete id="deleteMicroDomain" parameterType="map">

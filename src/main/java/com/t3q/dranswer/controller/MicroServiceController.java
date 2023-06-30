@@ -139,7 +139,6 @@ public class MicroServiceController {
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
 
-	//TODO put으로 updateMicroServiceDomain 맹글것 V
 	@PutMapping("/domain")
 	@SwintValid
 	public ResponseEntity<Object> updateMicroServiceDomain(HttpServletRequest request,

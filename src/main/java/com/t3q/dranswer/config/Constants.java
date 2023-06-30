@@ -86,11 +86,11 @@ public class Constants {
 	public static final String E40004		 		= "40004";
 	public static final String E40004_MSG	 		= "ID matching failed";
 	public static final String E40005		 		= "40005";
-	public static final String E40005_MSG	 		= "";
+	public static final String E40005_MSG	 		= "Domain is in use";
 	public static final String E40006		 		= "40006";
-	public static final String E40006_MSG	 		= "";
+	public static final String E40006_MSG	 		= "Port is in use";
 	public static final String E40007		 		= "40007";
-	public static final String E40007_MSG	 		= "";
+	public static final String E40007_MSG	 		= "Image is in process";
 	public static final String E50001		 		= "50001";
 	public static final String E50001_MSG	 		= "Unable to access the system";
 	public static final String E50002		 		= "50002";

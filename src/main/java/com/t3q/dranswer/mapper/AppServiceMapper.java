@@ -25,6 +25,4 @@ public interface AppServiceMapper {
 	public int updateService(@Param("obj") DbAppService obj);
 	// 응용서비스 삭제
 	public int deleteService(@Param("service") String service);
-	// 응용서비스 복구
-	public int recoverService(@Param("service") String service);
 }

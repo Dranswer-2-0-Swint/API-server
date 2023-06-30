@@ -13,6 +13,7 @@ import com.t3q.dranswer.dto.servpot.*;
 import com.t3q.dranswer.mapper.ImageMapper;
 import com.t3q.dranswer.mapper.MicroDomainMapper;
 import lombok.extern.log4j.Log4j2;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -170,7 +171,7 @@ public class ImageService {
 					log.info("container pod name : " + pod);
 
 				} catch (Exception e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					log.error(e.getMessage());
 					if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 						imageMapper.updateImageStatus(image, Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
@@ -233,6 +234,7 @@ public class ImageService {
 
 	public ServpotImageStatusRes updateImageStatus(ServpotImageStatusUpdateReq imageReq) throws Exception {
 		log.info("ImageService : updateImageStatus");
+		String pod = "";
 		DbImage dbImage = imageMapper.selectImage(imageReq.getImageId());
 		if (dbImage == null) {
 			throw new Exception(Constants.E40004);
@@ -246,18 +248,45 @@ public class ImageService {
 
 		ServpotImageStatusRes res = new ServpotImageStatusRes();
 		res.setImageId(imageReq.getImageId());
-		
-		if (container != null) {
-			if (imageReq.getImageStatus().equals(Constants.STATUS_RUN)) {
+
+		if (container != null && !dbImage.getImageStatus().equals(Constants.STATUS_SEARCH_FAILED)) {
+			try {
+				// 1. 컨테이너 조회
+				CmanContainerReadRes cmanRes = getContainerInfo(container);
+				log.info("container name : " + cmanRes.getName());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error(e.getMessage());
+				if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
+					imageMapper.updateImageStatus(dbImage.getImage(), Constants.STATUS_SEARCH_FAILED, Constants.DETAIL_CONTAINER_NOT_EXIST);
+					throw new Exception(Constants.E40004);
+				}
+				throw new Exception(e.getMessage());
+			}
+
+			try {
+				// 2. 파드 이름 조회
+				CmanContainerPodReadRes cmanRes = getContainerPod(service, container);
+				pod = cmanRes.getPodList().get(0).getPodName();
+				log.info("container pod name : " + pod);
+
+			} catch (Exception e) {
+				//e.printStackTrace();
+				log.error(e.getMessage());
+				if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
+					imageMapper.updateImageStatus(dbImage.getImage(), Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
+				} else {
+					throw new Exception(e.getMessage());
+				}
+			}
+
+			if (pod.isEmpty() && imageReq.getImageStatus().equals(Constants.STATUS_RUN)) {
 				imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_POD_DEPLOYING, Constants.DETAIL_DEPLOYING);
 				try {
-					// 1. 컨테이너 정보 조회
-					CmanContainerReadRes cmanRes = getContainerInfo(container);
 					CmanContainerDeployReq cmanDeployReq = new CmanContainerDeployReq();
 					cmanDeployReq.setDomains(new ArrayList<>());
-
 					if (!microDomains.isEmpty()) {
-						//이미지id로 컨테이너 목록 가져오기
 						List<DbContainer> dbContainerList = imageMapper.selectContainerByImage(imageReq.getImageId());
 						for(DbContainer dbContainer : dbContainerList) {
 							Optional<DbMicroDomain> dbMicroDomain = microDomains.stream().filter(s -> s.getPort() == dbContainer.getPort()).findFirst();
@@ -272,7 +301,6 @@ public class ImageService {
 						}
 					}
 
-					// 3. 컨테이너 배포
 					CmanContainerDeployRes cmanDeployRes = setContainerDeploy(service, container, cmanDeployReq);
 					log.info("container deploy success.\nenvName : " + cmanDeployRes.getEnvName());
 					dbImage.setImageStatus(Constants.STATUS_POD_DEPLOYING);
@@ -301,12 +329,12 @@ public class ImageService {
 					imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_DEPLOY_FAILED, Constants.DETAIL_ERROR_INTERNAL_ERR);
 					throw new Exception(e.getMessage());
 				}
-			} else if (imageReq.getImageStatus().equals(Constants.STATUS_SUSPEND) && !dbImage.getImageStatus().equals(Constants.STATUS_SEARCH_FAILED)) {
+			} else if (!pod.isEmpty() && imageReq.getImageStatus().equals(Constants.STATUS_SUSPEND)) {
 
 				imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_POD_TERMINATING, Constants.DETAIL_TERMINATING);
 
 				try {
-					// 컨테이너 배포 취소
+
 					CmanContainerRecycleRes cmanRes = setContainerRecycle(service, container);
 					log.info("container recycle success.\nmessage : " + cmanRes.getMessage());
 					dbImage.setImageStatus(Constants.STATUS_POD_TERMINATING);
@@ -463,30 +491,33 @@ public class ImageService {
 
 		if (container != null && !dbImage.getImageStatus().equals(Constants.STATUS_IMAGE_UPLOAD_FAILED)) {
 			try {
-				
-				CmanContainerDeleteRes cmanRes = delContainer(container);
-				log.info("container delete success : " + cmanRes.getMessage());
-				imageMapper.deleteContainerByImage(dbImage.getImage());
-				
+				switch (dbImage.getImageStatus()) {
+					case Constants.STATUS_POD_RUNNING :
+					case Constants.STATUS_DEPLOY_FAILED :
+						setContainerRecycle(service, container);
+						break;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(e.getMessage());
 				if (e.getMessage().equals(Constants.DETAIL_ERROR_NOT_EXIST)) {
 					imageMapper.updateImageStatus(dbImage.getImage(), Constants.STATUS_DEPLOY_FAILED, Constants.DETAIL_ERROR_INTERNAL_ERR);
+				} else {
+					throw new Exception(e.getMessage());
 				}
-				throw new Exception(e.getMessage());
 			}
 		}
-		
+
+/*		논리삭제
 		try {
-			
+
 			List<CmanImageReadRes> cmanRes = getImage(service, dbImage.getMicroService());
 
 			if (cmanRes.size() > 0) {
 				final String imageName = dbImage.getImage();
 				CmanImageReadRes imageInfo = cmanRes.get(0);
 				boolean match = imageInfo.getTags().stream().anyMatch(tag -> tag.getName().equals(imageName));
-				
+
 				if (match) {
 					CmanContainerDeleteRes cmanImageTagRes = delImageTag(service, dbImage.getMicroService(), image);
 					log.info("image delete success : " + cmanImageTagRes.getMessage());
@@ -499,7 +530,9 @@ public class ImageService {
 				throw new Exception(e.getMessage());
 			}
 		}
+*/
 
+		imageMapper.deleteContainerByImage(dbImage.getImage());
 		imageMapper.deleteImage(dbImage.getImage());
 
 		return res;
@@ -516,7 +549,6 @@ public class ImageService {
 		cmanImageReq.setTag(imageId);
 
 		HttpHeaders headers = new HttpHeaders();
-		//RequestContext.RequestContextData localdata = RequestContext.getContextData();
 		headers.add("request_id", localdata.getRequestId());
 		headers.add("access_token", localdata.getAccessToken());
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -758,7 +790,7 @@ public class ImageService {
 				res = cmanRes.getBody();
 			}
 		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			log.error(e.getMessage());
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
 				ErrorResponse errRes = ResponseUtil.parseJsonString(e.getResponseBodyAsString());
@@ -816,7 +848,6 @@ public class ImageService {
 
 		return res;
 	}
-	//TODO  CMAN에서 준 DTO받아서 만들고 여기에 포함시켜서 호출할 것! 마이크로도메인의 도메인이랑 컨테이너 도메인이랑 포트 비교 일치하는애를 연결 해준다.
 
 	public CmanContainerDeployRes setContainerDeploy(String service, String container, CmanContainerDeployReq cmanReq) throws Exception {
 		CmanContainerDeployRes res = new CmanContainerDeployRes();

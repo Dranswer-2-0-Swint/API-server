@@ -59,12 +59,12 @@
 			and	del_yn		= 'N'
     </update>
 
-	<update id="recoverService" parameterType="String">
+	<update id="deleteService" parameterType="String">
 		update tb_service_info set
 			del_yn 			= 'N',
 			mod_timestamp 	= current_timestamp
 		where
-			service = #{service}
+			service			= #{service}
 	</update>
 
 	<delete id="removeService" parameterType="String">

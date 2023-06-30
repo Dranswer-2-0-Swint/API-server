@@ -110,13 +110,6 @@
 		where	micro_service	= #{microService}
 	</update>
 
-	<update id="recoverImage" parameterType="String">
-		update tb_image_info set
-			del_yn			= 'N',
-			mod_timestamp	= current_timestamp
-		where	micro_service	= #{micro}
-	</update>
-
 	<delete id="removeImage" parameterType="String">
 		delete from tb_image_info
 		where
@@ -136,7 +129,8 @@
 	<resultMap type="DbContainer" id="dbContainerMap">
 		<result property="image"				column="image" />
 		<result property="container"			column="container" />
-		<result property="containerDomain"		column="container_domain" />
+		<result property="domain"				column="domain" />
+		<result property="port"					column="port" />
 		<result property="modTimestamp"			column="mod_timestamp" />
 		<result property="regTimestamp"			column="reg_timestamp" />
     </resultMap>
@@ -170,13 +164,15 @@
 		(
 			image,
 			container,
-			domain
+			domain,
+		 	port
 		) values
 		<foreach collection="list" item="obj" separator=",">
 		(
 			#{obj.image},
 			#{obj.container},
-			#{obj.containerDomain}
+			#{obj.domain},
+			split_part(#{obj.domain} , ':', 2)
 		)
 		</foreach>
     </insert>
@@ -187,14 +183,6 @@
 		    mod_timestamp	= current_timestamp
 		where
 			image = #{image}
-	</update>
-
-	<update id="recoverContainer" parameterType="String">
-		update tb_container_info set
-			del_yn			= 'N',
-			mod_timestamp	= current_timestamp
-		where
-		    image = #{image}
 	</update>
 
 	<delete id="removeContainerByImage" parameterType="String">

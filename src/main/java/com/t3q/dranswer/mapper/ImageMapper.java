@@ -32,10 +32,7 @@ public interface ImageMapper {
 	public int deleteImage(@Param("image") String image);
 	// 마이크로서비스에 속한 이미지 삭제
 	public int deleteImageByMicro(@Param("microService") String microService);
-	// 이미지 복구
-	public int recoverImage(@Param("micro") String micro);
-	
-	
+
 	// 기업의 컨테이너 순번
 	public int getContainerSequence();
 	// 이미지ID 조회
@@ -49,7 +46,5 @@ public interface ImageMapper {
 	// 컨테이너 삭제
 	public int deleteContainerByImage(@Param("image") String image);
 	public int removeContainerByImage(@Param("image") String image);
-	// 컨테이너 복구
-	public int recoverContainer(@Param("image") String image);
 
 }

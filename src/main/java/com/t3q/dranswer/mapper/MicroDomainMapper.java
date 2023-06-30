@@ -14,6 +14,8 @@ public interface MicroDomainMapper {
 
     // 마이크로서비스도메인 조회 V
     public DbMicroDomain selectMicroDomain(@Param("domain") String domain);
+    // 마이크로서비스도메인 조회 V
+    public DbMicroDomain selectMicroDomainPort(@Param("microService") String microService, @Param("port") String port);
     // 마이크로서비스도메인 목록 조회 V
     public List<DbMicroDomain> selectMicroDomainByMicro(@Param("microService") String microService);
     // 마이크로서비스도메인 생성 V
@@ -24,6 +26,5 @@ public interface MicroDomainMapper {
     public int deleteMicroDomainByMicro(@Param("microService") String microService);
     // 마이크로서비스도메인 삭제 V
     public int deleteMicroDomain(@Param("obj") ServpotMicroServiceDomainDeleteReq obj);
-    // 마이크로서비스도메인 복구 V
-    public int recoverMicroDomain(@Param("micro") String micro);
+
 }

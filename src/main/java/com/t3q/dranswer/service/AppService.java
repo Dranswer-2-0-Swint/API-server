@@ -67,8 +67,6 @@ public class AppService {
 				subCompany.getServiceList().add(subService);
 			}
 			res.getCompanyList().add(subCompany);
-			//dbAppServiceList.removeIf(obj -> obj.getCompany().equals(dbAppService.getCompany()));
-			//imageInfo.getTags().stream().anyMatch(tag -> tag.getName().equals(imageName))
 		}
 
 		return res;
@@ -95,6 +93,7 @@ public class AppService {
 		log.info("AppService : createAppService");
 		String serviceId = Constants.PREFIX_SVC + HashUtil.makeCRC32(appServiceMapper.getServiceSequence());
 
+/*		현재는 응용서비스를 미리 생성하여 cman과 맵핑되어 있기 때문에 주석처리함
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		RequestContext.RequestContextData localdata = RequestContext.getContextData();
@@ -123,6 +122,8 @@ public class AppService {
 			log.error(e.getMessage());
 			return null;
 		}
+*/
+
 		DbAppService dbAppService = new DbAppService();
 		dbAppService.setService(serviceId);
 		dbAppService.setCompany(serviceReq.getCompanyId());

@@ -27,8 +27,6 @@ public interface MicroServiceMapper {
 	public int deleteMicroService(@Param("microService") String microService);
 	// 응용서비스에 속한 마이크로서비스 삭제
 	public int deleteMicroServiceByService(@Param("service") String service);
-	// 마이크로서비스 복구
-	public int recoverMicroService(@Param("service") String service);
 
 	// 컨테이너 조회(마이크로서비스 도메인 변경 시 해당하는 모든 컨테이너의 외부 도메인을 변경)
 	public List<String> selectContainerByMicro(@Param("micro") String micro);
