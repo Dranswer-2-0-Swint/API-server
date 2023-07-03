@@ -14,6 +14,7 @@ import com.t3q.dranswer.mapper.ImageMapper;
 import com.t3q.dranswer.mapper.MicroDomainMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.bcel.Const;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -539,6 +540,7 @@ public class ImageService {
 	}
 
 	public void asyncImageRegist(RequestContext.RequestContextData localdata, String imageId, ServpotImageRegistReq imageReq) throws Exception {
+		MDC.put("requestId", localdata.getRequestId());
 		log.info("ImageService : asyncImageRegist");
 		String service = imageMapper.selectServiceByMicro(imageReq.getMicroId());
 		

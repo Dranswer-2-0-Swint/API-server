@@ -2,7 +2,6 @@ package com.t3q.dranswer.aop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.t3q.dranswer.config.ApplicationProperties;
-import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
@@ -10,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.*;
@@ -42,13 +42,10 @@ public class ValidAOP {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("access_token");
         String request_id = request.getHeader("request_id");
-        //token = token.substring(7);
-        //boolean isValidToken = validateToken(token,request_id);
+        MDC.put("requestId", request_id);
         KeycloakIntroSpectRes response = validateToken(token,request_id);
 
-
         if(!response.isActive()){
-
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -57,7 +54,6 @@ public class ValidAOP {
         RequestContext.setContextData(request_id, swintToken,response.getPreferredUsername());
 
         return joinPoint.proceed();
-
     }
 
 
