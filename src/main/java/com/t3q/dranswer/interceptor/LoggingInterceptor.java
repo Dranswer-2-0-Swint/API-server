@@ -32,36 +32,14 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body,
                                         ClientHttpRequestExecution execution) throws IOException {
-
-        LogEntity logEntity = new LogEntity();
-
         String requestBody = new String(body, StandardCharsets.UTF_8);
         ObjectMapper reqobjectMapper = new ObjectMapper();
         JsonNode reqNode = reqobjectMapper.readTree(requestBody);
 
-
-
-
         // Log request data before sending the request
         logRequest(request, body);
 
-
-
-
-
-        // Execute the request
-        ClientHttpResponse response = execution.execute(request, body);
-
-
-
-
-        String responseBody = getResponseBody(response);
-        ObjectMapper resobjectMapper = new ObjectMapper();
-        JsonNode resNode = resobjectMapper.readTree(responseBody);
-
-        // Log response data after receiving the response
-        logResponse(response);
-
+        LogEntity logEntity = new LogEntity();
         String req_id = request.getHeaders().getFirst("request_id");
         logEntity.setReq_id(req_id);
         logEntity.setReq_user("swint");
@@ -71,7 +49,17 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         logEntity.setReq_md(request.getMethodValue());
         logEntity.setReq_prm(request.getURI().getQuery());
 
-        //TODO keycloak인지 cman인지? v
+        loggingRepository.save(logEntity);
+
+        // Execute the request
+        ClientHttpResponse response = execution.execute(request, body);
+
+        String responseBody = getResponseBody(response);
+        ObjectMapper resobjectMapper = new ObjectMapper();
+        JsonNode resNode = resobjectMapper.readTree(responseBody);
+
+        // Log response data after receiving the response
+        logResponse(response);
 
         logEntity.setRes_user("cman");
         logEntity.setRes_body(responseBody);
@@ -88,10 +76,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         // Extract relevant request data and save it to the database
         String url = request.getURI().toString();
         String requestBody = new String(body);  // Modify as per your requirements
-        log.info("########hihihihihihi this is request url !!!! {}",url);
-        log.info("this is bodybody {}", requestBody);
-        // Save request data to the database
-        // ...
+        log.info("########hihihihihihi this is request url !!!! \n{}\n{}\n", url, requestBody);
     }
 
     private void logResponse(ClientHttpResponse response) throws IOException {
@@ -99,9 +84,7 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
         HttpStatus statusCode = response.getStatusCode();
         String responseBody = getResponseBody(response);
         //json parsing
-        log.info("########hihihihihihi this is response SC!!!!! {}",statusCode);
-        log.info("this is bodybody {}", responseBody);
-
+        log.info("########hihihihihihi this is response SC!!!!! \n{}\n{}\n", statusCode, responseBody);
     }
 
     private String getResponseBody(ClientHttpResponse response) throws IOException {

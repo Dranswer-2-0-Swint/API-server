@@ -270,11 +270,11 @@ CREATE TABLE swint.tb_api_log (
                                   req_prm varchar NULL, -- 요청 param
                                   req_body varchar NULL, -- 요청 Body
                                   req_dt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 요청 일시
-                                  res_user varchar NOT NULL, -- API 응답자
-                                  res_status varchar NOT NULL, -- 응답 상태코드
-                                  res_msg varchar NOT NULL, -- 응답 메시지
-                                  res_body varchar NOT NULL, -- 응답 Body
-                                  res_dt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 응답 일시
+                                  res_user varchar NULL, -- API 응답자
+                                  res_status varchar NULL, -- 응답 상태코드
+                                  res_msg varchar NULL, -- 응답 메시지
+                                  res_body varchar NULL, -- 응답 Body
+                                  res_dt timestamp NULL, -- 응답 일시
                                   CONSTRAINT tb_api_log_pk PRIMARY KEY (seq_id)
 );
 COMMENT ON TABLE swint.tb_api_log IS 'servpot 과 cman의 request reponse 로깅';

@@ -10,6 +10,6 @@ import lombok.Data;
 public class ApiResponse {
 
 	private String rspCode	= "00000";			// 응답코드
-	private String rspMsg	= "성공";				// 응답메시지
+	private String rspMsg	= "Success";		// 응답메시지
 	
 }

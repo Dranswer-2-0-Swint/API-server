@@ -51,7 +51,7 @@ public class ValidAOP {
 
         //swint token 발급 및 threadlocal에 저장
         String swintToken = getToken(request_id);
-        RequestContext.setContextData(request_id, swintToken,response.getPreferredUsername());
+        RequestContext.setContextData(request_id, swintToken, response.getPreferredUsername());
 
         return joinPoint.proceed();
     }
@@ -67,8 +67,8 @@ public class ValidAOP {
         //ClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
         RestTemplate resTmpl = new RestTemplate();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", 		"swint");
-        body.add("client_secret", 	"Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP");
+        body.add("client_id", 		applicationProperties.getUserClient());
+        body.add("client_secret", 	applicationProperties.getUserSecret());
         body.add("token_type_hint", "access_token");
         body.add("token", 			token);
 
@@ -97,8 +97,8 @@ public class ValidAOP {
         //ClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
         RestTemplate resTmpl = new RestTemplate();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", 		"swint");
-        body.add("client_secret", 	"Vvw2Obuuqa4nlAz5cctSBK5kb1jONReP");
+        body.add("client_id", 		applicationProperties.getUserClient());
+        body.add("client_secret", 	applicationProperties.getUserSecret());
         body.add("token_type_hint", "access_token");
         body.add("token", 			token);
 
@@ -127,8 +127,8 @@ public class ValidAOP {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         RestTemplate resTmpl = new RestTemplate();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", 		"swint");
-        body.add("client_secret", 	"K91G3XhKY3z2qussprBEAC24cksv0qNk");
+        body.add("client_id", 		applicationProperties.getSystemClient());
+        body.add("client_secret", 	applicationProperties.getSystemSecret());
         body.add("username",        "swint-dev");
         body.add("password",        "1234");
         body.add("grant_type",      "password");

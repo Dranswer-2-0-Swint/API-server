@@ -42,50 +42,43 @@ public class LoggingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
-        LogEntity logEntity = new LogEntity();
-        filterChain.doFilter(requestWrapper, responseWrapper);
 
         String Headers = getHeaders(requestWrapper).toString();
         String queryString = getQueryParameter(requestWrapper).toString();
         String RequestBody = contentBody(requestWrapper.getContentAsByteArray());
-        String ResponseBody = contentBody(responseWrapper.getContentAsByteArray());
 
-        ObjectMapper resobjectMapper = new ObjectMapper();
-        JsonNode resNode = resobjectMapper.readTree(ResponseBody);
+        log.info("\n=======URI: [{}], METHOD: [{}]=======\n", request.getRequestURI(), request.getMethod());
+        log.info("\nHeaders: {}\nQueryString: {}\nRequest Body: {}\n", Headers, queryString, RequestBody);
 
-        log.info("=======URI: [{}], METHOD: [{}]=======", request.getRequestURI(), request.getMethod());
-        log.info("Headers: {}", Headers);
-        log.info("QueryString: {}", queryString);
-        log.info("Request Body: {}", RequestBody);
-        log.info("Response Body: {}", ResponseBody);
-
-
-        ///jpa
-		String requestId = request.getHeader("request_id");
-
-        ///jpa
+        LogEntity logEntity = new LogEntity();
+        String requestId = request.getHeader("request_id");
         logEntity.setReq_id(requestId);
-
         RequestContext.RequestContextData localdata = RequestContext.getContextData();
-
         logEntity.setReq_user(localdata == null? "": localdata.getReq_user());
         logEntity.setReq_prm(requestWrapper.getQueryString());
         logEntity.setReq_body(RequestBody);
         logEntity.setReq_dt(LocalDateTime.now());
         logEntity.setReq_uri(requestWrapper.getRequestURI());
         logEntity.setReq_md(requestWrapper.getMethod());
-        logEntity.setRes_user("swint");
-        logEntity.setRes_body(ResponseBody);
-        logEntity.setRes_dt(LocalDateTime.now());
-        logEntity.setRes_msg("this is filter's msg : " + resNode.get("message"));
-        logEntity.setRes_status(responseWrapper.getStatus());
-
-
 
         loggingRepository.save(logEntity);
 
-        responseWrapper.copyBodyToResponse();
+        filterChain.doFilter(requestWrapper, responseWrapper);
 
+        String ResponseBody = contentBody(responseWrapper.getContentAsByteArray());
+        ObjectMapper resobjectMapper = new ObjectMapper();
+        JsonNode resNode = resobjectMapper.readTree(ResponseBody);
+
+        log.info("\nResponse Body: {}\n", ResponseBody);
+
+        logEntity.setRes_user("swint");
+        logEntity.setRes_body(ResponseBody);
+        logEntity.setRes_dt(LocalDateTime.now());
+        logEntity.setRes_msg(String.valueOf(resNode.get("message")));
+        logEntity.setRes_status(responseWrapper.getStatus());
+
+        loggingRepository.save(logEntity);
+        responseWrapper.copyBodyToResponse();
     }
 
     private Map<String, String> getHeaders(HttpServletRequest request) {
@@ -101,8 +94,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 
     private Map<String, String> getQueryParameter(HttpServletRequest request) {
         Map<String, String> queryMap = new HashMap<>();
-        request.getParameterMap()
-                .forEach((key, value) -> queryMap.put(key, String.join("", value)));
+        request.getParameterMap().forEach((key, value) -> queryMap.put(key, String.join("", value)));
         return queryMap;
     }
 
