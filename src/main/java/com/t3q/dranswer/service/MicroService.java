@@ -171,6 +171,7 @@ public class MicroService {
 
 		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByMicro(microReq.getMicroId());
 		for(DbMicroDomain microDomain: microDomains) {
+
 			if( microDomain.getDomain().equals(microReq.getPresentDomain())){
 				microDomainMapper.updateMicroDomain(microReq);
 				break;

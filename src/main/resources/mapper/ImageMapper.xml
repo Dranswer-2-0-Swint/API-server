@@ -38,6 +38,8 @@
 		limit	1
     </select>
 
+
+
     <select id="selectImage" parameterType="String" resultType="DbImage">
     	select	*
     	from	tb_image_info
@@ -122,9 +124,7 @@
 			micro_service = #{microService}
 	</delete>
 
-
-
-
+	
 
 	<resultMap type="DbContainer" id="dbContainerMap">
 		<result property="image"				column="image" />

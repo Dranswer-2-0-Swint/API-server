@@ -688,7 +688,6 @@ public class ImageService {
 		}
 	}
 
-
 	public CmanContainerReadRes getContainerInfo(String container) throws Exception {
 		CmanContainerReadRes res = new CmanContainerReadRes();
 		HttpHeaders headers = new HttpHeaders();

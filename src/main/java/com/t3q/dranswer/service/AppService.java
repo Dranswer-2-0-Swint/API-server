@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.dto.db.DbImage;
+import com.t3q.dranswer.dto.db.DbMicroService;
 import com.t3q.dranswer.dto.servpot.*;
+import com.t3q.dranswer.mapper.ImageMapper;
+import com.t3q.dranswer.mapper.MicroServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +38,12 @@ public class AppService {
 	
 	@Autowired
 	AppServiceMapper appServiceMapper;
+
+	@Autowired
+	MicroServiceMapper microServiceMapper;
+
+	@Autowired
+	ImageMapper imageMapper;
 	
 	private final RestTemplate restTemplate;
 	private final ApplicationProperties applicationProperties;
@@ -43,6 +53,47 @@ public class AppService {
         this.restTemplate = restTemplate;
         this.applicationProperties = applicationProperties;
     }
+
+	public ServpotAppServiceReadMicroServicesAndImagesRes readMicroServicesAndImages(String service) {
+		log.info("AppService : readMicroServicesAndImages");
+
+		ServpotAppServiceReadMicroServicesAndImagesRes res = new ServpotAppServiceReadMicroServicesAndImagesRes();
+		res.setMicrosWithImages(new ArrayList<>());
+		// 응용서비스 검색
+		DbAppService dbAppService = appServiceMapper.selectService(service);
+		if(dbAppService.getService() != null){
+			res.setCompanyId(dbAppService.getCompany());
+			res.setServiceId(dbAppService.getService());
+			//응용서비스에 있는 마이크로 서비스 목록 조회
+			List<DbMicroService> dbMicroServiceList = microServiceMapper.selectMicroServiceByService(dbAppService.getService());
+			//micro service ID를 이용해 이미지 목록 조회
+			if(!dbMicroServiceList.isEmpty()){
+
+				for(DbMicroService dbMicroService : dbMicroServiceList){
+					ServpotAppServiceReadMicroServicesAndImagesResSub sub = new ServpotAppServiceReadMicroServicesAndImagesResSub();
+					sub.setImageList(new ArrayList<>());
+
+					sub.setMicroId(dbMicroService.getMicroService());
+					List<DbImage> dbImageList = imageMapper.selectImageByMicro(dbMicroService.getMicroService());
+
+					if(!dbImageList.isEmpty()){
+
+						for (DbImage dbImage : dbImageList) {
+							ServpotImageListReadResSub subsub = new ServpotImageListReadResSub();
+
+							subsub.setImageId(dbImage.getImage());
+							subsub.setImageName(dbImage.getImageName());
+							sub.getImageList().add(subsub);
+						}
+					}
+					res.getMicrosWithImages().add(sub);
+				}
+			}
+
+		}
+
+		return res;
+	}
 
 	public ServpotAppServiceAllReadRes readAppServiceAll() {
 		log.info("AppService : readAppServiceAll");
