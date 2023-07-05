@@ -13,12 +13,10 @@ import com.t3q.dranswer.dto.servpot.*;
 import com.t3q.dranswer.mapper.ImageMapper;
 import com.t3q.dranswer.mapper.MicroDomainMapper;
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Log4j2
@@ -60,6 +57,8 @@ public class ImageService {
 		}
 
 		ServpotImageListReadRes res = new ServpotImageListReadRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setImageList(new ArrayList<>());
 		res.setMicroId(micro);
 		for (DbImage dbImage : dbImageList) {
@@ -120,7 +119,10 @@ public class ImageService {
 			res.setStopTime(Constants.ZERO);
 			res.setRunningTime(Constants.ZERO);
 		}
-		
+
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
+
 		return res;
 	}
 
@@ -135,9 +137,7 @@ public class ImageService {
 		}
 		
 		String service = imageMapper.selectServiceByMicro(dbImage.getMicroService());
-		ServpotImageStatusRes res = new ServpotImageStatusRes();
-		res.setImageId(image);
-		
+
 		if (container != null) {
 			if (!dbImage.getImageStatus().equals(Constants.STATUS_DEPLOY_FAILED) && !dbImage.getImageStatus().equals(Constants.STATUS_SEARCH_FAILED)) {
 				try {
@@ -226,9 +226,13 @@ public class ImageService {
 				throw new Exception(e.getMessage());
 			}
 		}
-		
+
+		ServpotImageStatusRes res = new ServpotImageStatusRes();
+		res.setImageId(image);
 		res.setImageStatus(dbImage.getImageStatus());
 		res.setImageStatusDetail(dbImage.getImageStatusDetail());
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 
 		return res;
 	}
@@ -246,9 +250,6 @@ public class ImageService {
 		}
 		String container = imageMapper.selectContainerIdByImage(imageReq.getImageId());
 		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByMicro(dbImage.getMicroService());
-
-		ServpotImageStatusRes res = new ServpotImageStatusRes();
-		res.setImageId(imageReq.getImageId());
 
 		if (container != null && !dbImage.getImageStatus().equals(Constants.STATUS_SEARCH_FAILED)) {
 			try {
@@ -351,10 +352,14 @@ public class ImageService {
 				}
 			}
 		}
-		
+
+		ServpotImageStatusRes res = new ServpotImageStatusRes();
+		res.setImageId(imageReq.getImageId());
 		res.setImageStatus(dbImage.getImageStatus());
 		res.setImageStatusDetail(dbImage.getImageStatusDetail());
-		
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
+
 		return res;
 	}
 	
@@ -389,7 +394,8 @@ public class ImageService {
 		res.setImageName(dbImage.getImageName());
 		res.setImageStatus(dbImage.getImageStatus());
 		res.setImageStatusDetail(dbImage.getImageStatusDetail());
-		
+		res.setRequestId(localdata.getRequestId());
+
 		return res;
 	}
 
@@ -403,15 +409,11 @@ public class ImageService {
 			throw new Exception(Constants.E40004);
 		}
 
-		ServpotImageRegistRes res = new ServpotImageRegistRes();
-		res.setImageId(imageReq.getImageId());
-		res.setImageName(imageReq.getImageName());
-		
-		CmanContainerUpdateReq cmanContainerReq = new CmanContainerUpdateReq();
-		cmanContainerReq.setEnv(new ArrayList<>());
-		cmanContainerReq.setServicePort(new ArrayList<>());
-		cmanContainerReq.setVolumeMounts(new ArrayList<>());
-		cmanContainerReq.setProjectName(service);
+		CmanContainerUpdateReq cmanReq = new CmanContainerUpdateReq();
+		cmanReq.setEnv(new ArrayList<>());
+		cmanReq.setServicePort(new ArrayList<>());
+		cmanReq.setVolumeMounts(new ArrayList<>());
+		cmanReq.setProjectName(service);
 		
 		List<ServpotImageRegistUpdateReqSub> setupList = imageReq.getSetupList()
 																.stream()
@@ -422,7 +424,7 @@ public class ImageService {
 			CmanContainerUpdateReqPort sub = new CmanContainerUpdateReqPort();
 			sub.setPort(Integer.parseInt(value[0]));
 			sub.setProtocol(value[1]);
-			cmanContainerReq.getServicePort().add(sub);
+			cmanReq.getServicePort().add(sub);
 		}
 		setupList.clear();
 		setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_MOUNT)).collect(Collectors.toList());
@@ -432,7 +434,7 @@ public class ImageService {
 			sub.setName(String.valueOf(setup.getSetupSeq()));
 			sub.setPath(value[0]);
 			sub.setMountPath(value[1]);
-			cmanContainerReq.getVolumeMounts().add(sub);
+			cmanReq.getVolumeMounts().add(sub);
 		}
 		setupList.clear();
 		setupList = imageReq.getSetupList().stream().filter(set -> set.getSetupType().equals(Constants.TYPE_ENV)).collect(Collectors.toList());
@@ -440,39 +442,27 @@ public class ImageService {
 			CmanContainerUpdateReqEnv sub = new CmanContainerUpdateReqEnv();
 			sub.setName(setup.getSetupKey());
 			sub.setValue(setup.getSetupValue());
-			cmanContainerReq.getEnv().add(sub);
+			cmanReq.getEnv().add(sub);
 		}
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
-		headers.add("request_id", localdata.getRequestId());
-		headers.add("access_token", localdata.getAccessToken());
-		
-		HttpEntity<CmanContainerUpdateReq> containerEntity = new HttpEntity<>(cmanContainerReq, headers);
-		URI uri = UriComponentsBuilder
-			    .fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_UPDATE_URL)
-			    .encode()
-			    .buildAndExpand(container)
-			    .toUri();
-		
+
 		try {
-			ResponseEntity<CmanContainerUpdateRes> cmanContainerRes = restTemplate.exchange(	uri, 
-																								HttpMethod.PATCH, 
-																								containerEntity, 
-																								CmanContainerUpdateRes.class);
-		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			throw new Exception(Constants.E50002);
+
+			CmanContainerUpdateRes cmanRes = modContainer(container, cmanReq);
+			log.info("container name : " + cmanRes.getConName());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
-			throw new Exception(Constants.E50000);
+			throw new Exception(e.getMessage());
 		}
 
+		ServpotImageRegistRes res = new ServpotImageRegistRes();
+		res.setImageId(imageReq.getImageId());
+		res.setImageName(imageReq.getImageName());
 		res.setImageStatus(dbImage.getImageStatus());
 		res.setImageStatusDetail(dbImage.getImageStatusDetail());
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 
 		return res;
 	}
@@ -483,9 +473,6 @@ public class ImageService {
 		if (dbImage == null) {
 			throw new Exception(Constants.E40004);
 		}
-		
-		ServpotImageDeleteRes res = new ServpotImageDeleteRes();
-		res.setImageId(dbImage.getImage());
 		
 		String service = imageMapper.selectServiceByImage(dbImage.getImage());
 		String container = imageMapper.selectContainerIdByImage(dbImage.getImage());
@@ -535,6 +522,11 @@ public class ImageService {
 
 		imageMapper.deleteContainerByImage(dbImage.getImage());
 		imageMapper.deleteImage(dbImage.getImage());
+
+		ServpotImageDeleteRes res = new ServpotImageDeleteRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
+		res.setImageId(dbImage.getImage());
 
 		return res;
 	}
@@ -967,6 +959,42 @@ public class ImageService {
 			throw new Exception(Constants.E50000);
 		}
 		
+		return res;
+	}
+
+	public CmanContainerUpdateRes modContainer(String container, CmanContainerUpdateReq cmanReq) throws Exception {
+		CmanContainerUpdateRes res = new CmanContainerUpdateRes();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		headers.add("request_id", localdata.getRequestId());
+		headers.add("access_token", localdata.getAccessToken());
+
+		HttpEntity<CmanContainerUpdateReq> containerEntity = new HttpEntity<>(cmanReq, headers);
+		URI uri = UriComponentsBuilder
+				.fromUriString(applicationProperties.getCmanUrl() + Constants.CMAN_CONTAINER_UPDATE_URL)
+				.encode()
+				.buildAndExpand(container)
+				.toUri();
+
+		try {
+			ResponseEntity<CmanContainerUpdateRes> cmanRes = restTemplate.exchange(	uri,
+																					HttpMethod.PATCH,
+																					containerEntity,
+																					CmanContainerUpdateRes.class);
+			if (cmanRes.getStatusCode() == HttpStatus.OK) {
+				res = cmanRes.getBody();
+			}
+		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new Exception(Constants.E50002);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new Exception(Constants.E50000);
+		}
+
 		return res;
 	}
 

@@ -51,7 +51,6 @@ public class ImageController {
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageListReadRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String micro = (String) parameter.get("micro_id");
 		if (micro == null || micro.isEmpty()) {
@@ -62,7 +61,6 @@ public class ImageController {
 		
 		try {
 			res = imageService.readImageList(micro);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -80,7 +78,6 @@ public class ImageController {
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageReadRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String image = (String) parameter.get("image_id");
 		if (image == null || image.isEmpty()) {
@@ -91,7 +88,6 @@ public class ImageController {
 		
 		try {
 			res = imageService.readImage(image);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -109,7 +105,6 @@ public class ImageController {
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotImageStatusRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String image = (String) parameter.get("image_id");
 		if (image == null || image.isEmpty()) {
@@ -120,7 +115,6 @@ public class ImageController {
 		
 		try {
 			res = imageService.readImageStatus(image);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -138,11 +132,9 @@ public class ImageController {
 													@RequestBody @Valid final ServpotImageStatusUpdateReq imageReq) {
 		
 		ServpotImageStatusRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = imageService.updateImageStatus(imageReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -160,11 +152,9 @@ public class ImageController {
 													@RequestBody @Valid final ServpotImageRegistReq imageReq) {
 		
 		ServpotImageRegistRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = imageService.createImageRegist(imageReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -182,11 +172,9 @@ public class ImageController {
 													@RequestBody @Valid final ServpotImageRegistUpdateReq imageReq) {
 		
 		ServpotImageRegistRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = imageService.updateImageRegist(imageReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -204,11 +192,9 @@ public class ImageController {
 													@RequestBody @Valid final ServpotImageDeleteReq imageReq) {
 		
 		ServpotImageDeleteRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = imageService.deleteImage(imageReq.getImageId());
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

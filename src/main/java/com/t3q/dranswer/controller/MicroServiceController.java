@@ -42,7 +42,6 @@ public class MicroServiceController {
 														@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
 		ServpotMicroServiceListReadRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String service = (String) parameter.get("service_id");
 		if (service == null || service.isEmpty()) {
@@ -53,7 +52,6 @@ public class MicroServiceController {
 		
 		try {
 			res = microService.readMicroServiceList(service);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -70,11 +68,9 @@ public class MicroServiceController {
 														@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
 		
 		ServpotMicroServiceCreateRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.createMicroService(microReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -92,11 +88,9 @@ public class MicroServiceController {
 														@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
 		
 		ServpotMicroServiceUpdateRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.updateMicroService(microReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -114,11 +108,9 @@ public class MicroServiceController {
 														@RequestBody @Valid final ServpotMicroServiceDeleteReq microReq) {
 		
 		ServpotMicroServiceDeleteRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.deleteMicroService(microReq.getMicroId());
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -136,11 +128,9 @@ public class MicroServiceController {
 														@RequestBody @Valid final ServpotMicroServiceDomainCreateReq microReq) {
 		
 		ServpotMicroServiceDomainCreateRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.createMicroServiceDomain(microReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -157,11 +147,9 @@ public class MicroServiceController {
 														   @RequestBody @Valid final ServpotMicroServiceDomainUpdateReq microReq){
 
 		ServpotMicroServiceDomainUpdateRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.updateMicroServiceDomain(microReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -179,11 +167,9 @@ public class MicroServiceController {
 															@RequestBody @Valid final ServpotMicroServiceDomainDeleteReq microReq) {
 		
 		ServpotMicroServiceDomainDeleteRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.deleteMicroServiceDomain(microReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

@@ -34,6 +34,7 @@ public class AppServiceController {
 
 	@Autowired
 	AppService appService;
+
 	// 응용서비스 세부정보 조회 (하위 마이크로서비스, 이미지 조회)
 	@GetMapping("/detail")
 	@SwintValid
@@ -42,7 +43,7 @@ public class AppServiceController {
 
 
 		String service = (String) parameter.get("service_id");
-		ServpotAppServiceReadMicroServicesAndImagesRes res = new ServpotAppServiceReadMicroServicesAndImagesRes();
+		ServpotAppServiceReadMicroServicesAndImagesRes res;
 
 		try {
 			res = appService.readMicroServicesAndImages(service);
@@ -63,11 +64,9 @@ public class AppServiceController {
 	public ResponseEntity<Object> readAppServiceAll(HttpServletRequest request) {
 
 		ServpotAppServiceAllReadRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = appService.readAppServiceAll();
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -84,7 +83,6 @@ public class AppServiceController {
 													 @RequestParam(required = false) HashMap<String, Object> parameter) {
 
 		ServpotAppServiceListReadRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String company = (String) parameter.get("company_id");
 		if (company == null || company.isEmpty()) {
@@ -95,7 +93,6 @@ public class AppServiceController {
 
 		try {
 			res = appService.readAppServiceList(company);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -113,11 +110,9 @@ public class AppServiceController {
 													@RequestBody @Valid final ServpotAppServiceCreateReq serviceReq) {
 		
 		ServpotAppServiceCreateRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = appService.createAppService(serviceReq);
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -135,11 +130,9 @@ public class AppServiceController {
 														@RequestBody @Valid final ServpotAppServiceDeleteReq serviceReq) {
 		
 		ServpotAppServiceDeleteRes res;
-		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = appService.deleteService(serviceReq.getServiceId());
-			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

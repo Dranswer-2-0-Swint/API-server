@@ -1,36 +1,24 @@
 package com.t3q.dranswer.service;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.t3q.dranswer.dto.RequestContext;
-import com.t3q.dranswer.dto.db.DbImage;
-import com.t3q.dranswer.dto.db.DbMicroService;
-import com.t3q.dranswer.dto.servpot.*;
-import com.t3q.dranswer.mapper.ImageMapper;
-import com.t3q.dranswer.mapper.MicroServiceMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.t3q.dranswer.common.util.HashUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.cman.CmanInitProjectReq;
-import com.t3q.dranswer.dto.cman.CmanInitProjectRes;
+import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.db.DbAppService;
+import com.t3q.dranswer.dto.db.DbImage;
+import com.t3q.dranswer.dto.db.DbMicroService;
+import com.t3q.dranswer.dto.servpot.*;
 import com.t3q.dranswer.mapper.AppServiceMapper;
-
+import com.t3q.dranswer.mapper.ImageMapper;
+import com.t3q.dranswer.mapper.MicroServiceMapper;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -58,6 +46,8 @@ public class AppService {
 		log.info("AppService : readMicroServicesAndImages");
 
 		ServpotAppServiceReadMicroServicesAndImagesRes res = new ServpotAppServiceReadMicroServicesAndImagesRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicrosWithImages(new ArrayList<>());
 		// 응용서비스 검색
 		DbAppService dbAppService = appServiceMapper.selectService(service);
@@ -100,6 +90,8 @@ public class AppService {
 		List<DbAppService> dbAppServiceList = appServiceMapper.selectServiceAll();
 
 		ServpotAppServiceAllReadRes res = new ServpotAppServiceAllReadRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setCompanyList(new ArrayList<>());
 		for (DbAppService dbAppService : dbAppServiceList) {
 			if (res.getCompanyList().stream().anyMatch(obj -> obj.getCompanyId().equals(dbAppService.getCompany()))) {
@@ -128,8 +120,10 @@ public class AppService {
 		List<DbAppService> dbAppServiceList = appServiceMapper.selectServiceByCompany(company);
 
 		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
-		res.setServiceList(new ArrayList<>());
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setCompanyId(company);
+		res.setServiceList(new ArrayList<>());
 		for (DbAppService dbAppService : dbAppServiceList) {
 			ServpotAppServiceListReadResSub sub = new ServpotAppServiceListReadResSub();
 			sub.setServiceId(dbAppService.getService());
@@ -183,6 +177,8 @@ public class AppService {
 		appServiceMapper.insertService(dbAppService);
 		
 		ServpotAppServiceCreateRes res = new ServpotAppServiceCreateRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setServiceId(dbAppService.getService());
 		res.setCompanyId(dbAppService.getCompany());
 		res.setServiceName(dbAppService.getServiceName());
@@ -196,6 +192,8 @@ public class AppService {
 		appServiceMapper.deleteService(service);
 		
 		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setServiceId(service);
 		
 		return res;

@@ -1,24 +1,23 @@
 package com.t3q.dranswer.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.t3q.dranswer.common.util.HashUtil;
+import com.t3q.dranswer.config.ApplicationProperties;
+import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.db.DbMicroDomain;
+import com.t3q.dranswer.dto.db.DbMicroService;
 import com.t3q.dranswer.dto.servpot.*;
+import com.t3q.dranswer.mapper.ImageMapper;
 import com.t3q.dranswer.mapper.MicroDomainMapper;
+import com.t3q.dranswer.mapper.MicroServiceMapper;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.t3q.dranswer.common.util.HashUtil;
-import com.t3q.dranswer.config.ApplicationProperties;
-import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.db.DbMicroService;
-import com.t3q.dranswer.mapper.ImageMapper;
-import com.t3q.dranswer.mapper.MicroServiceMapper;
-
-import lombok.extern.log4j.Log4j2;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -50,6 +49,8 @@ public class MicroService {
 		log.info("MicroService : readMicroServiceList");
 		List<DbMicroService> dbMicroServiceList = microServiceMapper.selectMicroServiceByService(service);
 		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroList(new ArrayList<>());
 		res.setServiceId(service);
 
@@ -86,6 +87,8 @@ public class MicroService {
 		microServiceMapper.insertMicroService(dbMicroService);
 		
 		ServpotMicroServiceCreateRes res = new ServpotMicroServiceCreateRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setServiceId(dbMicroService.getService());
 		res.setMicroId(dbMicroService.getMicroService());
 		res.setMicroName(dbMicroService.getMicroServiceName());
@@ -104,6 +107,8 @@ public class MicroService {
 		microServiceMapper.updateMicroServiceName(dbMicroService);
 		
 		ServpotMicroServiceUpdateRes res = new ServpotMicroServiceUpdateRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroId(dbMicroService.getMicroService());
 		res.setMicroName(dbMicroService.getMicroServiceName());
 		
@@ -132,6 +137,8 @@ public class MicroService {
 		microServiceMapper.deleteMicroService(micro);
 
 		ServpotMicroServiceDeleteRes res = new ServpotMicroServiceDeleteRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroId(micro);
 
 		return res;
@@ -155,6 +162,8 @@ public class MicroService {
 		microDomainMapper.insertMicroDomain(dbMicroDomain);
 
 		ServpotMicroServiceDomainCreateRes res = new ServpotMicroServiceDomainCreateRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroId(microReq.getMicroId());
 		res.setDomain(microReq.getDomain());
 		res.setPath(microReq.getPath());
@@ -179,6 +188,8 @@ public class MicroService {
 		}
 
 		ServpotMicroServiceDomainUpdateRes res = new ServpotMicroServiceDomainUpdateRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroId(microReq.getMicroId());
 		res.setDomain(microReq.getRenewDomain());
 		res.setPath(microReq.getPath());
@@ -195,6 +206,8 @@ public class MicroService {
 		microDomainMapper.deleteMicroDomain(microReq);
 
 		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+		res.setRequestId(localdata.getRequestId());
 		res.setMicroId(microReq.getMicroId());
 
 		return res;
