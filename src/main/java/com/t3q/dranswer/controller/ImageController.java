@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,7 @@ import lombok.extern.log4j.Log4j2;
 @Controller
 @RequestMapping("/api/v1/image")
 public class ImageController {
-	
+
 	@Autowired
 	ImageService imageService;
 
@@ -47,15 +49,19 @@ public class ImageController {
 	public ResponseEntity<Object> readImageList(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
-		ServpotImageListReadRes res = new ServpotImageListReadRes();
-		
+		ServpotImageListReadRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		String micro = (String) parameter.get("micro_id");
-		if (micro == null || micro.isEmpty() == true) {
-			// exception
+		if (micro == null || micro.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		try {
 			res = imageService.readImageList(micro);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -72,15 +78,19 @@ public class ImageController {
 	public ResponseEntity<Object> readImage(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
-		ServpotImageReadRes res = new ServpotImageReadRes();
-		
+		ServpotImageReadRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		String image = (String) parameter.get("image_id");
-		if (image == null || image.isEmpty() == true) {
-			// exception
+		if (image == null || image.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		try {
 			res = imageService.readImage(image);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -97,15 +107,19 @@ public class ImageController {
 	public ResponseEntity<Object> readImageStatus(HttpServletRequest request, 
 													@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
-		ServpotImageStatusRes res = new ServpotImageStatusRes();
-		
+		ServpotImageStatusRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		String image = (String) parameter.get("image_id");
-		if (image == null || image.isEmpty() == true) {
-			// exception
+		if (image == null || image.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		try {
 			res = imageService.readImageStatus(image);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -122,10 +136,12 @@ public class ImageController {
 	public ResponseEntity<Object> updateImageStatus(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageStatusUpdateReq imageReq) {
 		
-		ServpotImageStatusRes res = new ServpotImageStatusRes();
-		
+		ServpotImageStatusRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = imageService.updateImageStatus(imageReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -142,10 +158,12 @@ public class ImageController {
 	public ResponseEntity<Object> createImageRegist(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageRegistReq imageReq) {
 		
-		ServpotImageRegistRes res = new ServpotImageRegistRes();
-		
+		ServpotImageRegistRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = imageService.createImageRegist(imageReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -162,10 +180,12 @@ public class ImageController {
 	public ResponseEntity<Object> updateImageRegist(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageRegistUpdateReq imageReq) {
 		
-		ServpotImageRegistRes res = new ServpotImageRegistRes();
-		
+		ServpotImageRegistRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = imageService.updateImageRegist(imageReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -182,10 +202,12 @@ public class ImageController {
 	public ResponseEntity<Object> deleteImage(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotImageDeleteReq imageReq) {
 		
-		ServpotImageDeleteRes res = new ServpotImageDeleteRes();
-		
+		ServpotImageDeleteRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = imageService.deleteImage(imageReq.getImageId());
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

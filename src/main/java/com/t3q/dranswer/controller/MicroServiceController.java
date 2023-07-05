@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.servpot.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,22 +35,25 @@ public class MicroServiceController {
 	@Autowired
 	MicroService microService;
 
-	
 	// 마이크로서비스 목록 조회
 	@GetMapping("/list")
 	@SwintValid
 	public ResponseEntity<Object> readMicroServiceList(HttpServletRequest request, 
 														@RequestParam(required = false) HashMap<String, Object> parameter) {
 		
-		ServpotMicroServiceListReadRes res = new ServpotMicroServiceListReadRes();
-		
+		ServpotMicroServiceListReadRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		String service = (String) parameter.get("service_id");
-		if (service == null || service.isEmpty() == true) {
-			// exception
+		if (service == null || service.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		try {
 			res = microService.readMicroServiceList(service);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -64,10 +69,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> createMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceCreateReq microReq) {
 		
-		ServpotMicroServiceCreateRes res = new ServpotMicroServiceCreateRes();
-		
+		ServpotMicroServiceCreateRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = microService.createMicroService(microReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -84,10 +91,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> updateMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceUpdateReq microReq) {
 		
-		ServpotMicroServiceUpdateRes res = new ServpotMicroServiceUpdateRes();
-		
+		ServpotMicroServiceUpdateRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = microService.updateMicroService(microReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -104,10 +113,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> deleteMicroService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceDeleteReq microReq) {
 		
-		ServpotMicroServiceDeleteRes res = new ServpotMicroServiceDeleteRes();
-		
+		ServpotMicroServiceDeleteRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = microService.deleteMicroService(microReq.getMicroId());
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -124,11 +135,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> createMicroServiceDomain(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotMicroServiceDomainCreateReq microReq) {
 		
-		//ServpotMicroServiceDomainMergeRes res = new ServpotMicroServiceDomainMergeRes();
-		ServpotMicroServiceDomainCreateRes res = new ServpotMicroServiceDomainCreateRes();
-		
+		ServpotMicroServiceDomainCreateRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = microService.createMicroServiceDomain(microReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -144,10 +156,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> updateMicroServiceDomain(HttpServletRequest request,
 														   @RequestBody @Valid final ServpotMicroServiceDomainUpdateReq microReq){
 
-		ServpotMicroServiceDomainUpdateRes res = new ServpotMicroServiceDomainUpdateRes();
+		ServpotMicroServiceDomainUpdateRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = microService.updateMicroServiceDomain(microReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -164,10 +178,12 @@ public class MicroServiceController {
 	public ResponseEntity<Object> deleteMicroServiceDomain(HttpServletRequest request, 
 															@RequestBody @Valid final ServpotMicroServiceDomainDeleteReq microReq) {
 		
-		ServpotMicroServiceDomainDeleteRes res = new ServpotMicroServiceDomainDeleteRes();
-		
+		ServpotMicroServiceDomainDeleteRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = microService.deleteMicroServiceDomain(microReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());

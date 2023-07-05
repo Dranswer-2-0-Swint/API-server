@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.servpot.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,10 +40,12 @@ public class AppServiceController {
 	@SwintValid
 	public ResponseEntity<Object> readAppServiceAll(HttpServletRequest request) {
 
-		ServpotAppServiceAllReadRes res = new ServpotAppServiceAllReadRes();
+		ServpotAppServiceAllReadRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		try {
 			res = appService.readAppServiceAll();
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -57,15 +61,19 @@ public class AppServiceController {
 	public ResponseEntity<Object> readAppServiceList(HttpServletRequest request,
 													 @RequestParam(required = false) HashMap<String, Object> parameter) {
 
-		ServpotAppServiceListReadRes res = new ServpotAppServiceListReadRes();
+		ServpotAppServiceListReadRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
 
 		String company = (String) parameter.get("company_id");
-		if (company == null || company.isEmpty() == true) {
-			// exception
+		if (company == null || company.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		try {
 			res = appService.readAppServiceList(company);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -82,10 +90,12 @@ public class AppServiceController {
 	public ResponseEntity<Object> createAppService(HttpServletRequest request, 
 													@RequestBody @Valid final ServpotAppServiceCreateReq serviceReq) {
 		
-		ServpotAppServiceCreateRes res = new ServpotAppServiceCreateRes();
-		
+		ServpotAppServiceCreateRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = appService.createAppService(serviceReq);
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
@@ -102,15 +112,17 @@ public class AppServiceController {
 	public ResponseEntity<Object> deleteService(HttpServletRequest request, 
 														@RequestBody @Valid final ServpotAppServiceDeleteReq serviceReq) {
 		
-		ServpotAppServiceDeleteRes res = new ServpotAppServiceDeleteRes();
-		
+		ServpotAppServiceDeleteRes res;
+		RequestContext.RequestContextData localdata = RequestContext.getContextData();
+
 		try {
 			res = appService.deleteService(serviceReq.getServiceId());
+			res.setRequestId(localdata.getRequestId());
 		}catch (Exception e){
 			e.printStackTrace();
 			log.error(e.getMessage());
-			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()), 
-												new HttpHeaders(), 
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(e.getMessage()),
+												new HttpHeaders(),
 												HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);

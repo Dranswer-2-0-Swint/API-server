@@ -54,7 +54,7 @@ public class LoggingFilter extends OncePerRequestFilter {
         String requestId = request.getHeader("request_id");
         logEntity.setReq_id(requestId);
         RequestContext.RequestContextData localdata = RequestContext.getContextData();
-        logEntity.setReq_user(localdata == null? "": localdata.getReq_user());
+        logEntity.setReq_user(localdata == null? "": localdata.getRequestUser());
         logEntity.setReq_prm(requestWrapper.getQueryString());
         logEntity.setReq_body(RequestBody);
         logEntity.setReq_dt(LocalDateTime.now());

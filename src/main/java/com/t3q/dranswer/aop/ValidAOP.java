@@ -43,7 +43,7 @@ public class ValidAOP {
         String token = request.getHeader("access_token");
         String request_id = request.getHeader("request_id");
         MDC.put("requestId", request_id);
-        KeycloakIntroSpectRes response = validateToken(token,request_id);
+        KeycloakIntroSpectRes response = validateToken(token, request_id);
 
         if(!response.isActive()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
