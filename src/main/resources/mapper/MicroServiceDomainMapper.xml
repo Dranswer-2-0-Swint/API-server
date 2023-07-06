@@ -21,6 +21,7 @@
         select	*
         from	tb_micro_domain
         where	domain = #{domain}
+        and     path = #{path}
     </select>
 
     <select id="selectMicroDomainPort" parameterType="String" resultType="DbMicroDomain">

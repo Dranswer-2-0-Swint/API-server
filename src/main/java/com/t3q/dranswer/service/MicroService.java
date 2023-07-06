@@ -146,7 +146,7 @@ public class MicroService {
 
 	public ServpotMicroServiceDomainCreateRes createMicroServiceDomain(ServpotMicroServiceDomainCreateReq microReq) throws Exception {
 		log.info("MicroService : createMicroServiceDomain");
-		if (microDomainMapper.selectMicroDomain(microReq.getDomain()) != null) {
+		if (microDomainMapper.selectMicroDomain(microReq.getDomain(), microReq.getPath()) != null) {
 			throw new Exception(Constants.E40005);
 		} else if (microDomainMapper.selectMicroDomainPort(microReq.getMicroId(), String.valueOf(microReq.getPort())) != null) {
 			throw new Exception(Constants.E40006);
@@ -172,10 +172,12 @@ public class MicroService {
 		return res;
 	}
 
-	public ServpotMicroServiceDomainUpdateRes updateMicroServiceDomain(ServpotMicroServiceDomainUpdateReq microReq){
+	public ServpotMicroServiceDomainUpdateRes updateMicroServiceDomain(ServpotMicroServiceDomainUpdateReq microReq) throws Exception {
 		log.info("MicroService : updateMicroServiceDomain");
-		if (microDomainMapper.selectMicroDomain(microReq.getRenewDomain()) != null) {
-			new Exception(Constants.E40005);
+		if (microDomainMapper.selectMicroDomain(microReq.getRenewDomain(), microReq.getPath()) != null) {
+			throw new Exception(Constants.E40005);
+		} else if (microDomainMapper.selectMicroDomainPort(microReq.getMicroId(), String.valueOf(microReq.getPort())) != null) {
+			throw new Exception(Constants.E40006);
 		}
 
 		List<DbMicroDomain> microDomains = microDomainMapper.selectMicroDomainByMicro(microReq.getMicroId());

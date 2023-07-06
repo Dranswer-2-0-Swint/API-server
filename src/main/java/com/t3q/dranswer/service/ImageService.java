@@ -341,7 +341,7 @@ public class ImageService {
 					log.info("container recycle success.\nmessage : " + cmanRes.getMessage());
 					dbImage.setImageStatus(Constants.STATUS_POD_TERMINATING);
 					dbImage.setImageStatusDetail(Constants.DETAIL_TERMINATING);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					log.error(e.getMessage());
@@ -350,6 +350,8 @@ public class ImageService {
 					}
 					throw new Exception(e.getMessage());
 				}
+			} else if (pod.isEmpty() && imageReq.getImageStatus().equals(Constants.STATUS_SUSPEND) && dbImage.getImageStatus().equals(Constants.STATUS_DEPLOY_FAILED)) {
+				imageMapper.updateImageStatus(imageReq.getImageId(), Constants.STATUS_POD_STOPPED, Constants.DETAIL_SHUTDOWN);
 			}
 		}
 
@@ -446,7 +448,7 @@ public class ImageService {
 		}
 
 		try {
-
+			// 1. 컨테이너 조회
 			CmanContainerUpdateRes cmanRes = modContainer(container, cmanReq);
 			log.info("container name : " + cmanRes.getConName());
 

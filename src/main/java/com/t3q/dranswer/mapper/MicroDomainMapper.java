@@ -13,7 +13,7 @@ import java.util.List;
 public interface MicroDomainMapper {
 
     // 마이크로서비스도메인 조회 V
-    public DbMicroDomain selectMicroDomain(@Param("domain") String domain);
+    public DbMicroDomain selectMicroDomain(@Param("domain") String domain, @Param("path") String path);
     // 마이크로서비스도메인 조회 V
     public DbMicroDomain selectMicroDomainPort(@Param("microService") String microService, @Param("port") String port);
     // 마이크로서비스도메인 목록 조회 V
