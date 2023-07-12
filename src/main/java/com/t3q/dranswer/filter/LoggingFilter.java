@@ -1,5 +1,24 @@
 package com.t3q.dranswer.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.t3q.dranswer.common.util.ResponseUtil;
+import com.t3q.dranswer.config.Constants;
+import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.entity.LogEntity;
+import com.t3q.dranswer.repository.LoggingRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,26 +27,6 @@ import java.time.LocalDateTime;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.t3q.dranswer.common.util.HashUtil;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-
-import com.t3q.dranswer.dto.RequestContext;
-import com.t3q.dranswer.entity.LogEntity;
-import com.t3q.dranswer.repository.LoggingRepository;
-
-import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
@@ -49,6 +48,14 @@ public class LoggingFilter extends OncePerRequestFilter {
 
         log.info("\n=======URI: [{}], METHOD: [{}]=======\n", request.getRequestURI(), request.getMethod());
         log.info("\nHeaders: {}\nQueryString: {}\nRequest Body: {}\n", Headers, queryString, RequestBody);
+
+        if (request.getHeader("request_id") == null || request.getHeader("access_token") == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getWriter(), ResponseUtil.parseRspCode(Constants.E40002));
+            return;
+        }
 
         LogEntity logEntity = new LogEntity();
         String requestId = request.getHeader("request_id");

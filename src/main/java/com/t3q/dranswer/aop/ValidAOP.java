@@ -1,7 +1,9 @@
 package com.t3q.dranswer.aop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.ApplicationProperties;
+import com.t3q.dranswer.config.Constants;
 import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.keycloak.KeycloakIntroSpectRes;
 import com.t3q.dranswer.dto.keycloak.KeycloakTokenRes;
@@ -46,7 +48,7 @@ public class ValidAOP {
         KeycloakIntroSpectRes response = validateToken(token, request_id);
 
         if(!response.isActive()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseUtil.parseRspCode(Constants.E40003));
         }
 
         //swint token 발급 및 threadlocal에 저장

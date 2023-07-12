@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ import com.t3q.dranswer.service.MicroService;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
+@Validated
 @Controller
 @RequestMapping("/api/v1/micro-service")
 public class MicroServiceController {
@@ -47,7 +49,7 @@ public class MicroServiceController {
 		if (service == null || service.isEmpty()) {
 			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
 												new HttpHeaders(),
-												HttpStatus.INTERNAL_SERVER_ERROR);
+												HttpStatus.BAD_REQUEST);
 		}
 		
 		try {

@@ -1,41 +1,25 @@
 package com.t3q.dranswer.controller;
 
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.RequestContext;
+import com.t3q.dranswer.dto.servpot.*;
+import com.t3q.dranswer.service.ImageService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import com.t3q.dranswer.common.util.ResponseUtil;
-import com.t3q.dranswer.dto.servpot.ServpotImageDeleteReq;
-import com.t3q.dranswer.dto.servpot.ServpotImageDeleteRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageListReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageReadRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageRegistReq;
-import com.t3q.dranswer.dto.servpot.ServpotImageRegistRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageRegistUpdateReq;
-import com.t3q.dranswer.dto.servpot.ServpotImageStatusRes;
-import com.t3q.dranswer.dto.servpot.ServpotImageStatusUpdateReq;
-import com.t3q.dranswer.service.ImageService;
-
-import lombok.extern.log4j.Log4j2;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.HashMap;
 
 @Log4j2
+@Validated
 @Controller
 @RequestMapping("/api/v1/image")
 public class ImageController {
@@ -56,7 +40,7 @@ public class ImageController {
 		if (micro == null || micro.isEmpty()) {
 			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
 												new HttpHeaders(),
-												HttpStatus.INTERNAL_SERVER_ERROR);
+												HttpStatus.BAD_REQUEST);
 		}
 		
 		try {
@@ -83,7 +67,7 @@ public class ImageController {
 		if (image == null || image.isEmpty()) {
 			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
 												new HttpHeaders(),
-												HttpStatus.INTERNAL_SERVER_ERROR);
+												HttpStatus.BAD_REQUEST);
 		}
 		
 		try {
@@ -110,7 +94,7 @@ public class ImageController {
 		if (image == null || image.isEmpty()) {
 			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
 												new HttpHeaders(),
-												HttpStatus.INTERNAL_SERVER_ERROR);
+												HttpStatus.BAD_REQUEST);
 		}
 		
 		try {

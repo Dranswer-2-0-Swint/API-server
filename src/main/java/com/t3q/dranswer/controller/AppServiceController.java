@@ -1,35 +1,27 @@
 package com.t3q.dranswer.controller;
 
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import com.t3q.dranswer.aop.annotation.SwintValid;
+import com.t3q.dranswer.common.util.ResponseUtil;
 import com.t3q.dranswer.config.Constants;
-import com.t3q.dranswer.dto.RequestContext;
 import com.t3q.dranswer.dto.servpot.*;
+import com.t3q.dranswer.service.AppService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import com.t3q.dranswer.common.util.ResponseUtil;
-import com.t3q.dranswer.service.AppService;
-
-import lombok.extern.log4j.Log4j2;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.HashMap;
 
 @Log4j2
+@Validated
 @Controller
 @RequestMapping("/api/v1/service")
-
 public class AppServiceController {
 
 	@Autowired
@@ -42,8 +34,15 @@ public class AppServiceController {
 														@RequestParam(required = false) HashMap<String, Object> parameter) {
 
 
-		String service = (String) parameter.get("service_id");
 		ServpotAppServiceReadMicroServicesAndImagesRes res;
+
+		String service = (String) parameter.get("service_id");
+		if (service == null || service.isEmpty()) {
+			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
+												new HttpHeaders(),
+												HttpStatus.BAD_REQUEST);
+		}
+
 
 		try {
 			res = appService.readMicroServicesAndImages(service);
@@ -88,7 +87,7 @@ public class AppServiceController {
 		if (company == null || company.isEmpty()) {
 			return new ResponseEntity<Object>(ResponseUtil.parseRspCode(Constants.E40001),
 												new HttpHeaders(),
-												HttpStatus.INTERNAL_SERVER_ERROR);
+												HttpStatus.BAD_REQUEST);
 		}
 
 		try {
@@ -142,5 +141,5 @@ public class AppServiceController {
 		}
 		return new ResponseEntity<Object>(res, new HttpHeaders(), HttpStatus.OK);
 	}
-	
+
 }
